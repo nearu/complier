@@ -2,9 +2,7 @@ program : program_head  routine  DOT
 program_head : PROGRAM  ID  SEMI
 routine : routine_head  routine_body
 name_list : name_list  COMMA  ID  |  ID
--=====================================================
 sub_routine : routine_head  routine_body
--=====================================================
 routine_head : label_part  const_part  type_part  var_part  routine_part
 label_part : ε
 const_part : CONST  const_expr_list  |  ε
@@ -29,18 +27,13 @@ var_decl_list : var_decl_list  var_decl  |  var_decl
 var_decl : name_list  COLON  type_decl  SEMI
 routine_part : routine_part  function_decl  |  routine_part  procedure_decl
            |  function_decl  |  procedure_decl
-+=================================================================                     
 function_decl : FUNCTION  ID  parameters  COLON  simple_type_decl SEMI routine SEMI
               | FUNCTION  ID  COLON simple_type_decl SEMI routine SEMI
-+=================================================================
-
-+-=================================================================
 procedure_decl : PROCEDURE ID parameters  SEMI  routine  SEMI 
                | PROCEDURE ID SEMI  routine  SEMI 
-+-=================================================================
 parameters : LP  para_decl_list  RP  |  ε
 para_decl_list : para_decl_list  SEMI  para_type_list
-para_type_list : var_para_list COLON  simpe_type_decl  
+para_type_list : var_para_list COLON  simple_type_decl  
 |  val_para_list  COLON  simple_type_decl
 var_para_list : VAR  name_list
 val_para_list : name_list
@@ -59,7 +52,7 @@ proc_stmt : ID
           |  SYS_PROC
           |  SYS_PROC  LP  args_list  RP
           |  READ  LP  factor  RP
-compound_stmt : BEGIN  stmt_list  END
+compound_stmt : BEGINP  stmt_list  END
 if_stmt : IF  expression  THEN  stmt  else_clause
 else_clause : ELSE stmt |  ε
 repeat_stmt : REPEAT  stmt_list  UNTIL  expression
