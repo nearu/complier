@@ -34,12 +34,14 @@ public:
 class ListTreeNode {
 private:
 	std::string typeName;
-	std::vector<TreeNode *> list;
+	std::vector<T *> list;
 public:
 	ListTreeNode(const std::string& _name):typeName(_name) {}
+	ListTreeNode(const std::string& _name, const std::vector<TreeNode *>_list)
+	:typeName(_name),list(_list) {}
 	//a.insert(a.end(), b.begin(), b.end());
 	void append() {}
-	void insert(TreeNode * newNode) {
+	void insert(T * newNode) {
 		list.push_back(newNode);
 	}
 };
@@ -95,6 +97,9 @@ class TypeTreeNode : public TreeNode {
 public:
 	virtual ~TypeTreeNode() {}
 };
+/*
+* node for user defined type
+*/
 class CustomTypeTreeNode : TypeTreeNode {
 private:
 	std::string name;
@@ -105,6 +110,10 @@ public:
 						{}
 
 };
+
+/*
+* node for simple type such as sys type , subrange type, enum tpye
+*/
 class SimpleTypeTreeNode : public TypeTreeNode {
 public:
 	virtual ~SimpleTypeTreeNode() {}
@@ -128,6 +137,9 @@ public:
 						{}
 };
 
+/*
+* node for enum type
+*/
 class EnumTypeTreeNode : public SimpleTypeTreeNode {
 private:
 	std::string name;
@@ -137,6 +149,7 @@ public:
 					:name(_name), elemList(_elemList)
 					{}
 };
+
 /*
 * node for array type
 */
@@ -151,13 +164,29 @@ public:
 	{}
 };
 
+/*
+* node for record type
+*/
+class RecordTypeTreeNode : public TypeTreeNode {
+private:
+	std::string name;
+	std::vector<ListTreeNode *> elemList;
+public:
+	RecordTypeTreeNode(const std::string& _name, const std::vector<ListTreeNode *>& _list)
+						: name(_name), list(_list)
+						{}
+};
 //==============================================================
 /// id node
 /**
 * node for differnet kinds of const values
 */
+class IDTreeNode : public TreeNode {
+public:
+	virtual ~IDTreeNode() {}
+};
 template <class T>
-class NumberTreeNode : public TreeNode {
+class NumberTreeNode : public IDTreeNode {
 private:
 	T value;
 public:
@@ -167,7 +196,7 @@ public:
 /*
 *  node for const variables
 */
-class ConstTreeNode : public TreeNode {
+class ConstTreeNode : public IDTreeNode {
 private:
 	std::string name;
 	NumberTreeNode *value;
@@ -179,7 +208,7 @@ public:
 /*
 * node for variables such as "fuck"
 */
-class VariableTreeNode : public TreeNode {
+class VariableTreeNode : public IDTreeNode {
 private:
 	std::string name;
 	std::string type;
@@ -187,13 +216,48 @@ public:
 	VariableTreeNode(const std::string& _name, const std::string& _type):name(_name), type(_type) {}
 };
 
+class ArrayElemTreeNode : public IDTreeNode {
+private:
+	std::string name;
+	ExprTreeNode *index;
+public:
+	ArrayElemTreeNode(const std::string& _name, const ExprTreeNode *_index)
+					: name(_name), index(_index) 
+					{}
+};
 
+class RecordElemTreeNode : public IDTreeNode {
+private:
+	std::string recordName;
+	std::string elemName;
+public:
+	RecordElemTreeNode(const std::string& _rName, const std::string& _eName)
+					:recordName(_rName), elemName(_eName)
+					{}
+};
 //===============================================
 /// expr node
+class ExprTreeNode : public TreeNode {
+
+public:
+	virtual ~ExprTreeNode() {}
+};
+
+/*
+* node for unary operator
+*/
+class UnaryExprTreeNode : public ExprTreeNode {
+private:
+	char op;
+	TreeNode *oprand;
+public:
+	UnaryExprTreeNode(char _op, const TreeNode *_operand):op(_op),operand(_operand)
+	{}
+};
 /*
 * node for binary operaotr such as '+'  '='
 */
-class BinaryExprTreeNode : public TreeNode {
+class BinaryExprTreeNode : public ExprTreeNode {
 private:
 	char op;
 	TreeNode * rhs, lhs;
@@ -205,7 +269,7 @@ public:
 /*
 * node for function call
 */
-class CallExprTreeNode : public TreeNode {
+class CallExprTreeNode : public ExprTreeNode {
 private:
 	std::string name;
 	std::vector<TreeNode *> args;
@@ -215,7 +279,14 @@ public:
 
 };
 
-
+class CaseExprTreeNode : public ExprTreeNode {
+private:
+	IDTreeNode *lable;
+	StmtTreeNode *stmt;
+public:
+	CaseExprTreeNode(const IDTreeNode* _lable, const StmtTreeNode *_stmt)
+					: lable(_lable), stmt(_stmt){}
+};
 //======================================================
 ///function and procedure node
 /*
@@ -237,7 +308,7 @@ public:
 /*
 * node for procedure definition
 */
-class ProcedureTreeNode : public TreeNode {
+class ProcedureTreeNode :  public TreeNode {
 private:
 	std::string name;
 	std::vector<VariableTreeNode *> args;
@@ -254,6 +325,77 @@ public:
 class StmtTreeNode : public TreeNode {
 public:
 	virtual ~StmtTreeNode() {}
+};
+
+class CompoundStmtTreeNode : public StmtTreeNode {
+private:
+	ListTreeNode *stmtList;
+public:
+	CompoundStmtTreeNode(const ListTreeNode *list):stmtList(list){}
+
+};
+
+class IfStmtTreeNode : public StmtTreeNode {
+private:
+	ExprTreeNode *condition;
+	CompoundStmtTreeNode *body;
+	StmtTreeNode *elsePart;
+public:
+	IfStmtTreeNode(const ExprTreeNode *e, const CompoundStmtTreeNode *c)
+				:condition(e), body(c){}
+	IfStmtTreeNode(const ExprTreeNode *e, const CompoundStmtTreeNode *c,
+		const StmtTreeNode *s)
+				:condition(e), body(c),elsePart(s){}				
+
+};
+
+class RepeatStmtTreeNode : public StmtTreeNode {
+private:
+	CompoundStmtTreeNode *body;
+	ExprTreeNode *condition;
+public:
+	RepeatStmtTreeNode(const CompoundStmtTreeNode *_body, ExprTreeNode *_cond) 
+					: body(_body), condition(_cond)
+					{}
+};
+
+class WhileStmtTreeNode : public StmtTreeNode {
+private:
+	StmtTreeNode *body;
+	ExprTreeNode *condition;
+public:
+	WhileStmtTreeNode(const StmtTreeNode* _body, const ExprTreeNode *_cond)
+					: body(_body),cond(_cond){}
+
+};
+
+class CaseStmtTreeNode : public StmtTreeNode {
+private:
+	TreeNode *expr;
+	ListTreeNode *caseExprList;
+public:
+	CaseStmtTreeNode(const TreeNode *_expr, const ListTreeNode *_list)
+				:expr(_expr), caseExprList(_list){}
+};
+
+class ForStmtTreeNode : public StmtTreeNode {
+private:
+	ExprTreeNode *assignExpr;
+	std::string direction;
+	TreeNode *dirExpr; // may be a variable
+	StmtTreeNode *body;
+public:
+	ForStmtTreeNode(const ExprTreeNode * _aExpr, const std::string& _dire, 
+		const TreeNode *_dExpr, const StmtTreeNode* _body)
+		: assignExpr(_aExpr), direction(_dire), dirExpr(_dExpr), body(_body){}
+};
+
+
+class GotoStmtTreeNode : public StmtTreeNode {
+private:
+	int lable;
+public:
+	GotoStmtTreeNode(int _lable):label(_lable){}
 };
 /*
 * if treceScan = TRUE, every token along with lineno will be 
