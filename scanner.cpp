@@ -602,7 +602,7 @@ char *yytext;
 #include <iostream>
 
 using namespace std;
-
+string currentToken;
 #line 607 "scanner.cpp"
 
 #define INITIAL 0
@@ -2164,7 +2164,7 @@ int getToken(void) {
 		lineno++;
 	}
 	curToken = yylex();
-	//yylval = yytext;
+	currentToken = yytext;
 	if (traceScan) {
 		fprintf(listing, "\t%d %s\n", lineno, yytext);
 	}	

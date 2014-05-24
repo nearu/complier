@@ -6,7 +6,7 @@
 #include <iostream>
 
 using namespace std;
-
+string currentToken;
 %}
 
 digit [0-9]
@@ -94,7 +94,7 @@ int getToken(void) {
 		lineno++;
 	}
 	curToken = yylex();
-	//yylval = yytext;
+	currentToken = yytext;
 	if (traceScan) {
 		fprintf(listing, "\t%d %s\n", lineno, yytext);
 	}	

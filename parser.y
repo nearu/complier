@@ -11,13 +11,25 @@ using namespace std;
 %token AND  ARRAY  ASSIGN  BEGINP  CASE CHAR COLON COMMA CONST DIV DO SYS_CON PROCEDURE
 %token DOT DOTDOT DOWNTO OR ELSE END EQUAL FOR FUNCTION GE GOTO GT ID
 %token IF INTEGER LB LE LP LT MINUS MOD MUL NOT OF PLUS PROGRAM RB SYS_TYPE
-%token READ REAL RECORD REPEAT RP SEMI STRING THEN TO TYPE UNEQUAL UNTIL VAR WHILE SYS_FUNCT SYS_PROC
+%token READ REAL RECORD REPEAT RP SEMI STRING THEN TO TYPE UNEQUAL UNTIL VAR WHILE SYS_FUNCT SYS_PROC MINUST
 
 %%
-program : program_head  routine  DOT
-program_head : PROGRAM  ID  SEMI
-routine : routine_head  routine_body
-name_list : name_list  COMMA  ID  |  ID
+program : program_head  routine  DOT {
+$$ = new ProgramTreeNode($1, $2);
+}
+;
+program_head : PROGRAM  ID {
+  $$ = new ProgramHeadTreeNode(currentToken);
+} SEMI 
+;
+routine : routine_head  routine_body {
+  $$ = new RoutineTreeNode($1, $2);
+}
+;
+name_list : name_list  COMMA  ID  |  ID {
+   
+}
+;
 routine_head : label_part  const_part  type_part  var_part  routine_part
 label_part : 
 const_part : CONST  const_expr_list  |  
@@ -45,7 +57,7 @@ routine_part : routine_part  function_decl  |  routine_part  procedure_decl
 function_decl : FUNCTION  ID  parameters  COLON  simple_type_decl SEMI routine SEMI
 procedure_decl : PROCEDURE ID parameters  SEMI  routine  SEMI 
 parameters : LP  para_decl_list  RP  |  
-para_decl_list : para_decl_list  SEMI  para_type_list
+para_decl_list : para_decl_list  SEMI  para_type_list | para_type_list
 para_type_list : var_para_list COLON  simple_type_decl  
 |  val_para_list  COLON  simple_type_decl
 var_para_list : VAR  name_list
@@ -75,7 +87,6 @@ case_expr_list : case_expr_list  case_expr  |  case_expr
 case_expr : const_value  COLON  stmt  SEMI
           |  ID  COLON  stmt  SEMI
 goto_stmt : GOTO  INTEGER
-expression_list : expression_list  COMMA  expression  |  expression
 expression : expression  GE  expr  |  expression  GT  expr  |  expression  LE  expr
           |  expression  LT  expr  |  expression  EQUAL  expr  
 |  expression  UNEQUAL  expr  |  expr

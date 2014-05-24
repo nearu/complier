@@ -102,7 +102,8 @@ extern int yydebug;
      VAR = 311,
      WHILE = 312,
      SYS_FUNCT = 313,
-     SYS_PROC = 314
+     SYS_PROC = 314,
+     MINUST = 315
    };
 #endif
 
