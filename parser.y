@@ -18,7 +18,6 @@ program : program_head  routine  DOT
 program_head : PROGRAM  ID  SEMI
 routine : routine_head  routine_body
 name_list : name_list  COMMA  ID  |  ID
-sub_routine : routine_head  routine_body
 routine_head : label_part  const_part  type_part  var_part  routine_part
 label_part : 
 const_part : CONST  const_expr_list  |  
@@ -42,11 +41,9 @@ var_part : VAR  var_decl_list  |
 var_decl_list : var_decl_list  var_decl  |  var_decl
 var_decl : name_list  COLON  type_decl  SEMI
 routine_part : routine_part  function_decl  |  routine_part  procedure_decl
-           |  function_decl  |  procedure_decl
+           |  function_decl  |  procedure_decl | 
 function_decl : FUNCTION  ID  parameters  COLON  simple_type_decl SEMI routine SEMI
-              | FUNCTION  ID  COLON simple_type_decl SEMI routine SEMI
 procedure_decl : PROCEDURE ID parameters  SEMI  routine  SEMI 
-               | PROCEDURE ID SEMI  routine  SEMI 
 parameters : LP  para_decl_list  RP  |  
 para_decl_list : para_decl_list  SEMI  para_type_list
 para_type_list : var_para_list COLON  simple_type_decl  
