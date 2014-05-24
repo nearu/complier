@@ -62,12 +62,18 @@ private:
 	std::vector<TreeNode *> list;
 public:
 	ListTreeNode( std::string& _name):typeName(_name) {}
-	ListTreeNode( std::string& _name,  std::vector<TreeNode *>_list)
+	ListTreeNode( std::string& _name,  std::vector<TreeNode *>& _list)
 	:typeName(_name),list(_list) {}
 	//a.insert(a.end(), b.begin(), b.end());
 	void append() {}
 	void insert(TreeNode * newNode) {
 		list.push_back(newNode);
+	}
+	TreeNode *get(int index) {
+		return list[index];
+	}
+	int size() {
+		return list.size();
 	}
 };
 
@@ -183,12 +189,11 @@ public:
 */
 class ArrayTypeTreeNode : public TypeTreeNode {
 private:
-	std::string name;
 	SimpleTypeTreeNode *indexType;
 	TypeTreeNode *elemType;
 public:
-	ArrayTypeTreeNode( std::string& _name,  SimpleTypeTreeNode *_indexType,
-					 TypeTreeNode *_elemType):name(_name), indexType(_indexType),elemType(_elemType)
+	ArrayTypeTreeNode(SimpleTypeTreeNode *_indexType,
+					 TypeTreeNode *_elemType):indexType(_indexType),elemType(_elemType)
 	{}
 };
 
@@ -197,11 +202,10 @@ public:
 */
 class RecordTypeTreeNode : public TypeTreeNode {
 private:
-	std::string name;
-	std::vector<ListTreeNode *> elemList;
+	ListTreeNode * elemList;
 public:
-	RecordTypeTreeNode( std::string& _name,  std::vector<ListTreeNode *>& _list)
-						: name(_name), elemList(_list)
+	RecordTypeTreeNode( ListTreeNode *_list)
+						:elemList(_list)
 						{}
 };
 //==============================================================
