@@ -26,7 +26,11 @@ routine : routine_head  routine_body {
   $$ = new RoutineTreeNode($1, $2);
 }
 ;
-name_list : name_list  COMMA  ID  |  ID {
+name_list : name_list  COMMA  ID  {
+  $$ = $1;
+  $$.push_back(new VariableTreeNode(currentToken));
+}
+|  ID {
    
 }
 ;

@@ -56,18 +56,19 @@ public:
 /*
 * node contains a list of sub-nodes with same type
 */
+template <class T>
 class ListTreeNode {
 private:
 	std::string typeName;
-	std::vector<TreeNode *> list;
+	std::vector<T *> list;
 public:
 	ListTreeNode( std::string& _name):typeName(_name) {}
-	ListTreeNode( std::string& _name,  std::vector<TreeNode *>_list)
+	ListTreeNode( std::string& _name,  std::vector<T *>_list)
 	:typeName(_name),list(_list) {}
 	//a.insert(a.end(), b.begin(), b.end());
 	void append() {}
-	void insert(TreeNode * newNode) {
-		list.push_back(newNode);
+	void insert(T * elem) {
+		list.push_back(elem);
 	}
 };
 
@@ -239,6 +240,7 @@ private:
 	std::string type;
 public:
 	VariableTreeNode( std::string& _name,  std::string& _type):name(_name), type(_type) {}
+	VariableTreeNode( std::string& _name):name(_name), type("") {}
 };
 
 class ArrayElemTreeNode : public IDTreeNode {
@@ -260,9 +262,9 @@ public:
 					:recordName(_rName), elemName(_eName)
 					{}
 };
+
 //===============================================
-
-
+//type nodes
 /*
 * node for unary operator
 */
