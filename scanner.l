@@ -4,9 +4,8 @@
 #include "utils.h"
 #include <cstdio>
 #include <iostream>
-
 using namespace std;
-string currentToken;
+
 %}
 
 digit [0-9]

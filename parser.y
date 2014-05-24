@@ -28,7 +28,7 @@ routine : routine_head  routine_body {
 ;
 name_list : name_list  COMMA  ID  {
   $$ = $1;
-  $$.push_back(new VariableTreeNode(currentToken));
+  $$.insert(&currentToken);
 }
 |  ID {
    

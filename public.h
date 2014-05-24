@@ -56,19 +56,18 @@ public:
 /*
 * node contains a list of sub-nodes with same type
 */
-template <class T>
 class ListTreeNode {
 private:
 	std::string typeName;
-	std::vector<T *> list;
+	std::vector<TreeNode *> list;
 public:
 	ListTreeNode( std::string& _name):typeName(_name) {}
-	ListTreeNode( std::string& _name,  std::vector<T *>_list)
+	ListTreeNode( std::string& _name,  std::vector<TreeNode *>_list)
 	:typeName(_name),list(_list) {}
 	//a.insert(a.end(), b.begin(), b.end());
 	void append() {}
-	void insert(T * elem) {
-		list.push_back(elem);
+	void insert(TreeNode * newNode) {
+		list.push_back(newNode);
 	}
 };
 
