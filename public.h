@@ -24,11 +24,16 @@ FILE *listing;
 * base class for all different kind of node within a AST
 */
 class TreeNode {
+private:
+	vector<TreeNode *> children;
 public:
 	virtual ~TreeNode() {}
 	virtual void traverse() {};
 	virtual void printSelf() {
 		cout << " TreeNode ";
+	}
+	virtual vector<TreeNode　*> getChildren() {
+		return children;
 	}
 };
 
@@ -81,9 +86,13 @@ private:
 	std::string typeName;
 	std::vector<TreeNode *> list;
 public:
-	ListTreeNode( std::string& _name):typeName(_name) {}
+	ListTreeNode( std::string& _name):typeName(_name) {
+		children = list;
+	}
 	ListTreeNode( std::string& _name,  std::vector<TreeNode *>& _list)
-	:typeName(_name),list(_list) {}
+	:typeName(_name),list(_list) {
+		children = list;
+	}
 	//a.insert(a.end(), b.begin(), b.end());
 	void append() {}
 	void insert(TreeNode * newNode) {
@@ -118,9 +127,14 @@ public:
 	RoutineHeadTreeNode( ListTreeNode *_constPart,  ListTreeNode *_typePart, 
 		 ListTreeNode *_varPart,  ListTreeNode *_routinePart)
 		:constPart(_constPart), typePart(_typePart), varPart(_varPart),routinePart(_routinePart)
-		{}
+		{
+			children.push_back(constPart);
+			children.push_back(typePart);
+			children.push_back(varPart);
+			children.push_back(routinePart);
+		}
 	void printSelf {
-		cout << "RoutineHead : " <<
+		cout << "RoutineHead";
 	}
 };
 /*
@@ -133,7 +147,10 @@ private:
 public:
 	RoutineTreeNode( RoutineHeadTreeNode *_head,  ListTreeNode *_body)
 					:head(_head), body(_body) 
-					{}
+					{
+						children.push_back(head);
+						children.push_back(body);
+					}
 };
 
 class ProgramHeadTreeNode : public TreeNode {
@@ -152,7 +169,9 @@ private:
 	RoutineTreeNode * routine;
 public:
 	ProgramTreeNode( std::string& _name,  RoutineTreeNode * _routine):name(_name), routine(_routine)
-	{}
+	{
+		children.push_back(routine);
+	}
 
 };
 
@@ -227,7 +246,10 @@ private:
 public:
 	ArrayTypeTreeNode(SimpleTypeTreeNode *_indexType,
 					 TypeTreeNode *_elemType):indexType(_indexType),elemType(_elemType)
-	{}
+	{
+		children.push_back(indexType);
+		children.push_back(elemType);
+	}
 };
 
 /*
@@ -239,7 +261,9 @@ private:
 public:
 	RecordTypeTreeNode( ListTreeNode *_list)
 						:elemList(_list)
-						{}
+						{
+							children.push_back(elemList);
+						}
 };
 //==============================================================
 /// id node
@@ -272,8 +296,6 @@ public:
 	ConstTreeNode( std::string& _name,  IDTreeNode *_value)
 				:name(_name),value(_value)
 				{}
-
-
 };
 
 /*
@@ -341,7 +363,9 @@ private:
 	TreeNode *oprand;
 public:
 	UnaryExprTreeNode(std::string& _op,  TreeNode *_operand):op(_op),oprand(_operand)
-	{}
+	{
+		children.push_back(oprand);
+	}
 };
 /*
 * node for binary operaotr such as '+'  '='
@@ -352,7 +376,11 @@ private:
 	TreeNode * rhs, *lhs;
 public:
 	BinaryExprTreeNode(std::string& _op,  TreeNode* r,  TreeNode* l)
-						:op(_op),rhs(r),lhs(l) {}
+						:op(_op),rhs(r),lhs(l) 
+	{
+		children.push_back(rhs);
+		children.push_back(lhs);
+	}
 
 };
 
@@ -387,13 +415,17 @@ public:
 class FuntionTreeNode : public TreeNode {
 private:
 	std::string name;
-	std::vector<VariableTreeNode *> args;
+	ListTreeNode* args;
 	std::string returnType;
-	std::vector<TreeNode*> body;
+	ListTreeNode* body;
 public:
-	FuntionTreeNode( std::string& _name,  std::vector<VariableTreeNode *> _args, 
-		 std::string& _returnType,  std::vector<TreeNode *>& _body)
-		:name(_name), args(_args), returnType(_returnType), body(_body){}
+	FuntionTreeNode( std::string& _name,  ListTreeNode* _args, 
+		 std::string& _returnType,  ListTreeNode* _body)
+		:name(_name), args(_args), returnType(_returnType), body(_body)
+		{
+			children.push_back(args);
+			children.push_back(body);
+		}
 
 };
 
@@ -403,12 +435,16 @@ public:
 class ProcedureTreeNode :  public TreeNode {
 private:
 	std::string name;
-	std::vector<VariableTreeNode *> args;
-	std::vector<TreeNode*> body;
+	ListTreeNode * args;
+	ListTreeNode * body;
 public:
-	ProcedureTreeNode( std::string& _name,  std::vector<VariableTreeNode *> _args, 
-		 std::vector<TreeNode *>& _body)
-		:name(_name), args(_args), body(_body){}
+	ProcedureTreeNode( std::string& _name,  ListTreeNode *  _args, 
+		 ListTreeNode *  _body)
+		:name(_name), args(_args), body(_body)
+		{
+			children.push_back(args);
+			children.push_back(body);
+		}
 
 };
 
@@ -421,7 +457,10 @@ private:
 	ListTreeNode *stmtList;
 public:
 	CompoundStmtTreeNode( ListTreeNode *list)
-						:stmtList(list){}
+						:stmtList(list)
+	{
+		children.push_back(stmtList);
+	}
 
 };
 
@@ -430,12 +469,22 @@ private:
 	ExprTreeNode *condition;
 	CompoundStmtTreeNode *body;
 	StmtTreeNode *elsePart;
+	void addChildren() {
+		children.push_back(condition);
+		children.push_back(body);
+		children.push_back(elsePart);
+	}
 public:
 	IfStmtTreeNode( ExprTreeNode *e,  CompoundStmtTreeNode *c)
-				:condition(e), body(c){}
+				:condition(e), body(c)
+	{
+		addChildren();
+	}
 	IfStmtTreeNode( ExprTreeNode *e,  CompoundStmtTreeNode *c,
 		 StmtTreeNode *s)
-				:condition(e), body(c),elsePart(s){}				
+				:condition(e), body(c),elsePart(s){
+					addChildren();
+				}				
 
 };
 
@@ -446,7 +495,10 @@ private:
 public:
 	RepeatStmtTreeNode( CompoundStmtTreeNode *_body, ExprTreeNode *_cond) 
 					: body(_body), condition(_cond)
-					{}
+	{
+		children.push_back(condition);
+		children.push_back(body);
+	}
 };
 
 class WhileStmtTreeNode : public StmtTreeNode {
@@ -455,7 +507,11 @@ private:
 	ExprTreeNode *condition;
 public:
 	WhileStmtTreeNode( StmtTreeNode* _body,  ExprTreeNode *_cond)
-					: body(_body),condition(_cond){}
+					: body(_body),condition(_cond)
+	{
+		children.push_back(condition);
+		children.push_back(body);
+	}
 
 };
 
@@ -468,7 +524,11 @@ private:
 	ListTreeNode *caseExprList;
 public:
 	SwitchStmtTreeNode( TreeNode *_expr,  ListTreeNode *_list)
-				:expr(_expr), caseExprList(_list){}
+				:expr(_expr), caseExprList(_list)
+	{
+		children.push_back(expr);
+		children.push_back(caseExprList);
+	}
 };
 
 class ForStmtTreeNode : public StmtTreeNode {
@@ -480,7 +540,12 @@ private:
 public:
 	ForStmtTreeNode( ExprTreeNode * _aExpr,  std::string& _dire, 
 		 TreeNode *_dExpr,  StmtTreeNode* _body)
-		: assignExpr(_aExpr), direction(_dire), dirExpr(_dExpr), body(_body){}
+		: assignExpr(_aExpr), direction(_dire), dirExpr(_dExpr), body(_body)
+		{
+			children.push_back(assignExpr);
+			children.push_back(dirExpr);
+			children.push_back(body);
+		}
 };
 
 
