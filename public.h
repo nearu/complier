@@ -30,6 +30,7 @@ protected:
 	vector<TreeNode *> children;
 public:
 	TreeNode(string& _name):name(_name){}
+	TreeNode():name(""){}
 	virtual ~TreeNode() {}
 	virtual void traverse() {};
 	virtual void printSelf() {
@@ -234,9 +235,9 @@ public:
 class EnumTypeTreeNode : public SimpleTypeTreeNode {
 private:
 	std::string name;
-	std::vector<std::string> elemList;
+	std::vector<ListTreeNode *> elemList;
 public:
-	EnumTypeTreeNode(std::vector<std::string>& _elemList,std::string &_name = "")
+	EnumTypeTreeNode(std::vector<ListTreeNode *>& _elemList,std::string &_name = "")
 					:name(_name), elemList(_elemList)
 					{}
 

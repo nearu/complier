@@ -29,11 +29,11 @@ routine : routine_head  routine_body {
 ;
 name_list : name_list  COMMA  ID  {
   $$ = $1;
-  $$->insert(new VariableTreeNode(currentToken));
+  $$->insert(new TreeNode(currentToken));
 }
 |  ID {
    vector<TreeNode *> list;
-   list.push_back(new VariableTreeNode(currentToken));
+   list.push_back(new TreeNode(currentToken));
    $$ = new ListTreeNode("name_list", list);
 }
 ;
@@ -237,7 +237,7 @@ assign_stmt : ID 	{VariableTreeNode* x = new VariableTreeNode(currentToken);} AS
                 ArrayElemTreeNode x = new ArrayElemTreeNode(s,$3);
                 $$ = new BinaryExprTreeNode("=",x,$6);
             }
-            | ID     {string s1 = currentToken;} DOT  ID  {string s2 = currentToken;} ASSIGN  expression	{
+            | ID  {string s1 = currentToken;} DOT  ID  {string s2 = currentToken;} ASSIGN  expression	{
                 RecordElemTreeNode x = new RecordElemTreeNode(s1,s2);
                 $$ = new BinaryExprTreeNode("=",x,$5);
             }
@@ -316,7 +316,7 @@ factor : ID                         {$$ = new CallExprTreeNode(currentToken);}
        LP  args_list  RP            {$$ = new CallExprTreeNode(s,$3->getList());}
        |  SYS_FUNCT                 {$$ = new CallExprTreeNode(currentToken);}
        |  SYS_FUNCT                 {string s = currentToken;}
-       LP  args_list  RP            {$$ = new CallExprTreeNode(s,$3->getLIst());}
+       LP  args_list  RP            {$$ = new CallExprTreeNode(s,$3->getList());}
        |  const_value               {$$ = $1;}
        |  LP  expression  RP        {$$ = $2;}
        |  NOT  factor               {$$ = new UnaryExprTreeNode("~",$2);}
