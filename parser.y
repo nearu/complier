@@ -194,10 +194,10 @@ para_decl_list : para_decl_list  SEMI  para_type_list {
 }
 ;
 para_type_list : var_para_list COLON  simple_type_decl  {
-  $$ = new Variable($1, $3,1);
+  $$ = new VariableTreeNode($1, $3,1);
 }
 |  val_para_list  COLON  simple_type_decl {
- $$ = new Variable($1, $3, 0); 
+ $$ = new VariableTreeNode($1, $3, 0); 
 }
 var_para_list : VAR  name_list {
   $$ = $2;
