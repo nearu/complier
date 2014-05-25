@@ -29,7 +29,7 @@ routine : routine_head  routine_body {
 ;
 name_list : name_list  COMMA  ID  {
   $$ = $1;
-  $$.insert(new VariableTreeNode(currentToken));
+  $$->insert(new VariableTreeNode(currentToken));
 }
 |  ID {
    vector<TreeNode *> list;
@@ -50,13 +50,13 @@ const_part : CONST  const_expr_list {
 const_expr_list : const_expr_list  ID {string name = currentToken;}
 EQUAL  const_value  SEMI {
   $$ = $1;
-  $$.insert(new ConstTreeNode(name,$4));
+  $$->insert(new ConstTreeNode(name,$4));
 }
 |  ID  {string name = currentToken;}
 EQUAL  const_value  SEMI {
   vector<TreeNode *> list;
   $$ = new ListTreeNode(list);
-  $$.insert(new ConstTreeNode(name, $3));
+  $$->insert(new ConstTreeNode(name, $3));
 }
 ;
 const_value : INTEGER     {$$ = new NumberTreeNode<int>(atoi(currentToken.c_str()));}
@@ -69,9 +69,10 @@ type_part : TYPE type_decl_list {
   $$ = $2;
 } |  
 ;
-type_decl_list : type_decl_list  type_definition {
+type_decl_list : type_decl_list  type_definition 
+{
   $$ = $1;
-  $$.insert($2);
+  $$->insert($2);
 } 
 |  type_definition {
   vector<TreeNode *> list;
@@ -97,7 +98,7 @@ record_type_decl : RECORD  field_decl_list  END {
 ;
 field_decl_list : field_decl_list  field_decl  {
   $$ = $1;
-  $$.insert($2);
+  $$->insert($2);
 }
 |  field_decl {
   vector<TreeNode *> list;
@@ -122,12 +123,12 @@ simple_type_decl : SYS_TYPE {
                   $$ = new SubRangeTypeTreeNode($1,$3);
                 }
                 |  MINUS  const_value  DOTDOT  const_value {
-                  $1.set(-(int)$1.get());
+                  $1->set(-(int)$1->get());
                   $$ = new SubRangeTypeTreeNode($1,$3);
                 }
                 |  MINUS  const_value  DOTDOT  MINUS  const_value {
-                  $1.set(-(int)$1.get());
-                  $2.set(-(int)$2.get());
+                  $1->set(-(int)$1->get());
+                  $2->set(-(int)$2->get());
                   $$ = new SubRangeTypeTreeNode($1,$3); 
                 }
                 |  ID {string recordName = currentToken;} DOTDOT  ID {
@@ -141,7 +142,7 @@ var_part : VAR  var_decl_list {
 ;
 var_decl_list : var_decl_list  var_decl {
   $$ = $1;
-  $$.insert($2);
+  $$->insert($2);
 } |  var_decl {
   vector<TreeNode *> list;
   list.push_back($1);
@@ -154,11 +155,11 @@ var_decl : name_list  COLON  type_decl  SEMI {
 ;
 routine_part : routine_part  function_decl  {
                 $$ = $1;
-                $$.insert($2);
+                $$->insert($2);
               }
             |  routine_part  procedure_decl {
               $$ = $1;
-              $$.insert($2);
+              $$->insert($2);
               }
             |  function_decl  {
                 vector<TreeNode *> list;
@@ -185,7 +186,7 @@ parameters : LP  para_decl_list  RP  {
 ; 
 para_decl_list : para_decl_list  SEMI  para_type_list {
   $$ = $1;
-  $$.insert($3);
+  $$->insert($3);
 }
 | para_type_list {
   vector<TreeNode *> list;
@@ -234,7 +235,7 @@ non_label_stmt : assign_stmt  {$$ = $1;}
         ;
 
 assign_stmt : ID  ASSIGN  expression  
-           | ID LB expression RB ASSIGN expression
+           | ID LB expression RB ASSIGN expression 
            | ID  DOT  ID  ASSIGN  expression
            ;
 proc_stmt : ID

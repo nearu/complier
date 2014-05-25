@@ -313,10 +313,10 @@ public:
 */
 class UnaryExprTreeNode : public ExprTreeNode {
 private:
-	char op;
+	std::string op;
 	TreeNode *oprand;
 public:
-	UnaryExprTreeNode(char _op,  TreeNode *_operand):op(_op),oprand(_operand)
+	UnaryExprTreeNode(std::string& _op,  TreeNode *_operand):op(_op),oprand(_operand)
 	{}
 };
 /*
@@ -324,10 +324,10 @@ public:
 */
 class BinaryExprTreeNode : public ExprTreeNode {
 private:
-	char op;
+	std::string op;
 	TreeNode * rhs, *lhs;
 public:
-	BinaryExprTreeNode(char _op,  TreeNode* r,  TreeNode* l)
+	BinaryExprTreeNode(std::string& _op,  TreeNode* r,  TreeNode* l)
 						:op(_op),rhs(r),lhs(l) {}
 };
 
