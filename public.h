@@ -11,6 +11,7 @@
 #endif
 #include <string>
 #include <vector>
+using namespace std;
 typedef int TokenType;
 /*
 * following variables are defined in main.c
@@ -26,6 +27,9 @@ class TreeNode {
 public:
 	virtual ~TreeNode() {}
 	virtual void traverse() {};
+	virtual void printSelf() {
+		cout << " TreeNode ";
+	}
 };
 
 class StmtTreeNode : public TreeNode {
@@ -36,18 +40,26 @@ public:
 	void setLable(int _lable) {
 		lable = _lable;
 	}
+	void printSelf() {
+		cout << "StmtTreeNode";
+	}
 };
 
 class IDTreeNode : public TreeNode {
 public:
 	virtual ~IDTreeNode() {}
+	void printSelf() {
+		cout << "IDTreeNode";
+	}
 };
 
 /// expr node
 class ExprTreeNode : public TreeNode {
-
 public:
 	virtual ~ExprTreeNode() {}
+	void printSelf() {
+		cout << "ExprTreeNode";
+	}
 };
 
 /*
@@ -56,12 +68,15 @@ public:
 class TypeTreeNode : public TreeNode {
 public:
 	virtual ~TypeTreeNode() {}
+	void printSelf() {
+		cout << "TypeTreeNode";
+	}
 };
 
 /*
 * node contains a list of sub-nodes with same type
 */
-class ListTreeNode {
+class ListTreeNode : public TreeNode{
 private:
 	std::string typeName;
 	std::vector<TreeNode *> list;
@@ -79,6 +94,12 @@ public:
 	}
 	int size() {
 		return list.size();
+	}
+	vector<TreeNode *>& getList() {
+		return list;
+	}
+	void printSelf() {
+		cout << "a list of " << typeName;
 	}
 };
 
@@ -98,6 +119,9 @@ public:
 		 ListTreeNode *_varPart,  ListTreeNode *_routinePart)
 		:constPart(_constPart), typePart(_typePart), varPart(_varPart),routinePart(_routinePart)
 		{}
+	void printSelf {
+		cout << "RoutineHead : " <<
+	}
 };
 /*
 * node for routine
@@ -341,7 +365,6 @@ private:
 public:
 	CallExprTreeNode( std::string& _name,  std::vector<TreeNode *> _args )
 						:name(_name), args(_args){}
-
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
