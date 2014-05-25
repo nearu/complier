@@ -60,8 +60,8 @@ EQUAL  const_value  SEMI {
 }
 ;
 const_value : INTEGER     {$$ = new NumberTreeNode<int>(atoi(currentToken.c_str()));}
-              |  REAL     {$$ = new NumberTreeNode<double>(atof(currentToken.c_str));}
-              |  CHAR     {$$ = new NumberTreeNode<char>(atof(currentToken[0]));}
+              |  REAL     {$$ = new NumberTreeNode<double>(atof(currentToken.c_str()));}
+              |  CHAR     {$$ = new NumberTreeNode<char>(currentToken[0]);}
               |  STRING   {$$ = new NumberTreeNode<string>(currentToken);}  
               |  SYS_CON  {$$ = new NumberTreeNode<string>(currentToken);}  
               ;
@@ -106,31 +106,110 @@ field_decl_list : field_decl_list  field_decl  {
 }
 ;
 field_decl : name_list  COLON  type_decl  SEMI {
-  for(int i = 0; i < $1.size(); ++i) {
-
-  }
+  $$ = new VariableTreeNode($1, $3);
 }
 ;
-simple_type_decl : SYS_TYPE  |  ID  |  LP  name_list  RP  
-                |  const_value  DOTDOT  const_value  
-                |  MINUS  const_value  DOTDOT  const_value
-                |  MINUS  const_value  DOTDOT  MINUS  const_value
-                |  ID  DOTDOT  ID
-var_part : VAR  var_decl_list  |  
-var_decl_list : var_decl_list  var_decl  |  var_decl
-var_decl : name_list  COLON  type_decl  SEMI
-routine_part : routine_part  function_decl  |  routine_part  procedure_decl
-           |  function_decl  |  procedure_decl | 
-function_decl : FUNCTION  ID  parameters  COLON  simple_type_decl SEMI routine SEMI
-procedure_decl : PROCEDURE ID parameters  SEMI  routine  SEMI 
-parameters : LP  para_decl_list  RP  
-|  
-para_decl_list : para_decl_list  SEMI  para_type_list | para_type_list
-para_type_list : var_para_list COLON  simple_type_decl  
-|  val_para_list  COLON  simple_type_decl
-var_para_list : VAR  name_list
-val_para_list : name_list
-routine_body : compound_stmt
+simple_type_decl : SYS_TYPE {
+                  $$ = new SysTypeTreeNode(currentToken);
+                } 
+                |  ID {
+                  $$ = new CustomTypeTreeNode(currentToken);
+                }
+                |  LP  name_list  RP {
+                  $$ = new EnumTypeTreeNode($2);
+                }
+                |  const_value  DOTDOT  const_value  {
+                  $$ = new SubRangeTypeTreeNode($1,$3);
+                }
+                |  MINUS  const_value  DOTDOT  const_value {
+                  $1.set(-(int)$1.get());
+                  $$ = new SubRangeTypeTreeNode($1,$3);
+                }
+                |  MINUS  const_value  DOTDOT  MINUS  const_value {
+                  $1.set(-(int)$1.get());
+                  $2.set(-(int)$2.get());
+                  $$ = new SubRangeTypeTreeNode($1,$3); 
+                }
+                |  ID {string recordName = currentToken;} DOTDOT  ID {
+                  string elemName = currentToken;
+                  $$ = new RecordElemTreeNode(recordName, elemName);
+                }
+;
+var_part : VAR  var_decl_list {
+  $$ = $2;
+} |  
+;
+var_decl_list : var_decl_list  var_decl {
+  $$ = $1;
+  $$.insert($2);
+} |  var_decl {
+  vector<TreeNode *> list;
+  list.push_back($1);
+  $$ = new ListTreeNode(list);
+}
+;
+var_decl : name_list  COLON  type_decl  SEMI {
+  $$ = new VariableTreeNode($1, $3, 1);
+}
+;
+routine_part : routine_part  function_decl  {
+                $$ = $1;
+                $$.insert($2);
+              }
+            |  routine_part  procedure_decl {
+              $$ = $1;
+              $$.insert($2);
+              }
+            |  function_decl  {
+                vector<TreeNode *> list;
+                $$ = new ListTreeNode(list.push_back($1));
+              }
+            |  procedure_decl {
+                vector<TreeNode *> list;
+                $$ = new ListTreeNode(list.push_back($1));
+            }
+            | 
+;
+function_decl : FUNCTION  ID {string funcName = currentToken;} parameters  COLON  simple_type_decl SEMI routine SEMI {
+  $$ = new FunctionTreeNode(funcName, $3, $5, $7);
+}
+;
+procedure_decl : PROCEDURE ID {string procName = currentToken;}parameters  SEMI  routine  SEMI {
+ $$ = new ProcedureTreeNode(funcName, $3, $5); 
+}
+;
+parameters : LP  para_decl_list  RP  {
+  $$ = $2; 
+}
+| 
+; 
+para_decl_list : para_decl_list  SEMI  para_type_list {
+  $$ = $1;
+  $$.insert($3);
+}
+| para_type_list {
+  vector<TreeNode *> list;
+  $$ = new ListTreeNode(list.push_back($1));
+}
+;
+para_type_list : var_para_list COLON  simple_type_decl  {
+  $$ = new Variable($1, $3,1);
+}
+|  val_para_list  COLON  simple_type_decl {
+ $$ = new Variable($1, $3, 0); 
+}
+var_para_list : VAR  name_list {
+  $$ = $2;
+}
+val_para_list : name_list {
+  $$ = $1;
+}
+routine_body : compound_stmt {
+  $$ = $1;
+}
+
+
+
 stmt_list : stmt_list  stmt  SEMI  |  
 stmt : INTEGER  COLON  non_label_stmt  |  non_label_stmt
 non_label_stmt : assign_stmt | proc_stmt | compound_stmt | if_stmt | repeat_stmt | while_stmt | for_stmt | case_stmt | goto_stmt

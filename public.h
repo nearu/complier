@@ -139,7 +139,10 @@ private:
 	std::string name;
 	TypeTreeNode *type;
 public:
-	CustomTypeTreeNode( std::string& _name,  TypeTreeNode* _type) 
+	
+	///if type is null, then it means we need to check whether this 
+	///type exists
+	CustomTypeTreeNode( std::string& _name,  TypeTreeNode* _type=NULL) 
 						: name(_name),type(_type)
 						{}
 
@@ -179,9 +182,10 @@ private:
 	std::string name;
 	std::vector<std::string> elemList;
 public:
-	EnumTypeTreeNode( std::string &_name,  std::vector<std::string>& _elemList)
+	EnumTypeTreeNode(std::vector<std::string>& _elemList,std::string &_name = "")
 					:name(_name), elemList(_elemList)
 					{}
+
 };
 
 /*
@@ -210,16 +214,22 @@ public:
 };
 //==============================================================
 /// id node
+
 /**
 * node for differnet kinds of  values
 */
-
 template <class T>
 class NumberTreeNode : public IDTreeNode {
 private:
 	T value;
 public:
 	NumberTreeNode(T v):value(v) {}
+	T get() {
+		return value;
+	}
+	void set(T v) {
+		value = v;
+	}
 };
 
 /*
@@ -228,22 +238,47 @@ public:
 class ConstTreeNode : public IDTreeNode {
 private:
 	std::string name;
-	IDTreeNode *value;
+	IDTreeNode *value; // NumberTreeNode
 public:
 	ConstTreeNode( std::string& _name,  IDTreeNode *_value)
 				:name(_name),value(_value)
 				{}
+
+
 };
+
 /*
-* node for variables such as "fuck"
+* node for variables such as "fuck", it represents three kinds
+* of variable: only a name, a name with a type, a list of name with a type
+* if this node's type is NULL, we need to determine it in the analysis pass
 */
+/// copy by reference if ref = 1, else copy by value
+/// if this node is not within a arg-list , then ref can be ignored
 class VariableTreeNode : public IDTreeNode {
 private:
 	std::string name;
-	std::string type;
+	TypeTreeNode * type;
+	ListTreeNode *nameList;
+	int ref;
 public:
-	VariableTreeNode( std::string& _name,  std::string& _type):name(_name), type(_type) {}
-	VariableTreeNode( std::string& _name):name(_name), type("") {}
+	VariableTreeNode( std::string& _name="",  TypeTreeNode* _type=NULL, int _ref = 0)
+	:name(_name), type(_type), nameList(NULL),ref(_ref)
+	 {}
+	VariableTreeNode(ListTreeNode *_list, TypeTreeNode* _type=NULL, int _ref)
+	:name(""),type(_type),ref(_ref)
+	{}
+	const string& getName() {
+		return name;
+	}
+	const string getType() {
+		return type;
+	}
+	ListTreeNode *getNameList() {
+		return nameList;
+	}
+	int getRef() {
+		return ref;
+	}
 };
 
 class ArrayElemTreeNode : public IDTreeNode {
