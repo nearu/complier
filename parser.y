@@ -219,7 +219,7 @@ stmt_list : stmt_list  stmt  SEMI  {
 }
     | {}
     ;  
-stmt : INTEGER  COLON  non_label_stmt   {$$ = $3;}
+stmt : INTEGER  {int x = atoi(currentToken.c_str());} COLON  non_label_stmt   {$$ = $3;$$->setLable(x);}
   |  non_label_stmt         {$$ = $1;}
   ;
 non_label_stmt : assign_stmt  {$$ = $1;}
@@ -233,14 +233,20 @@ non_label_stmt : assign_stmt  {$$ = $1;}
         | goto_stmt   {$$ = $1;}
         ;
 
-assign_stmt : ID  ASSIGN  expression  
-           | ID LB expression RB ASSIGN expression
-           | ID  DOT  ID  ASSIGN  expression
+assign_stmt : ID 											{VariableTreeNode x = new VariableTreeNode(currentToken.c_str());} 
+			  ASSIGN  expression  							{$$ = new BinaryExprTreeNode("=",x,$3);}
+           | ID  											{String s = currentToken.c_str();}
+           LB expression RB ASSIGN expression 				{ArrayElemTreeNode x = new ArrayElemTreeNode(s,$3); $$ = new BinaryExprTreeNode("=",x,$6);}
+           | ID  											{String s1 = currentToken.c_str();}
+           DOT  ID  										{String s2 = currentToken.c_str();}
+           ASSIGN  expression								{RecordElemTreeNode x = new RecordElemTreeNode(s1,s2); $$ = new BinaryExprTreeNode("=",x,$5);}
            ;
-proc_stmt : ID
-          |  ID  LP  args_list  RP
-          |  SYS_PROC
-          |  SYS_PROC  LP  args_list  RP
+proc_stmt : ID 									{$$ = new CallExprTreeNode(currentToken.c_str());}
+          |  ID  								{String s = currentToken.c_str();}
+          LP  args_list  RP 					{$$ = new CallExprTreeNode(s,$3);}
+          |  SYS_PROC							{$$ = new CallExprTreeNode(currentToken.c_str());}
+          |  SYS_PROC  							{String s = currentToken.c_str();}
+          LP  args_list  RP 					{$$ = new CallExprTreeNode(s,$3);}
           |  READ  LP  factor  RP
           ;
 compound_stmt : BEGINP  stmt_list  END {
@@ -274,7 +280,7 @@ case_stmt : CASE expression OF case_expr_list  END {
   $$ = new SwitchStmtTreeNode($2,$4);
 }
 ;
-case_expr_list : case_expr_list  case_expr  {$$.list.push_back($2);}
+case_expr_list : case_expr_list  case_expr  {$$->list->push_back($2);}
         |  case_expr        {$$.list.push_back($2);}
         ;
 case_expr : const_value  COLON  stmt  SEMI  { $$ = new CaseExprTreeNode($1,$3);}
