@@ -25,8 +25,11 @@ FILE *listing;
 */
 class TreeNode {
 private:
+	string name;
+protected:
 	vector<TreeNode *> children;
 public:
+	TreeNode(string& _name):name(_name){}
 	virtual ~TreeNode() {}
 	virtual void traverse() {};
 	virtual void printSelf() {
@@ -34,6 +37,9 @@ public:
 	}
 	virtual vector<TreeNode　*> getChildren() {
 		return children;
+	}
+	string getName() {
+		return name;
 	}
 };
 
