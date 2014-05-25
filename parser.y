@@ -210,62 +210,118 @@ routine_body : compound_stmt {
 
 
 
-stmt_list : stmt_list  stmt  SEMI  |  
-stmt : INTEGER  COLON  non_label_stmt  |  non_label_stmt
-non_label_stmt : assign_stmt | proc_stmt | compound_stmt | if_stmt | repeat_stmt | while_stmt | for_stmt | case_stmt | goto_stmt
+stmt_list : stmt_list  stmt  SEMI  {
+  if($1 == NULL)
+    $$ = new ListTreeNode("stmt");
+  else
+    $$ = $1;
+  $$->list.insert($2);
+}
+    | {}
+    ;  
+stmt : INTEGER  COLON  non_label_stmt   {$$ = $1;}
+  |  non_label_stmt         {$$ = $1;}
+  ;
+non_label_stmt : assign_stmt  {$$ = $1;}
+        | proc_stmt   {$$ = $1;}
+        | compound_stmt {$$ = $1;}
+        | if_stmt   {$$ = $1;}
+        | repeat_stmt {$$ = $1;}
+        | while_stmt  {$$ = $1;}
+        | for_stmt    {$$ = $1;}
+        | case_stmt   {$$ = $1;}
+        | goto_stmt   {$$ = $1;}
+        ;
 
-assign_stmt : ID  ASSIGN  expression
+assign_stmt : ID  ASSIGN  expression  
            | ID LB expression RB ASSIGN expression
            | ID  DOT  ID  ASSIGN  expression
+           ;
 proc_stmt : ID
           |  ID  LP  args_list  RP
           |  SYS_PROC
           |  SYS_PROC  LP  args_list  RP
           |  READ  LP  factor  RP
-compound_stmt : BEGINP  stmt_list  END
-if_stmt : IF  expression  THEN  stmt  else_clause
-else_clause : ELSE stmt |  
-repeat_stmt : REPEAT  stmt_list  UNTIL  expression
-while_stmt : WHILE  expression  DO stmt
-for_stmt : FOR  ID  ASSIGN  expression  direction  expression  DO stmt
-direction : TO | DOWNTO
-case_stmt : CASE expression OF case_expr_list  END
-case_expr_list : case_expr_list  case_expr  |  case_expr
-case_expr : const_value  COLON  stmt  SEMI
-          |  ID  COLON  stmt  SEMI
-goto_stmt : GOTO  INTEGER
-expression : expression  GE  expr  |  expression  GT  expr  |  expression  LE  expr
-          |  expression  LT  expr  |  expression  EQUAL  expr  
-|  expression  UNEQUAL  expr  |  expr
-expr : expr  PLUS  term  |  expr  MINUS  term  |  expr  OR  term  |  term
-term : term  MUL  factor  |  term  DIV  factor 
-|  term  MOD  factor  |  term  AND factor  |  factor
-factor : ID  |  ID  LP  args_list  RP  |  SYS_FUNCT 
-| SYS_FUNCT  LP  args_list  RP
-|  const_value  |  LP  expression  RP
-|  NOT  factor  |  MINUS  factor  |  ID  LB  expression  RB
-|  ID  DOT  ID
-args_list : args_list  COMMA  expression  |  expression
-
-
-%%
-
-main() 
-{
-  return yyparse();
+          ;
+compound_stmt : BEGINP  stmt_list  END {
+  $$ = new CompoundStmtTreeNode($2);
 }
+;
+if_stmt : IF  expression  THEN  stmt  else_clause {
+  $$ = new IfStmtTreeNode($2,$4,$5)
+}
+;
+else_clause : ELSE stmt   {$$ = $2;}
+      |         {$$ = NULL;}
+      ;
+repeat_stmt : REPEAT  stmt_list  UNTIL  expression {
+  $$ = new RepeatStmtTreeNode($2,$4);
+}
+;
+while_stmt : WHILE  expression  DO stmt {
+  $$ = new WhileStmtTreeNode($2,$4);
+}
+;
+for_stmt : FOR  ID  ASSIGN  expression  direction  expression  DO stmt{
+  $$ = new ForStmtTreeNode($4,$5,$6,$8);
+}
+;
+direction : TO    {$$ = $1;}
+    | DOWNTO  {$$ = $1;}
+    ;
+case_stmt : CASE expression OF case_expr_list  END {
+  $4 = new ListTreeNode("case");
+  $$ = new SwitchStmtTreeNode($2,$4);
+}
+;
+case_expr_list : case_expr_list  case_expr  {$$.list.push_back($2);}
+        |  case_expr        {$$.list.push_back($2);}
+        ;
+case_expr : const_value  COLON  stmt  SEMI  { $$ = new CaseExprTreeNode($1,$3);}
+          |  ID  COLON  stmt  SEMI  {$$ = new CaseExprTreeNode($1,$3);}
+          ;
+goto_stmt : GOTO  INTEGER {
+  $$ = new GotoStmtTreeNode($2);
+}
+;
+expression : expression  GE  expr       {$$ = new BinaryExprTreeNodw('GE',$1,$3);}
+      |  expression  GT  expr     {$$ = new BinaryExprTreeNodw('GT',$1,$3);}
+      |  expression  LE  expr     {$$ = new BinaryExprTreeNodw('LE',$1,$3);}
+            |  expression  LT  expr       {$$ = new BinaryExprTreeNodw('LT',$1,$3);}
+            |  expression  EQUAL  expr    {$$ = new BinaryExprTreeNodw('EQUAL',$1,$3);}
+      |  expression  UNEQUAL  expr    {$$ = new BinaryExprTreeNodw('UNENQUAL',$1,$3);}
+      |  expr             {$$ = $1;}
+      ;
+expr : expr  PLUS  term     {$$ = new BinaryExprTreeNodw('+',$1,$3);}
+  |  expr  MINUS  term      {$$ = new BinaryExprTreeNodw('-',$1,$3);}
+  |  expr  OR  term       {$$ = new BinaryExprTreeNodw('|',$1,$3);}
+  |  term           {$$ = $1;}
+  ;
+term : term  MUL  factor      {$$ = new BinaryExprTreeNodw('*',$1,$3);}
+  |  term  DIV  factor    {$$ = new BinaryExprTreeNodw('/',$1,$3);}
+  |  term  MOD  factor      {$$ = new BinaryExprTreeNodw('%',$1,$3);}
+  |  term  AND factor     {$$ = new BinaryExprTreeNodw('&',$1,$3);}
+  |  factor         {$$ = $1;}
+  ;
+factor : ID                 {$$ = $1;}
+    |  ID  LP  args_list  RP
+    |  SYS_FUNCT 
+    | SYS_FUNCT  LP  args_list  RP
+    |  const_value            {$$ = $1;}
+    |  LP  expression  RP         {$$ = $2;}
+    |  NOT  factor            {$$ = ~$1;}
+    |  MINUS  factor            {$$ = -$1;}
+    |  ID  LB  expression  RB
+    |  ID  DOT  ID
+    ;
+args_list : args_list  COMMA  expression  {
+  if($$==NULL)
+    $$ = new ListTreeNode("expr");
+  $$->list.insert($3);
+}
+    |  expression {$$->list.insert($3);}
+    ;
 
-
-
-int yyerror(char *s) {
-  fprintf(stderr, "%s\n", s);
-  return 0;
-}D  LP  args_list  RP  |  SYS_FUNCT 
-| SYS_FUNCT  LP  args_list  RP 
-|  const_value  |  LP  expression  RP
-|  NOT  factor  |  MINUS  factor  |  ID  LB  expression  RB
-|  ID  DOT  ID
-args_list : args_list  COMMA  expression  |  expression
 
 %%
 
