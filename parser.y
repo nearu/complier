@@ -219,7 +219,7 @@ stmt_list : stmt_list  stmt  SEMI  {
 }
     | {}
     ;  
-stmt : INTEGER  COLON  non_label_stmt   {$$ = $1;}
+stmt : INTEGER  COLON  non_label_stmt   {$$ = $3;}
   |  non_label_stmt         {$$ = $1;}
   ;
 non_label_stmt : assign_stmt  {$$ = $1;}

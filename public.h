@@ -29,8 +29,13 @@ public:
 };
 
 class StmtTreeNode : public TreeNode {
+protected:
+	int lable;
 public:
 	virtual ~StmtTreeNode() {}
+	void setLable(int _lable) {
+		lable = _lable;
+	}
 };
 
 class IDTreeNode : public TreeNode {
@@ -388,7 +393,8 @@ class CompoundStmtTreeNode : public StmtTreeNode {
 private:
 	ListTreeNode *stmtList;
 public:
-	CompoundStmtTreeNode( ListTreeNode *list):stmtList(list){}
+	CompoundStmtTreeNode( ListTreeNode *list)
+						:stmtList(list){}
 
 };
 
