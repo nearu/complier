@@ -293,13 +293,13 @@ goto_stmt : GOTO  INTEGER {
   $$ = new GotoStmtTreeNode(currentToken);
 }
 ;
-expression : expression  GE  expr       	{$$ = new BinaryExprTreeNode(">=",$1,$3);}
-      |  expression  GT  expr     			  {$$ = new BinaryExprTreeNode(">",$1,$3);}
-      |  expression  LE  expr     			  {$$ = new BinaryExprTreeNode("<=",$1,$3);}
-      |  expression  LT  expr      			  {$$ = new BinaryExprTreeNode("<",$1,$3);}
-      |  expression  EQUAL  expr   			  {$$ = new BinaryExprTreeNode("==",$1,$3);}
-      |  expression  UNEQUAL  expr    		{$$ = new BinaryExprTreeNode("!=",$1,$3);}
-      |  expr            			  		      {$$ = $1;}
+expression : expression  GE  expr  {$$ = new BinaryExprTreeNode(">=",$1,$3);}
+      |  expression  GT  expr      {$$ = new BinaryExprTreeNode(">",$1,$3);}
+      |  expression  LE  expr      {$$ = new BinaryExprTreeNode("<=",$1,$3);}
+      |  expression  LT  expr      {$$ = new BinaryExprTreeNode("<",$1,$3);}
+      |  expression  EQUAL  expr   {$$ = new BinaryExprTreeNode("==",$1,$3);}
+      |  expression  UNEQUAL  expr {$$ = new BinaryExprTreeNode("!=",$1,$3);}
+      |  expr            			  	 {$$ = $1;}
 ;
 expr : expr  PLUS  term     {$$ = new BinaryExprTreeNodw("+",$1,$3);}
   |  expr  MINUS  term      {$$ = new BinaryExprTreeNodw("-",$1,$3);}
