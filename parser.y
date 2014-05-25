@@ -243,13 +243,13 @@ assign_stmt : ID 	{VariableTreeNode* x = new VariableTreeNode(currentToken);} AS
               $$ = new BinaryExprTreeNode("=",x,$5);
            }
 ;
-proc_stmt :  ID 						 {$$ = new CallExprTreeNode(currentToken);}
-          |  ID  						 {string s = currentToken;}
-          LP  args_list  RP 			 {$$ = new CallExprTreeNode(s,$3->getlist());}
-          |  SYS_PROC				     {$$ = new CallExprTreeNode(currentToken;}
-          |  SYS_PROC  				     {string s = currentToken;}
-          LP  args_list  RP 			 {$$ = new CallExprTreeNode(s,$3->getlist();}
-          |  READ  LP  factor  RP        {$$ = new CallExprTreeNode(s,$3->getlist());}
+proc_stmt :  ID                   {$$ = new CallExprTreeNode(currentToken);}
+          |  ID                   {string s = currentToken;}
+          LP  args_list  RP       {$$ = new CallExprTreeNode(s,$3->getlist());}
+          |  SYS_PROC             {$$ = new CallExprTreeNode(currentToken;}
+          |  SYS_PROC             {string s = currentToken;}
+          LP  args_list  RP       {$$ = new CallExprTreeNode(s,$3->getlist();}
+          |  READ  LP  factor  RP {$$ = new CallExprTreeNode(s,$3->getlist());}
 ;
 
 compound_stmt : BEGINP  stmt_list  END {
