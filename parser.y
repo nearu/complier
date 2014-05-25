@@ -243,13 +243,13 @@ assign_stmt : ID 	{VariableTreeNode* x = new VariableTreeNode(currentToken);} AS
               $$ = new BinaryExprTreeNode("=",x,$5);
            }
 ;
-proc_stmt :  ID 									 {$$ = new CallExprTreeNode(currentToken);}
-          |  ID  								   {string s = currentToken;}
+proc_stmt :  ID 						 {$$ = new CallExprTreeNode(currentToken);}
+          |  ID  						 {string s = currentToken;}
           LP  args_list  RP 			 {$$ = new CallExprTreeNode(s,$3->getlist());}
-          |  SYS_PROC							 {$$ = new CallExprTreeNode(currentToken;}
-          |  SYS_PROC  						 {string s = currentToken;}
+          |  SYS_PROC				     {$$ = new CallExprTreeNode(currentToken;}
+          |  SYS_PROC  				     {string s = currentToken;}
           LP  args_list  RP 			 {$$ = new CallExprTreeNode(s,$3->getlist();}
-          |  READ  LP  factor  RP  {$$ = new CallExprTreeNode(s,$3->getlist());}
+          |  READ  LP  factor  RP        {$$ = new CallExprTreeNode(s,$3->getlist());}
 ;
 
 compound_stmt : BEGINP  stmt_list  END {
@@ -282,11 +282,11 @@ case_stmt : CASE expression OF case_expr_list  END {
   $$ = new SwitchStmtTreeNode($2,$4);
 }
 ;
-case_expr_list : case_expr_list  case_expr  {$$ = $1; $$->insert($2);}
+case_expr_list : case_expr_list  case_expr          {$$ = $1; $$->insert($2);}
         |  case_expr        				        {$$ = new ListTreeNode("case"); $$->insert($1);}
 ;
-case_expr : const_value  COLON  stmt  SEMI  {$$ = new CaseExprTreeNode($1,$3);}
-          |  ID 							              {string s = currentToken;}
+case_expr : const_value  COLON  stmt  SEMI          {$$ = new CaseExprTreeNode($1,$3);}
+          |  ID 							        {string s = currentToken;}
           COLON  stmt  SEMI 				        {$$ = new CaseExprTreeNode(s,$3);}
 ;
 goto_stmt : GOTO  INTEGER {
@@ -301,31 +301,31 @@ expression : expression  GE  expr  {$$ = new BinaryExprTreeNode(">=",$1,$3);}
       |  expression  UNEQUAL  expr {$$ = new BinaryExprTreeNode("!=",$1,$3);}
       |  expr            			  	 {$$ = $1;}
 ;
-expr : expr  PLUS  term     {$$ = new BinaryExprTreeNodw("+",$1,$3);}
-  |  expr  MINUS  term      {$$ = new BinaryExprTreeNodw("-",$1,$3);}
-  |  expr  OR  term       	{$$ = new BinaryExprTreeNodw("||",$1,$3);}
+expr : expr  PLUS  term         {$$ = new BinaryExprTreeNodw("+",$1,$3);}
+  |  expr  MINUS  term          {$$ = new BinaryExprTreeNodw("-",$1,$3);}
+  |  expr  OR  term       	    {$$ = new BinaryExprTreeNodw("||",$1,$3);}
   |  term           		    {$$ = $1;}
 ;
-term : term  MUL  factor      {$$ = new BinaryExprTreeNodw("*",$1,$3);}
-  |  term  DIV  factor    		{$$ = new BinaryExprTreeNodw("/",$1,$3);}
-  |  term  MOD  factor      	{$$ = new BinaryExprTreeNodw("%",$1,$3);}
-  |  term  AND factor     		{$$ = new BinaryExprTreeNodw("&&",$1,$3);}
+term : term  MUL  factor            {$$ = new BinaryExprTreeNodw("*",$1,$3);}
+  |  term  DIV  factor    		    {$$ = new BinaryExprTreeNodw("/",$1,$3);}
+  |  term  MOD  factor      	    {$$ = new BinaryExprTreeNodw("%",$1,$3);}
+  |  term  AND factor     		    {$$ = new BinaryExprTreeNodw("&&",$1,$3);}
   |  factor         			    {$$ = $1;}
 ;
-factor : ID                 	{$$ = new CallExprTreeNode(currentToken);}
-    |  ID   							    {string s = currentToken;}
+factor : ID                 	    {$$ = new CallExprTreeNode(currentToken);}
+    |  ID   					    {string s = currentToken;}
     LP  args_list  RP 				{$$ = new CallExprTreeNode(s,$3->getList());}
-    |  SYS_FUNCT 						  {$$ = new CallExprTreeNode(currentToken);}
-    |  SYS_FUNCT  						{string s = currentToken;}
+    |  SYS_FUNCT 				    {$$ = new CallExprTreeNode(currentToken);}
+    |  SYS_FUNCT  					{string s = currentToken;}
     LP  args_list  RP 				{$$ = new CallExprTreeNode(s,$3->getLIst());}
-    |  const_value            {$$ = $1;}
-    |  LP  expression  RP     {$$ = $2;}
-    |  NOT  factor            {$$ = new UnaryExprTreeNode("~",$2);}
-    |  MINUS  factor          {$$ = new UnaryExprTreeNode("-",$2);}
-    |  ID  								    {string s = currentToken;}
-    LB  expression  RB 		{$$ = new ArrayElemTreeNode(s,$3);}
-    |  ID  								{string s1 = currentToken;}
-    DOT  ID 							{string s2 = currentToken; $$ = new RecordElemTreeNode(s1,s2);}
+    |  const_value                  {$$ = $1;}
+    |  LP  expression  RP           {$$ = $2;}
+    |  NOT  factor                  {$$ = new UnaryExprTreeNode("~",$2);}
+    |  MINUS  factor                {$$ = new UnaryExprTreeNode("-",$2);}
+    |  ID  						    {string s = currentToken;}
+    LB  expression  RB 		        {$$ = new ArrayElemTreeNode(s,$3);}
+    |  ID  						    {string s1 = currentToken;}
+    DOT  ID 					    {string s2 = currentToken; $$ = new RecordElemTreeNode(s1,s2);}
 ;
 args_list : args_list  COMMA  expression  {
 	$$ = $1;
