@@ -1,14 +1,13 @@
 #ifndef _PUBLIC_H_
 #define _PUBLIC_H_
-#ifndef YYPARSER
-#include "parser.hpp"
-#endif
+
 #ifndef FALSE
 #define FALSE 0
 #endif
 #ifndef TRUE
 #define TRUE 1
 #endif
+#include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -25,32 +24,35 @@ FILE *listing;
 */
 class TreeNode {
 private:
-	string name;
+	const string name;
 protected:
 	vector<TreeNode *> children;
 public:
-	TreeNode(string& _name):name(_name){}
+	TreeNode(const string _name):name(_name){}
 	TreeNode():name(""){}
 	virtual ~TreeNode() {}
 	virtual void traverse() {};
 	virtual void printSelf() {
 		cout << " TreeNode ";
 	}
-	virtual vector<TreeNode　*> getChildren() {
+	virtual vector<TreeNode *> getChildren() {
 		return children;
 	}
 	string getName() {
 		return name;
 	}
+	virtual void insert(TreeNode* t) {}
+
 };
+
 
 class StmtTreeNode : public TreeNode {
 protected:
-	int lable;
+	int label;
 public:
 	virtual ~StmtTreeNode() {}
-	void setLable(int _lable) {
-		lable = _lable;
+	void setLabel(int _label) {
+		label = _label;
 	}
 	void printSelf() {
 		cout << "StmtTreeNode";
@@ -90,13 +92,13 @@ public:
 */
 class ListTreeNode : public TreeNode{
 private:
-	std::string typeName;
-	std::vector<TreeNode *> list;
+	string typeName;
+	vector<TreeNode *> list;
 public:
-	ListTreeNode( std::string& _name):typeName(_name) {
+	ListTreeNode( const string _name):typeName(_name) {
 		children = list;
 	}
-	ListTreeNode( std::string& _name,  std::vector<TreeNode *>& _list)
+	ListTreeNode( const string _name,  vector<TreeNode *>& _list)
 	:typeName(_name),list(_list) {
 		children = list;
 	}
@@ -131,16 +133,17 @@ private:
 	ListTreeNode * varPart;
 	ListTreeNode * routinePart;
 public:
-	RoutineHeadTreeNode( ListTreeNode *_constPart,  ListTreeNode *_typePart, 
-		 ListTreeNode *_varPart,  ListTreeNode *_routinePart)
-		:constPart(_constPart), typePart(_typePart), varPart(_varPart),routinePart(_routinePart)
+	RoutineHeadTreeNode( TreeNode *_constPart,  TreeNode *_typePart, 
+		 TreeNode *_varPart,  TreeNode *_routinePart)
+		:constPart((ListTreeNode*)_constPart), typePart((ListTreeNode*)_typePart)
+		, varPart((ListTreeNode*)_varPart),routinePart((ListTreeNode*)_routinePart)
 		{
 			children.push_back(constPart);
 			children.push_back(typePart);
 			children.push_back(varPart);
 			children.push_back(routinePart);
 		}
-	void printSelf {
+	void printSelf() {
 		cout << "RoutineHead";
 	}
 };
@@ -152,8 +155,8 @@ private:
 	RoutineHeadTreeNode *head;
 	ListTreeNode *body;
 public:
-	RoutineTreeNode( RoutineHeadTreeNode *_head,  ListTreeNode *_body)
-					:head(_head), body(_body) 
+	RoutineTreeNode( TreeNode *_head,  TreeNode *_body)
+					:head((RoutineHeadTreeNode*)_head), body((ListTreeNode *)_body) 
 					{
 						children.push_back(head);
 						children.push_back(body);
@@ -162,9 +165,12 @@ public:
 
 class ProgramHeadTreeNode : public TreeNode {
 private:
-	std::string name;
+	const string name;
 public:
-	ProgramHeadTreeNode(std::string _name):name(_name){}
+	ProgramHeadTreeNode(const string _name):name(_name){}
+	string getName() {
+		return name;
+	}
 };
 
 /*
@@ -172,10 +178,10 @@ public:
 */
 class ProgramTreeNode : public TreeNode {
 private:
-	std::string name;
+	const string name;
 	RoutineTreeNode * routine;
 public:
-	ProgramTreeNode( std::string& _name,  RoutineTreeNode * _routine):name(_name), routine(_routine)
+	ProgramTreeNode( const string _name,  TreeNode * _routine):name(_name), routine((RoutineTreeNode *)_routine)
 	{
 		children.push_back(routine);
 	}
@@ -189,16 +195,16 @@ public:
 /*
 * node for user defined type
 */
-class CustomTypeTreeNode : TypeTreeNode {
+class CustomTypeTreeNode : public TypeTreeNode {
 private:
-	std::string name;
+	const string name;
 	TypeTreeNode *type;
 public:
 	
 	///if type is null, then it means we need to check whether this 
 	///type exists
-	CustomTypeTreeNode( std::string& _name,  TypeTreeNode* _type=NULL) 
-						: name(_name),type(_type)
+	CustomTypeTreeNode( const string _name,  TreeNode* _type=NULL) 
+						: name(_name),type((TypeTreeNode*)_type)
 						{}
 
 };
@@ -214,9 +220,9 @@ public:
 
 class SysTypeTreeNode : public SimpleTypeTreeNode {
 private:
-	std::string name;
+	const  string name;
 public:
-	SysTypeTreeNode( std::string& _name):name(_name){}
+	SysTypeTreeNode( const string _name):name(_name){}
 };
 
 class SubRangeTypeTreeNode : public SimpleTypeTreeNode {
@@ -224,8 +230,8 @@ private:
 	IDTreeNode *upperBound;
 	IDTreeNode *lowerBound;
 public:
-	SubRangeTypeTreeNode( IDTreeNode *_u, IDTreeNode *_l)
-						:upperBound(_u), lowerBound(_l)
+	SubRangeTypeTreeNode( TreeNode *_u, TreeNode *_l)
+						:upperBound((IDTreeNode*)_u), lowerBound((IDTreeNode*)_l)
 						{}
 };
 
@@ -234,11 +240,11 @@ public:
 */
 class EnumTypeTreeNode : public SimpleTypeTreeNode {
 private:
-	std::string name;
-	std::vector<ListTreeNode *> elemList;
+	const string name;
+	ListTreeNode* elemList;
 public:
-	EnumTypeTreeNode(std::vector<ListTreeNode *>& _elemList,std::string &_name = "")
-					:name(_name), elemList(_elemList)
+	EnumTypeTreeNode(TreeNode* _elemList,const string _name="")
+					:name(_name), elemList((ListTreeNode*)_elemList)
 					{}
 
 };
@@ -251,8 +257,8 @@ private:
 	SimpleTypeTreeNode *indexType;
 	TypeTreeNode *elemType;
 public:
-	ArrayTypeTreeNode(SimpleTypeTreeNode *_indexType,
-					 TypeTreeNode *_elemType):indexType(_indexType),elemType(_elemType)
+	ArrayTypeTreeNode(TreeNode *_indexType,
+					 TreeNode *_elemType):indexType((SimpleTypeTreeNode*)_indexType),elemType((TypeTreeNode*)_elemType)
 	{
 		children.push_back(indexType);
 		children.push_back(elemType);
@@ -266,12 +272,13 @@ class RecordTypeTreeNode : public TypeTreeNode {
 private:
 	ListTreeNode * elemList;
 public:
-	RecordTypeTreeNode( ListTreeNode *_list)
-						:elemList(_list)
+	RecordTypeTreeNode( TreeNode *_list)
+						:elemList((ListTreeNode*)_list)
 						{
 							children.push_back(elemList);
 						}
 };
+
 //==============================================================
 /// id node
 
@@ -297,11 +304,11 @@ public:
 */
 class ConstTreeNode : public IDTreeNode {
 private:
-	std::string name;
+	const string name;
 	IDTreeNode *value; // NumberTreeNode
 public:
-	ConstTreeNode( std::string& _name,  IDTreeNode *_value)
-				:name(_name),value(_value)
+	ConstTreeNode( const string _name,  TreeNode *_value)
+				:name(_name),value((IDTreeNode*)_value)
 				{}
 };
 
@@ -314,21 +321,21 @@ public:
 /// if this node is not within a arg-list , then ref can be ignored
 class VariableTreeNode : public IDTreeNode {
 private:
-	std::string name;
+	const string name;
 	TypeTreeNode * type;
 	ListTreeNode *nameList;
 	int ref;
 public:
-	VariableTreeNode( std::string& _name="",  TypeTreeNode* _type=NULL, int _ref = 0)
-	:name(_name), type(_type), nameList(NULL),ref(_ref)
+	VariableTreeNode( const string _name = "",  TreeNode* _type=NULL, int _ref = 0)
+	:name(_name), type((TypeTreeNode*)_type), nameList(NULL),ref(_ref)
 	 {}
-	VariableTreeNode(ListTreeNode *_list, TypeTreeNode* _type=NULL, int _ref)
-	:name(""),type(_type),ref(_ref)
+	VariableTreeNode(TreeNode *_list, TreeNode* _type=NULL, int _ref = 0)
+	:name(""),type((TypeTreeNode*)_type),ref(_ref),nameList((ListTreeNode*)_list)
 	{}
 	const string& getName() {
 		return name;
 	}
-	const string getType() {
+	const TypeTreeNode* getType() {
 		return type;
 	}
 	ListTreeNode *getNameList() {
@@ -341,35 +348,35 @@ public:
 
 class ArrayElemTreeNode : public IDTreeNode {
 private:
-	std::string name;
+	const string name;
 	ExprTreeNode *index;
 public:
-	ArrayElemTreeNode( std::string& _name,  ExprTreeNode *_index)
-					: name(_name), index(_index) 
+	ArrayElemTreeNode( const string _name,  TreeNode *_index)
+					: name(_name), index((ExprTreeNode*)_index) 
 					{}
 };
 
 class RecordElemTreeNode : public IDTreeNode {
 private:
-	std::string recordName;
-	std::string elemName;
+	const string recordName;
+	const string elemName;
 public:
-	RecordElemTreeNode( std::string& _rName,  std::string& _eName)
+	RecordElemTreeNode( const string& _rName,  const string& _eName)
 					:recordName(_rName), elemName(_eName)
 					{}
 };
 
 //===============================================
-//type nodes
+//expr nodes
 /*
 * node for unary operator
 */
 class UnaryExprTreeNode : public ExprTreeNode {
 private:
-	std::string op;
+	const string op;
 	TreeNode *oprand;
 public:
-	UnaryExprTreeNode(std::string& _op,  TreeNode *_operand):op(_op),oprand(_operand)
+	UnaryExprTreeNode(const string _op,  TreeNode *_operand):op(_op),oprand(_operand)
 	{
 		children.push_back(oprand);
 	}
@@ -379,10 +386,10 @@ public:
 */
 class BinaryExprTreeNode : public ExprTreeNode {
 private:
-	std::string op;
+	const string op;
 	TreeNode * rhs, *lhs;
 public:
-	BinaryExprTreeNode(std::string& _op,  TreeNode* r,  TreeNode* l)
+	BinaryExprTreeNode(const string _op,  TreeNode* r,  TreeNode* l)
 						:op(_op),rhs(r),lhs(l) 
 	{
 		children.push_back(rhs);
@@ -396,39 +403,41 @@ public:
 */
 class CallExprTreeNode : public ExprTreeNode {
 private:
-	std::string name;
-	std::vector<TreeNode *> args;
+	const string name;
+	vector<TreeNode *> args;
 public:
-	CallExprTreeNode( std::string& _name,  std::vector<TreeNode *> _args )
+	CallExprTreeNode( const string _name,  vector<TreeNode *> _args )
 						:name(_name), args(_args){}
-	CallExprTreeNode( std::string& _name)
+	CallExprTreeNode( const string _name)
 						:name(_name){}
 
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
 private:
-	IDTreeNode *lable;
+	IDTreeNode *label;
 	StmtTreeNode *stmt;
 public:
-	CaseExprTreeNode( IDTreeNode* _lable,  StmtTreeNode *_stmt)
-					: lable(_lable), stmt(_stmt){}
+	CaseExprTreeNode( TreeNode* _label,  TreeNode *_stmt)
+					: label((IDTreeNode*)_label), stmt((StmtTreeNode*)_stmt){}
 };
+
+
 //======================================================
 ///function and procedure node
 /*
 * node for function definition
 */
-class FuntionTreeNode : public TreeNode {
+class FunctionTreeNode : public TreeNode {
 private:
-	std::string name;
+	const string name;
 	ListTreeNode* args;
-	std::string returnType;
+	SimpleTypeTreeNode* returnType;
 	ListTreeNode* body;
 public:
-	FuntionTreeNode( std::string& _name,  ListTreeNode* _args, 
-		 std::string& _returnType,  ListTreeNode* _body)
-		:name(_name), args(_args), returnType(_returnType), body(_body)
+	FunctionTreeNode( const string _name,  TreeNode* _args, 
+		 TreeNode* _returnType,  TreeNode* _body)
+		:name(_name), args((ListTreeNode*)_args), returnType((SimpleTypeTreeNode*)_returnType), body((ListTreeNode*)_body)
 		{
 			children.push_back(args);
 			children.push_back(body);
@@ -441,19 +450,21 @@ public:
 */
 class ProcedureTreeNode :  public TreeNode {
 private:
-	std::string name;
+	const string name;
 	ListTreeNode * args;
 	ListTreeNode * body;
 public:
-	ProcedureTreeNode( std::string& _name,  ListTreeNode *  _args, 
-		 ListTreeNode *  _body)
-		:name(_name), args(_args), body(_body)
+	ProcedureTreeNode( const string _name,  TreeNode *  _args, 
+		 TreeNode *  _body)
+		:name(_name), args((ListTreeNode*)_args), body((ListTreeNode*)_body)
 		{
 			children.push_back(args);
 			children.push_back(body);
 		}
 
 };
+
+
 
 //======================================================
 ///stmt node
@@ -463,8 +474,8 @@ class CompoundStmtTreeNode : public StmtTreeNode {
 private:
 	ListTreeNode *stmtList;
 public:
-	CompoundStmtTreeNode( ListTreeNode *list)
-						:stmtList(list)
+	CompoundStmtTreeNode( TreeNode *list)
+						:stmtList((ListTreeNode*)list)
 	{
 		children.push_back(stmtList);
 	}
@@ -482,14 +493,14 @@ private:
 		children.push_back(elsePart);
 	}
 public:
-	IfStmtTreeNode( ExprTreeNode *e,  CompoundStmtTreeNode *c)
-				:condition(e), body(c)
+	IfStmtTreeNode( TreeNode *e,  TreeNode *c)
+				:condition((ExprTreeNode*)e), body((CompoundStmtTreeNode*)c)
 	{
 		addChildren();
 	}
-	IfStmtTreeNode( ExprTreeNode *e,  CompoundStmtTreeNode *c,
-		 StmtTreeNode *s)
-				:condition(e), body(c),elsePart(s){
+	IfStmtTreeNode( TreeNode *e,  TreeNode *c,
+		 TreeNode *s)
+				:condition((ExprTreeNode*)e), body((CompoundStmtTreeNode*)c),elsePart((StmtTreeNode*)s){
 					addChildren();
 				}				
 
@@ -500,8 +511,8 @@ private:
 	CompoundStmtTreeNode *body;
 	ExprTreeNode *condition;
 public:
-	RepeatStmtTreeNode( CompoundStmtTreeNode *_body, ExprTreeNode *_cond) 
-					: body(_body), condition(_cond)
+	RepeatStmtTreeNode( TreeNode *_body, TreeNode *_cond) 
+					: body((CompoundStmtTreeNode*)_body), condition((ExprTreeNode*)_cond)
 	{
 		children.push_back(condition);
 		children.push_back(body);
@@ -513,8 +524,8 @@ private:
 	StmtTreeNode *body;
 	ExprTreeNode *condition;
 public:
-	WhileStmtTreeNode( StmtTreeNode* _body,  ExprTreeNode *_cond)
-					: body(_body),condition(_cond)
+	WhileStmtTreeNode( TreeNode* _body,  TreeNode *_cond)
+					: body((StmtTreeNode*)_body),condition((ExprTreeNode*)_cond)
 	{
 		children.push_back(condition);
 		children.push_back(body);
@@ -530,8 +541,8 @@ private:
 	TreeNode *expr;
 	ListTreeNode *caseExprList;
 public:
-	SwitchStmtTreeNode( TreeNode *_expr,  ListTreeNode *_list)
-				:expr(_expr), caseExprList(_list)
+	SwitchStmtTreeNode( TreeNode *_expr,  TreeNode *_list)
+				:expr(_expr), caseExprList((ListTreeNode*)_list)
 	{
 		children.push_back(expr);
 		children.push_back(caseExprList);
@@ -541,13 +552,13 @@ public:
 class ForStmtTreeNode : public StmtTreeNode {
 private:
 	ExprTreeNode *assignExpr;
-	std::string direction;
+	const string direction;
 	TreeNode *dirExpr; // may be a variable
 	StmtTreeNode *body;
 public:
-	ForStmtTreeNode( ExprTreeNode * _aExpr,  std::string& _dire, 
-		 TreeNode *_dExpr,  StmtTreeNode* _body)
-		: assignExpr(_aExpr), direction(_dire), dirExpr(_dExpr), body(_body)
+	ForStmtTreeNode( TreeNode * _aExpr, const string _dire, 
+		 TreeNode *_dExpr,  TreeNode* _body)
+		: assignExpr((ExprTreeNode*)_aExpr), direction(_dire), dirExpr(_dExpr), body((StmtTreeNode*)_body)
 		{
 			children.push_back(assignExpr);
 			children.push_back(dirExpr);
@@ -558,9 +569,9 @@ public:
 
 class GotoStmtTreeNode : public StmtTreeNode {
 private:
-	int lable;
+	const string label;
 public:
-	GotoStmtTreeNode(int _lable):lable(_lable){}
+	GotoStmtTreeNode(const string _label):label(_label){}
 };
 /*
 * if treceScan = TRUE, every token along with lineno will be 

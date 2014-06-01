@@ -5,4 +5,5 @@
 #define MAXTOKENLEN 63
 std::string currentToken;
 int getToken(void);
+int yylex();
 #endif

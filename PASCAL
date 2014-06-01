@@ -2,7 +2,6 @@ program : program_head  routine  DOT
 program_head : PROGRAM  ID  SEMI
 routine : routine_head  routine_body
 name_list : name_list  COMMA  ID  |  ID
-sub_routine : routine_head  routine_body
 routine_head : label_part  const_part  type_part  var_part  routine_part
 label_part : ε
 const_part : CONST  const_expr_list  |  ε

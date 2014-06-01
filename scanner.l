@@ -1,6 +1,7 @@
 %{
 #include "public.h"
 #include "scanner.h"
+#include "parser.hpp"
 #include "utils.h"
 #include <cstdio>
 #include <iostream>
