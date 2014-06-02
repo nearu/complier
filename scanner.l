@@ -5,24 +5,30 @@
 #include "utils.h"
 #include <cstdio>
 #include <iostream>
+#include <string>
 using namespace std;
-
+int lineno;
+FILE *source;
+FILE *listing;
+std::string currentToken;
+int traceScan = TRUE;
+std::string idstr;
 %}
 
 digit [0-9]
 number {digit}+
-integer [1-9]{digit}*
+integer [0-9]{digit}*
 real [1-9]{digit}*[.]{digit}+
 string \'[^']*\'
 letter [a-zA-Z]
 char \'[.]\'
-id ({letter}|_)+({letter}|_|{digit})+
+id ({letter}|_)+({letter}|_|{digit})*
 newline \n
 whitespace [ \t]+
 name ({letter}|_)+({letter}|_|{digit})+
-systype ("integer" | "real" | "string" | "char")
+
 %%
-systype {return SYS_TYPE;}
+
 "and" { return AND;}
 "array" { return ARRAY;}
 ":=" { return ASSIGN;}
@@ -47,7 +53,7 @@ systype {return SYS_TYPE;}
 "goto" { return GOTO;}
 ">" { return GT;}
 "if" { return IF;}
-{integer} { return INTEGER;}
+{integer} {return INTEGER;}
 "[" { return LB;}
 "<=" { return LE;}
 "(" { return LP;}
@@ -59,6 +65,7 @@ systype {return SYS_TYPE;}
 "of" { return OF;}
 "+" { return PLUS;}
 "program" { return PROGRAM;}
+"procedure" {return PROCEDURE;}
 "]" { return RB;}
 "read" { return READ;}
 {real} { return REAL;}
@@ -76,7 +83,11 @@ systype {return SYS_TYPE;}
 "while" { return WHILE;}
 {newline} {lineno++;}
 {whitespace} {}
-{id} { return ID;}
+"integer"	{return SYS_TYPE;} 
+"real"		{return SYS_TYPE;}
+"string"	{return SYS_TYPE;}
+"char"   	{return SYS_TYPE;}
+{id} {idstr = yytext;return ID;}
 
 %%
 
@@ -97,6 +108,7 @@ int getToken(void) {
 	currentToken = yytext;
 	if (traceScan) {
 		fprintf(listing, "\t%d %s\n", lineno, yytext);
+		fflush(listing);
 	}	
 	return curToken;
 }
@@ -105,13 +117,13 @@ int yywrap()
 {
 	return 1;
 }
-main() {
-	lineno = 0;
-	traceScan = TRUE;
-	cout << "begin yylex" << endl;
-	while(getToken() != 0);
-	cout << "end" << endl;
-}
+//main() {
+//	lineno = 0;
+//	traceScan = TRUE;
+//	cout << "begin yylex" << endl;
+//	while(getToken() != 0);
+//	cout << "end" << endl;
+//}
 
 
 

@@ -10,39 +10,48 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 using namespace std;
 typedef int TokenType;
 /*
 * following variables are defined in main.c
 */
-int lineno;
-FILE *source;
-FILE *listing;
+extern int lineno;
+extern FILE *source;
+extern FILE *listing;
+extern string currentToken;
+extern ofstream ast;
 
+////////////////////////////////////////////////////////
+// AST data structure								  //
+////////////////////////////////////////////////////////
 /*
 * base class for all different kind of node within a AST
 */
 class TreeNode {
 private:
-	const string name;
+	const string treeName;
 protected:
 	vector<TreeNode *> children;
+	int lineNO;
 public:
-	TreeNode(const string _name):name(_name){}
-	TreeNode():name(""){}
+	TreeNode(const string _name):treeName(_name){}
+	TreeNode():treeName(""){
+		lineNO = lineno;
+	}
 	virtual ~TreeNode() {}
-	virtual void traverse() {};
 	virtual void printSelf() {
-		cout << " TreeNode ";
+		ast << " TreeNode ";
 	}
 	virtual vector<TreeNode *> getChildren() {
 		return children;
 	}
-	string getName() {
-		return name;
+	const string& getName() {
+		return treeName;
 	}
 	virtual void insert(TreeNode* t) {}
-
+	virtual void genCode() {}
+	//virtual updateSymtab(Symtab)
 };
 
 
@@ -55,7 +64,7 @@ public:
 		label = _label;
 	}
 	void printSelf() {
-		cout << "StmtTreeNode";
+		ast << "StmtTreeNode";
 	}
 };
 
@@ -63,7 +72,7 @@ class IDTreeNode : public TreeNode {
 public:
 	virtual ~IDTreeNode() {}
 	void printSelf() {
-		cout << "IDTreeNode";
+		ast << "IDTreeNode";
 	}
 };
 
@@ -72,7 +81,7 @@ class ExprTreeNode : public TreeNode {
 public:
 	virtual ~ExprTreeNode() {}
 	void printSelf() {
-		cout << "ExprTreeNode";
+		ast << "ExprTreeNode";
 	}
 };
 
@@ -83,7 +92,7 @@ class TypeTreeNode : public TreeNode {
 public:
 	virtual ~TypeTreeNode() {}
 	void printSelf() {
-		cout << "TypeTreeNode";
+		ast << "TypeTreeNode";
 	}
 };
 
@@ -96,11 +105,9 @@ private:
 	vector<TreeNode *> list;
 public:
 	ListTreeNode( const string _name):typeName(_name) {
-		children = list;
 	}
 	ListTreeNode( const string _name,  vector<TreeNode *>& _list)
 	:typeName(_name),list(_list) {
-		children = list;
 	}
 	//a.insert(a.end(), b.begin(), b.end());
 	void append() {}
@@ -117,7 +124,10 @@ public:
 		return list;
 	}
 	void printSelf() {
-		cout << "a list of " << typeName;
+		ast << "a list of " << typeName<<":"<<list.size();	
+	}
+	vector<TreeNode *> getChildren() {
+		return list;
 	}
 };
 
@@ -144,7 +154,7 @@ public:
 			children.push_back(routinePart);
 		}
 	void printSelf() {
-		cout << "RoutineHead";
+		ast << "RoutineHead";
 	}
 };
 /*
@@ -161,6 +171,9 @@ public:
 						children.push_back(head);
 						children.push_back(body);
 					}
+	void printSelf() {
+		ast << "RoutineTreeNode";
+	}					
 };
 
 class ProgramHeadTreeNode : public TreeNode {
@@ -168,8 +181,12 @@ private:
 	const string name;
 public:
 	ProgramHeadTreeNode(const string _name):name(_name){}
-	string getName() {
+
+	const string& getName() {
 		return name;
+	}
+	void printSelf() {
+		ast << "ProgramHeadTreeNode";
 	}
 };
 
@@ -185,7 +202,9 @@ public:
 	{
 		children.push_back(routine);
 	}
-
+	void printSelf() {
+		ast << "ProgramTreeNode";
+	}
 };
 
 //======
@@ -206,6 +225,9 @@ public:
 	CustomTypeTreeNode( const string _name,  TreeNode* _type=NULL) 
 						: name(_name),type((TypeTreeNode*)_type)
 						{}
+	void printSelf() {
+		ast << "CustomTypeTreeNode:" << name;
+	}
 
 };
 
@@ -223,6 +245,9 @@ private:
 	const  string name;
 public:
 	SysTypeTreeNode( const string _name):name(_name){}
+	void printSelf() {
+		ast << "SysTypeTreeNode";
+	}
 };
 
 class SubRangeTypeTreeNode : public SimpleTypeTreeNode {
@@ -233,6 +258,9 @@ public:
 	SubRangeTypeTreeNode( TreeNode *_u, TreeNode *_l)
 						:upperBound((IDTreeNode*)_u), lowerBound((IDTreeNode*)_l)
 						{}
+	void printSelf() {
+		ast << "SubRangeTypeTreeNode";
+	}						
 };
 
 /*
@@ -246,6 +274,9 @@ public:
 	EnumTypeTreeNode(TreeNode* _elemList,const string _name="")
 					:name(_name), elemList((ListTreeNode*)_elemList)
 					{}
+	void printSelf() {
+		ast << "EnumTypeTreeNode";
+	}					
 
 };
 
@@ -260,9 +291,12 @@ public:
 	ArrayTypeTreeNode(TreeNode *_indexType,
 					 TreeNode *_elemType):indexType((SimpleTypeTreeNode*)_indexType),elemType((TypeTreeNode*)_elemType)
 	{
-		children.push_back(indexType);
-		children.push_back(elemType);
+		// children.push_back(indexType);
+		// children.push_back(elemType);
 	}
+	void printSelf() {
+		ast << "ArrayTypeTreeNode";
+	}	
 };
 
 /*
@@ -275,8 +309,11 @@ public:
 	RecordTypeTreeNode( TreeNode *_list)
 						:elemList((ListTreeNode*)_list)
 						{
-							children.push_back(elemList);
+							// children.push_back(elemList);
 						}
+	void printSelf() {
+		ast << "RecordTypeTreeNode";
+	}							
 };
 
 //==============================================================
@@ -297,6 +334,9 @@ public:
 	void set(T v) {
 		value = v;
 	}
+	void printSelf() {
+		ast << "NumberTreeNode";
+	}		
 };
 
 /*
@@ -310,6 +350,9 @@ public:
 	ConstTreeNode( const string _name,  TreeNode *_value)
 				:name(_name),value((IDTreeNode*)_value)
 				{}
+	void printSelf() {
+		ast << "ConstTreeNode";
+	}					
 };
 
 /*
@@ -344,6 +387,19 @@ public:
 	int getRef() {
 		return ref;
 	}
+	void printSelf() {
+		ast << "VariableTreeNode:";
+		if (name != "") {
+			ast << name;
+		} else {
+			vector<TreeNode *> list = nameList->getList();
+			if (list.size() > 0) {
+				for (int i = 0; i < list.size(); i++) 
+					ast << list[i]->getName();
+			}
+		}
+
+	}	
 };
 
 class ArrayElemTreeNode : public IDTreeNode {
@@ -354,6 +410,9 @@ public:
 	ArrayElemTreeNode( const string _name,  TreeNode *_index)
 					: name(_name), index((ExprTreeNode*)_index) 
 					{}
+	void printSelf() {
+		ast << "ArrayElemTreeNode:" << name;
+	}					
 };
 
 class RecordElemTreeNode : public IDTreeNode {
@@ -364,6 +423,9 @@ public:
 	RecordElemTreeNode( const string& _rName,  const string& _eName)
 					:recordName(_rName), elemName(_eName)
 					{}
+	void printSelf() {
+		ast << "RecordElemTreeNode:"<<recordName<<"."<<elemName;
+	}						
 };
 
 //===============================================
@@ -380,6 +442,9 @@ public:
 	{
 		children.push_back(oprand);
 	}
+	void printSelf() {
+		ast << "UnaryExprTreeNode";
+	}	
 };
 /*
 * node for binary operaotr such as '+'  '='
@@ -395,7 +460,9 @@ public:
 		children.push_back(rhs);
 		children.push_back(lhs);
 	}
-
+	void printSelf() {
+		ast << "BinaryExprTreeNode";
+	}	
 };
 
 /*
@@ -410,7 +477,9 @@ public:
 						:name(_name), args(_args){}
 	CallExprTreeNode( const string _name)
 						:name(_name){}
-
+	void printSelf() {
+		ast << "BinaryExprTreeNode";
+	}
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
@@ -420,6 +489,9 @@ private:
 public:
 	CaseExprTreeNode( TreeNode* _label,  TreeNode *_stmt)
 					: label((IDTreeNode*)_label), stmt((StmtTreeNode*)_stmt){}
+	void printSelf() {
+		ast << "CaseExprTreeNode";
+	}					
 };
 
 
@@ -442,6 +514,9 @@ public:
 			children.push_back(args);
 			children.push_back(body);
 		}
+	void printSelf() {
+		ast << "FunctionTreeNode";
+	}		
 
 };
 
@@ -461,6 +536,9 @@ public:
 			children.push_back(args);
 			children.push_back(body);
 		}
+	void printSelf() {
+		ast << "ProcedureTreeNode";
+	}		
 
 };
 
@@ -479,6 +557,9 @@ public:
 	{
 		children.push_back(stmtList);
 	}
+	void printSelf() {
+		ast << "CompoundStmtTreeNode";
+	}	
 
 };
 
@@ -502,7 +583,10 @@ public:
 		 TreeNode *s)
 				:condition((ExprTreeNode*)e), body((CompoundStmtTreeNode*)c),elsePart((StmtTreeNode*)s){
 					addChildren();
-				}				
+				}	
+	void printSelf() {
+		ast << "IfStmtTreeNode";
+	}							
 
 };
 
@@ -517,6 +601,9 @@ public:
 		children.push_back(condition);
 		children.push_back(body);
 	}
+	void printSelf() {
+		ast << "RepeatStmtTreeNode";
+	}	
 };
 
 class WhileStmtTreeNode : public StmtTreeNode {
@@ -530,6 +617,9 @@ public:
 		children.push_back(condition);
 		children.push_back(body);
 	}
+	void printSelf() {
+		ast << "WhileStmtTreeNode";
+	}	
 
 };
 
@@ -547,6 +637,9 @@ public:
 		children.push_back(expr);
 		children.push_back(caseExprList);
 	}
+	void printSelf() {
+		ast << "SwitchStmtTreeNode";
+	}	
 };
 
 class ForStmtTreeNode : public StmtTreeNode {
@@ -564,6 +657,9 @@ public:
 			children.push_back(dirExpr);
 			children.push_back(body);
 		}
+	void printSelf() {
+		ast << "ForStmtTreeNode";
+	}		
 };
 
 
@@ -572,10 +668,15 @@ private:
 	const string label;
 public:
 	GotoStmtTreeNode(const string _label):label(_label){}
+	void printSelf() {
+		ast << "GotoStmtTreeNode";
+	}	
 };
 /*
 * if treceScan = TRUE, every token along with lineno will be 
 * print in listing file
 */
-int traceScan;
+extern int traceScan;
+
+void printAST(TreeNode *root);
 #endif
