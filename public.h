@@ -58,7 +58,7 @@ public:
 	}
 	virtual void insert(TreeNode* t) {}
 
-	virtual void genCode() {
+	virtual int genCode() {
 		code << "default genCode" << endl;
 	}
 
@@ -149,7 +149,7 @@ public:
 		return list;
 	}
 
-	void genCode();
+	int genCode();
 	void updateSymtab(Symtab*);
 
 };
@@ -180,7 +180,7 @@ public:
 		ast << "RoutineHead";
 	}
 	void updateSymtab(Symtab *);
-	void genCode();
+	int genCode();
 };
 /*
 * node for routine
@@ -199,7 +199,7 @@ public:
 	void printSelf() {
 		ast << "RoutineTreeNode";
 	}					
-	void genCode();
+	int genCode();
 	void updateSymtab(Symtab*);
 
 };
@@ -233,7 +233,7 @@ public:
 	void printSelf() {
 		ast << "ProgramTreeNode";
 	}
-	void genCode();
+	int genCode();
 	void updateSymtab(Symtab*);
 };
 
@@ -403,7 +403,7 @@ public:
 	void printSelf() {
 		ast << "ConstTreeNode";
 	}
-	void genCode();
+	int genCode();
 	void updateSymtab(Symtab* symtab);
 };
 
@@ -516,8 +516,8 @@ public:
 	void printSelf() {
 		ast << "BinaryExprTreeNode";
 	}	
-	
-	void genCode();
+
+	int genCode();
 };
 
 /*

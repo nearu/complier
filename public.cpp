@@ -124,27 +124,33 @@ void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 ////////////////////////////////////////////////////////////
 // gen code functions 									  //
 ////////////////////////////////////////////////////////////
-void ProgramTreeNode::genCode() {
+int ProgramTreeNode::genCode() {
 	routine->genCode();
+	return 0;
 }
-void RoutineTreeNode::genCode() {
+
+int RoutineTreeNode::genCode() {
 	body->genCode();
+	return 0;
 }
 
-void ListTreeNode::genCode() {
+int ListTreeNode::genCode() {
 	childrenGenCode(children);
+	return 0;
 }
 
-void ConstTreeNode::genCode() {
+int ConstTreeNode::genCode() {
 	
-
+	return 0;
 }
 
-void RoutineHeadTreeNode::genCode() {
+int RoutineHeadTreeNode::genCode() {
 
+	return 0;
 }
-void BinaryExprTreeNode::genCode() {
+int BinaryExprTreeNode::genCode() {
 	
+	return 0;
 }
 
 

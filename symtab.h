@@ -18,6 +18,7 @@ class SymBucket {
 	// the address of this type
 	int 			location;
 	int 			size;
+	int 			regNum;
 	// type name
 	const string 	type;
 	// id name
@@ -33,7 +34,7 @@ public:
 	SymBucket 		*next;
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
-		location(0), next(this)
+		location(0), next(this), regNum(0)
 		{}
 
 /////////////////////////////////////////////////////
@@ -50,6 +51,10 @@ public:
 
 	void setSymtab(Symtab *symtab) {
 		nextSymtab = symtab;
+	}
+
+	void setRegNum(int rn) {
+		regNum = rn;
 	}
 
 /////////////////////////////////////////////////////
@@ -104,6 +109,7 @@ class Symtab {
 	SYMMAP symMap;
 	// current offset in the stack
 	int curLoc;
+	int curRegNum;
 public:
 	Symtab(const string _name, SymBucket *_pBucket = NULL)
 		:symtabName(_name), pBucket(_pBucket),curLoc(0){}
@@ -162,6 +168,7 @@ public:
 		return l;
 	}
 
+	int genRegNum() ge
 	void printSymtab(ofstream& out);
 	virtual ~Symtab() {}
 
