@@ -516,6 +516,8 @@ public:
 	void printSelf() {
 		ast << "BinaryExprTreeNode";
 	}	
+	
+	void genCode();
 };
 
 /*

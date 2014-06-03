@@ -2,5 +2,5 @@
  RoutineTreeNode 
  RoutineHead  CompoundStmtTreeNode 
  a list of non const part:0  a list of non type part:0  a list of var_decl_list:1  a list of non routine part:0  a list of stmt:1 
- VariableTreeNode:a  BinaryExprTreeNode 
+ VariableTreeNode:abc  BinaryExprTreeNode 
  RecordElemTreeNode:BBB.b  NumberTreeNode 

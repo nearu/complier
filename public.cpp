@@ -143,6 +143,9 @@ void ConstTreeNode::genCode() {
 void RoutineHeadTreeNode::genCode() {
 
 }
+void BinaryExprTreeNode::genCode() {
+	
+}
 
 
 ////////////////////////////////////////////////////////////

@@ -1,6 +1,10 @@
 program HelloWorld;
+const
+
+type
+
 var 
-a : integer;
+a,b,c: integer;
 begin	
 	BBB.b := 100;
 end.

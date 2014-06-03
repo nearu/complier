@@ -303,6 +303,8 @@ non_label_stmt :  assign_stmt       {tp("non_label_stmt 1");$$ = $1;}
                | compound_stmt      {tp("non_label_stmt 3");$$ = $1;}
                | if_stmt            {tp("non_label_stmt 4");$$ = $1;}
                | repeat_stmt        {tp("non_label_stmt 5");$$ = $1;}
+
+
                | while_stmt         {tp("non_label_stmt 6");$$ = $1;}
                | for_stmt           {tp("non_label_stmt 7");$$ = $1;}
                | case_stmt          {tp("non_label_stmt 8");$$ = $1;}
