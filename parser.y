@@ -90,11 +90,11 @@ EQUAL  const_value  SEMI {
   $$->insert(new ConstTreeNode(name, $4));
 }
 ;
-const_value : INTEGER     {tp("const value 1");$$ = new NumberTreeNode<int>(atoi(currentToken));}
-              |  REAL     {tp("const value 2");$$ = new NumberTreeNode<double>(atof(currentToken));}
-              |  CHAR     {tp("const value 3");$$ = new NumberTreeNode<char>(currentToken[0]);}
-              |  STRING   {tp("const value 4");$$ = new NumberTreeNode<string>(currentToken);}  
-              |  SYS_CON  {tp("const value 5");$$ = new NumberTreeNode<string>(currentToken);}  
+const_value : INTEGER     {tp("const value 1");$$ = new NumberTreeNode<int>(atoi(currentToken), "INTEGER");}
+              |  REAL     {tp("const value 2");$$ = new NumberTreeNode<double>(atof(currentToken), "REAL");}
+              |  CHAR     {tp("const value 3");$$ = new NumberTreeNode<char>(currentToken[0], "CHAR");}
+              |  STRING   {tp("const value 4");$$ = new NumberTreeNode<string>(currentToken, "STRING");}  
+              |  SYS_CON  {tp("const value 5");$$ = new NumberTreeNode<string>(currentToken, "SYS_CON");}  
               ;
 type_part : TYPE type_decl_list {
   tp("type part 1");
@@ -437,13 +437,13 @@ static int yylex() {
 static void tp(const string msg) {
   if(traceParse) {parserOut << lineno << " " << msg  << endl;}
 }
-main() 
-{
-  traceScan = TRUE;
-	yyparse();
-  printAST(root);
-  return 0;
-}
+//main() 
+//{
+//  traceScan = TRUE;
+//  yyparse();
+//  printAST(root);
+//  return 0;
+//}
 
 
 

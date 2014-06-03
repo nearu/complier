@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+
 using namespace std;
 typedef int TokenType;
 /*
@@ -21,6 +22,10 @@ extern FILE *source;
 extern FILE *listing;
 extern string currentToken;
 extern ofstream ast;
+extern ofstream code;
+extern ofstream sym;
+class Symtab;
+
 
 ////////////////////////////////////////////////////////
 // AST data structure								  //
@@ -50,8 +55,14 @@ public:
 		return treeName;
 	}
 	virtual void insert(TreeNode* t) {}
-	virtual void genCode() {}
-	//virtual updateSymtab(Symtab)
+
+	virtual void genCode() {
+		code << "default genCode";
+	}
+
+	virtual void updateSymtab(Symtab *symtab) {
+		sym << "default updateSymtab";
+	}
 };
 
 
@@ -99,7 +110,7 @@ public:
 /*
 * node contains a list of sub-nodes with same type
 */
-class ListTreeNode : public TreeNode{
+class ListTreeNode : public TreeNode {
 private:
 	string typeName;
 	vector<TreeNode *> list;
@@ -129,6 +140,10 @@ public:
 	vector<TreeNode *> getChildren() {
 		return list;
 	}
+
+	void genCode();
+	void updateSymtab(Symtab*);
+
 };
 
 //=====================================================================
@@ -156,6 +171,8 @@ public:
 	void printSelf() {
 		ast << "RoutineHead";
 	}
+	void updateSymtab(Symtab *);
+	void genCode();
 };
 /*
 * node for routine
@@ -174,6 +191,9 @@ public:
 	void printSelf() {
 		ast << "RoutineTreeNode";
 	}					
+	void genCode();
+	void updateSymtab(Symtab*);
+
 };
 
 class ProgramHeadTreeNode : public TreeNode {
@@ -205,6 +225,8 @@ public:
 	void printSelf() {
 		ast << "ProgramTreeNode";
 	}
+	void genCode();
+	void updateSymtab(Symtab*);
 };
 
 //======
@@ -326,17 +348,23 @@ template <class T>
 class NumberTreeNode : public IDTreeNode {
 private:
 	T value;
+	const string type;
 public:
-	NumberTreeNode(T v):value(v) {}
+	NumberTreeNode(T v, const string _type):value(v),type(_type) {}
 	T get() {
 		return value;
+	}
+	int getType() {
+		return type;
 	}
 	void set(T v) {
 		value = v;
 	}
 	void printSelf() {
 		ast << "NumberTreeNode";
-	}		
+	}	
+
+
 };
 
 /*
@@ -345,14 +373,16 @@ public:
 class ConstTreeNode : public IDTreeNode {
 private:
 	const string name;
-	IDTreeNode *value; // NumberTreeNode
+	NumberTreeNode *value; // NumberTreeNode
 public:
 	ConstTreeNode( const string _name,  TreeNode *_value)
-				:name(_name),value((IDTreeNode*)_value)
+				:name(_name),value((NumberTreeNode*)_value)
 				{}
 	void printSelf() {
 		ast << "ConstTreeNode";
-	}					
+	}
+	void genCode();
+	void updateSymtab(Symtab* symtab);
 };
 
 /*

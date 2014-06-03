@@ -3000,13 +3000,13 @@ static int yylex() {
 static void tp(const string msg) {
   if(traceParse) {parserOut << lineno << " " << msg  << endl;}
 }
-main() 
-{
-  traceScan = TRUE;
-	yyparse();
-  printAST(root);
-  return 0;
-}
+//main() 
+//{
+//  traceScan = TRUE;
+//  yyparse();
+//  printAST(root);
+//  return 0;
+//}
 
 
 
