@@ -168,7 +168,9 @@ public:
 		return l;
 	}
 
-	int genRegNum() ge
+	int genRegNum() {
+		
+	}
 	void printSymtab(ofstream& out);
 	virtual ~Symtab() {}
 
