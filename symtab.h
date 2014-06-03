@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <algorithm>
+#include <vector>
 using namespace std;
 
 class SymBucket;
@@ -16,30 +17,48 @@ class SymBucket {
 	int 			lineNO;
 	// the address of this type
 	int 			location;
-	int 			level;
+	int 			size;
 	// type name
 	const string 	type;
 	// id name
 	string 			name;
-	// next bucket in the one hash entry
-	SymBucket 		*next;
-	// next bucket in complicated data structure
-	SymBucket	    *nextItem;
+
 	// the sub level symtab for funciton or procedure
 	Symtab 			*nextSymtab;
 	// currnt symtab
 	Symtab 			*curSymtab;
+
 public:
-	SymBucket(const string _name, int _lineNO, const string _type, SymBucket *_next)
-		:name(_name),lineNO(_lineNO), type(_type), next(_next)
+	// next bucket in the one complicated datastructure
+	SymBucket 		*next;
+	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
+		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
+		location(0), next(this)
 		{}
 
-	void setLocation(int l) {
+/////////////////////////////////////////////////////
+// set functions								   //
+/////////////////////////////////////////////////////		
+	void setLoc(int l) {
 		location = l;
 	}
-	int getLocation() {
+
+	void setSize(int s) {
+		size = s;
+	}
+
+
+	void setSymtab(Symtab *symtab) {
+		nextSymtab = symtab;
+	}
+
+/////////////////////////////////////////////////////
+// get functions								   //
+/////////////////////////////////////////////////////	
+	int getLoc() {
 		return location;
 	}
+
 	int getLineno() {
 		return lineNO;
 	}
@@ -48,15 +67,27 @@ public:
 		return type;
 	}
 
-	SymBucket *getNext() {
-		return next;
+	Symtab* getNextSymtab() {
+		return nextSymtab;
 	}
 
 	const string& getName() {
 		return name;
 	}
-	void setSymtab(Symtab *symtab) {
-		nextSymtab = symtab;
+
+	int getSize() {
+		return size;
+	}
+	void printBucket(ofstream &out) {
+		out << lineNO << " " << name << ":\t" << type << "\t at " << location;
+		SymBucket *tmp = next;
+		while(tmp != this) {
+			out << " .. ";
+			out << tmp->getLineno() <<  "\t " << tmp->getName() << " :\t" << tmp->getType() << "\t at " << tmp->getLoc();
+			tmp = tmp->next;
+		}
+		out << endl;
+
 	}
 	~SymBucket() {
 
@@ -71,9 +102,11 @@ class Symtab {
 	SymBucket *pBucket;
 	// inner hash map for symtab
 	SYMMAP symMap;
+	// current offset in the stack
+	int curLoc;
 public:
 	Symtab(const string _name, SymBucket *_pBucket = NULL)
-		:symtabName(_name), pBucket(_pBucket){}
+		:symtabName(_name), pBucket(_pBucket),curLoc(0){}
 
 	void insert(SymBucket* b) {
 		SYMMAP::iterator iter;
@@ -113,9 +146,23 @@ public:
 		return pBucket;
 	}
 
-	void printSymtab() {
+	
 
+	void setCurLoc(int loc) {
+		curLoc = loc;
 	}
+
+	int getCurLoc() {
+		return curLoc;
+	}
+
+	int  genLoc(int size) {
+		int l = curLoc;
+		curLoc += size;
+		return l;
+	}
+
+	void printSymtab(ofstream& out);
 	virtual ~Symtab() {}
 
 };

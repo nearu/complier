@@ -1,5 +1,5 @@
 CC = g++
-objects = scanner.o parser.o public.o main.o
+objects = scanner.o parser.o public.o symtab.o main.o
 main : $(objects)
 	$(CC) -o main $(objects)
 main.o : main.cpp public.h
@@ -10,6 +10,8 @@ parser.o : parser.cpp public.h scanner.h
 	$(CC) -c parser.cpp
 public.o : public.cpp public.h
 	$(CC) -c public.cpp
+symtab.o : symtab.cpp symtab.h
+	$(CC) -c symtab.cpp
 clean:
 	del $(objects)
 	del main.exe

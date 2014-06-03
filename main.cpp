@@ -4,6 +4,7 @@
 #include "parser.hpp"
 #include "symtab.h"
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #define MAX_OPTION 10
 using namespace std;
@@ -12,6 +13,7 @@ extern int traceScan;
 extern int traceParse;
 extern TreeNode *root;
 Symtab *mainSymtab;
+extern ofstream sym;
 int main(int argc, char *argv[]) {
 	// char option[MAX_OPTION];
 	// int opNumber = 0;
@@ -41,10 +43,15 @@ int main(int argc, char *argv[]) {
 	// 	return 1;
 	// }
   traceScan = TRUE;
+  // cout << "begin parse" << endl;
   yyparse();
+  // cout << "begin print AST" << endl;
   printAST(root);
   mainSymtab = new Symtab("mainSymtab");
-  root->genCode();
+  //root->genCode();
+  root->updateSymtab(mainSymtab);
+  // cout << "begin print symtab" << endl;
+  mainSymtab->printSymtab(sym);
   return 0;
 	
 	

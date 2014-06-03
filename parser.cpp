@@ -1811,31 +1811,31 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
   case 16:
 /* Line 1792 of yacc.c  */
 #line 93 "parser.y"
-    {tp("const value 1");(yyval) = new NumberTreeNode<int>(atoi(currentToken));}
+    {tp("const value 1");(yyval) = new NumberTreeNode<int>(atoi(currentToken), "integer");}
     break;
 
   case 17:
 /* Line 1792 of yacc.c  */
 #line 94 "parser.y"
-    {tp("const value 2");(yyval) = new NumberTreeNode<double>(atof(currentToken));}
+    {tp("const value 2");(yyval) = new NumberTreeNode<double>(atof(currentToken), "real");}
     break;
 
   case 18:
 /* Line 1792 of yacc.c  */
 #line 95 "parser.y"
-    {tp("const value 3");(yyval) = new NumberTreeNode<char>(currentToken[0]);}
+    {tp("const value 3");(yyval) = new NumberTreeNode<char>(currentToken[0], "char");}
     break;
 
   case 19:
 /* Line 1792 of yacc.c  */
 #line 96 "parser.y"
-    {tp("const value 4");(yyval) = new NumberTreeNode<string>(currentToken);}
+    {tp("const value 4");(yyval) = new NumberTreeNode<string>(currentToken, "string");}
     break;
 
   case 20:
 /* Line 1792 of yacc.c  */
 #line 97 "parser.y"
-    {tp("const value 5");(yyval) = new NumberTreeNode<string>(currentToken);}
+    {tp("const value 5");(yyval) = new NumberTreeNode<string>(currentToken, "sys_con");}
     break;
 
   case 21:

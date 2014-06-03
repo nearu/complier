@@ -90,11 +90,11 @@ EQUAL  const_value  SEMI {
   $$->insert(new ConstTreeNode(name, $4));
 }
 ;
-const_value : INTEGER     {tp("const value 1");$$ = new NumberTreeNode<int>(atoi(currentToken), "INTEGER");}
-              |  REAL     {tp("const value 2");$$ = new NumberTreeNode<double>(atof(currentToken), "REAL");}
-              |  CHAR     {tp("const value 3");$$ = new NumberTreeNode<char>(currentToken[0], "CHAR");}
-              |  STRING   {tp("const value 4");$$ = new NumberTreeNode<string>(currentToken, "STRING");}  
-              |  SYS_CON  {tp("const value 5");$$ = new NumberTreeNode<string>(currentToken, "SYS_CON");}  
+const_value : INTEGER     {tp("const value 1");$$ = new NumberTreeNode<int>(atoi(currentToken), "integer");}
+              |  REAL     {tp("const value 2");$$ = new NumberTreeNode<double>(atof(currentToken), "real");}
+              |  CHAR     {tp("const value 3");$$ = new NumberTreeNode<char>(currentToken[0], "char");}
+              |  STRING   {tp("const value 4");$$ = new NumberTreeNode<string>(currentToken, "string");}  
+              |  SYS_CON  {tp("const value 5");$$ = new NumberTreeNode<string>(currentToken, "sys_con");}  
               ;
 type_part : TYPE type_decl_list {
   tp("type part 1");

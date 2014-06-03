@@ -25,6 +25,7 @@ extern ofstream ast;
 extern ofstream code;
 extern ofstream sym;
 class Symtab;
+class SymBucket;
 
 
 ////////////////////////////////////////////////////////
@@ -37,6 +38,7 @@ class TreeNode {
 private:
 	const string treeName;
 protected:
+	Symtab *env;
 	vector<TreeNode *> children;
 	int lineNO;
 public:
@@ -57,11 +59,14 @@ public:
 	virtual void insert(TreeNode* t) {}
 
 	virtual void genCode() {
-		code << "default genCode";
+		code << "default genCode" << endl;
 	}
 
 	virtual void updateSymtab(Symtab *symtab) {
-		sym << "default updateSymtab";
+		sym << "default updateSymtab" << endl;
+	}
+	void setEnv(Symtab *e) {
+		env = e;
 	}
 };
 
@@ -85,6 +90,7 @@ public:
 	void printSelf() {
 		ast << "IDTreeNode";
 	}
+	virtual const string getType() {}
 };
 
 /// expr node
@@ -105,6 +111,8 @@ public:
 	void printSelf() {
 		ast << "TypeTreeNode";
 	}
+	virtual SymBucket* genSymItem(const string typeName, Symtab *symtab){}
+	virtual const string getType() {}
 };
 
 /*
@@ -250,7 +258,7 @@ public:
 	void printSelf() {
 		ast << "CustomTypeTreeNode:" << name;
 	}
-
+	void updateSymtab(Symtab *);
 };
 
 /*
@@ -259,17 +267,20 @@ public:
 class SimpleTypeTreeNode : public TypeTreeNode {
 public:
 	virtual ~SimpleTypeTreeNode() {}
-
 };
 
 class SysTypeTreeNode : public SimpleTypeTreeNode {
 private:
-	const  string name;
+	const string type;
 public:
-	SysTypeTreeNode( const string _name):name(_name){}
+	SysTypeTreeNode( const string _name):type(_name){}
 	void printSelf() {
 		ast << "SysTypeTreeNode";
 	}
+	const string getType() {
+		return type;
+	}
+	SymBucket *genSymItem(const string type, Symtab *symtab);
 };
 
 class SubRangeTypeTreeNode : public SimpleTypeTreeNode {
@@ -282,7 +293,10 @@ public:
 						{}
 	void printSelf() {
 		ast << "SubRangeTypeTreeNode";
-	}						
+	}
+	const string getType() {
+		return "subrange";
+	}
 };
 
 /*
@@ -299,7 +313,9 @@ public:
 	void printSelf() {
 		ast << "EnumTypeTreeNode";
 	}					
-
+	const string getType() {
+		return "enum";
+	}
 };
 
 /*
@@ -319,6 +335,9 @@ public:
 	void printSelf() {
 		ast << "ArrayTypeTreeNode";
 	}	
+	const string getType() {
+		return "array";
+	}
 };
 
 /*
@@ -335,7 +354,10 @@ public:
 						}
 	void printSelf() {
 		ast << "RecordTypeTreeNode";
-	}							
+	}	
+	const string getType() {
+		return "record";
+	}						
 };
 
 //==============================================================
@@ -354,7 +376,7 @@ public:
 	T get() {
 		return value;
 	}
-	int getType() {
+	const string getType() {
 		return type;
 	}
 	void set(T v) {
@@ -373,10 +395,10 @@ public:
 class ConstTreeNode : public IDTreeNode {
 private:
 	const string name;
-	NumberTreeNode *value; // NumberTreeNode
+	IDTreeNode *value; // NumberTreeNode
 public:
 	ConstTreeNode( const string _name,  TreeNode *_value)
-				:name(_name),value((NumberTreeNode*)_value)
+				:name(_name),value((IDTreeNode*)_value)
 				{}
 	void printSelf() {
 		ast << "ConstTreeNode";
@@ -395,21 +417,21 @@ public:
 class VariableTreeNode : public IDTreeNode {
 private:
 	const string name;
-	TypeTreeNode * type;
+	TypeTreeNode * typeNode;
 	ListTreeNode *nameList;
 	int ref;
 public:
 	VariableTreeNode( const string _name = "",  TreeNode* _type=NULL, int _ref = 0)
-	:name(_name), type((TypeTreeNode*)_type), nameList(NULL),ref(_ref)
+	:name(_name), typeNode((TypeTreeNode*)_type), nameList(NULL),ref(_ref)
 	 {}
 	VariableTreeNode(TreeNode *_list, TreeNode* _type=NULL, int _ref = 0)
-	:name(""),type((TypeTreeNode*)_type),ref(_ref),nameList((ListTreeNode*)_list)
+	:name(""),typeNode((TypeTreeNode*)_type),ref(_ref),nameList((ListTreeNode*)_list)
 	{}
 	const string& getName() {
 		return name;
 	}
-	const TypeTreeNode* getType() {
-		return type;
+	const TypeTreeNode* getTreeNodeType() {
+		return typeNode;
 	}
 	ListTreeNode *getNameList() {
 		return nameList;
@@ -430,6 +452,7 @@ public:
 		}
 
 	}	
+	void updateSymtab(Symtab*);
 };
 
 class ArrayElemTreeNode : public IDTreeNode {
