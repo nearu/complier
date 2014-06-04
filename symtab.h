@@ -5,13 +5,15 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include "code_generator.h"
 using namespace std;
 
 class SymBucket;
 class Symtab;	
+
 typedef vector<SymBucket *> * SYMQUEUE;
 typedef map<string, SYMQUEUE> SYMMAP;
-
+extern RegManager *regManager;
 
 class SymBucket {
 	int 			lineNO;
@@ -195,6 +197,7 @@ public:
 		} else {
 			curRegNum++;
 		}
+		regManager->useReg(curRegNum);
 		return curRegNum;
 	}
 

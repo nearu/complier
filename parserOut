@@ -24,25 +24,15 @@
 8 routine part 5
 8 routine head
 8 stmt list 2
-9 const value 1
-9 factor 5
+9 factor 1
 9 term 5
 9 expr 4
 9 expression 7
-9 assign stmt 3
+9 assign stmt 1
 9 non_label_stmt 1
 9 stmt 2
 9 stmt list 1
-10 const value 1
-10 factor 5
-10 term 5
-10 expr 4
-10 expression 7
-10 assign stmt 1
-10 non_label_stmt 1
-10 stmt 2
-10 stmt list 1
-11 compound stmt
-11 routine_body
-11 routine
-11 pargram
+10 compound stmt
+10 routine_body
+10 routine
+10 pargram

@@ -14,6 +14,7 @@ extern int traceParse;
 extern TreeNode *root;
 Symtab *mainSymtab;
 extern ofstream sym;
+extern RegManager *regManager;
 int main(int argc, char *argv[]) {
 	// char option[MAX_OPTION];
 	// int opNumber = 0;
@@ -49,9 +50,11 @@ int main(int argc, char *argv[]) {
   printAST(root);
   mainSymtab = new Symtab("mainSymtab");
   //root->genCode();
+  regManager = new RegManager();
   root->updateSymtab(mainSymtab);
-  // cout << "begin print symtab" << endl;
   mainSymtab->printSymtab(sym);
+  root->genCode();
+  // cout << "begin print symtab" << endl;
   return 0;
 	
 	

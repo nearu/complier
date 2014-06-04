@@ -1,39 +1,14 @@
 #include <queue>
+#include "code_generator.h"
 #include "public.h"
 #include "symtab.h"
+
 ofstream ast("AST");
 ofstream code("CODE");
 ofstream sym("SYM");
 ofstream error("ERROR");
+RegManager *regManager;
 extern Symtab* mainSymtab;
-class RegManager {
-	static const int BEGIN_TMP = 8;
-	static const int END_TMP   = 15;
-	static int reg[32];
-public:
-	static int getTmpReg() {
-		for(int i = BEGIN_TMP; i <= END_TMP; i++) {
-			if (reg[i] == 0) {
-				return i;
-			}
-		}
-	}
-
-	static void useReg(int i) {
-		reg[i] = 1;
-	}
-
-	static void freeReg(int i) {
-		reg[i] = 0;
-	}
-};
-
-class CodeGenerator {
-public:
-	static emitCodeR(const string op, int dst, int src_1, int src_2) {
-
-	}
-};	
 
 void printAST(TreeNode *root) {
 	queue<TreeNode *> q;
@@ -182,7 +157,7 @@ SymBucket * ConstTreeNode::genCode(int *reg) {
 }
 
 SymBucket * VariableTreeNode::genCode(int *reg) {
-	Symbucket *b = env->find(name);
+	SymBucket *b = env->find(name);
 	if (b != NULL) {
 		int reg = b->getRegNum();
 	} else {
@@ -199,12 +174,21 @@ SymBucket * RoutineHeadTreeNode::genCode(int *reg) {
 
 SymBucket * BinaryExprTreeNode::genCode(int *reg) {
 	int regR, regL;
+	int locR, locL;
 	SymBucket *bucketR, *bucketL;
 	bucketR = rhs->genCode(&regR);
 	bucketL = lhs->genCode(&regL);
-	if (regR != -1) {
-		regR = RegManager::getTmpReg();
+	if (regL == -1 && regR == -1) {
+		locL = bucketL->getLoc();
+		locR = bucketR->getLoc();
+	} else if (regL != -1 && regR != -1) {
+		CodeGenerator::emitCodeR(op, regL, regR, 0);
+	} else if (regL != -1 && regR == -1) {
+
+	} else if (regL == -1 && regR != -1) {
+
 	}
+	
 	return 0;
 }
 
