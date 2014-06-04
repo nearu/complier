@@ -7,5 +7,5 @@ s : string;
 t : char;
 begin	
 	a := b;
-	c := t;
+	a := t;
 end.

@@ -161,13 +161,14 @@ SymBucket * ListTreeNode::genCode(Symtab *symtab, int *reg) {
 }
 
 SymBucket * ConstTreeNode::genCode(Symtab *symtab, int *reg) {
+	cout << "cg" << endl;
 	*reg = -1;
 	env = symtab;
 	return env->find(name);
 }
 
 SymBucket * VariableTreeNode::genCode(Symtab *symtab, int *reg) {
-	cout << "vg"<< endl;
+	cout << "vg : "<< endl;
 	env = symtab;
 	SymBucket *b = env->find(name);
 	if (b != NULL) {
@@ -189,40 +190,84 @@ SymBucket * CompoundStmtTreeNode::genCode(Symtab *symtab, int *reg) {
 	return NULL;
 }
 
+
 SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	cout << "bg" << symtab << endl;
 	env = symtab;
 	int regR, regL;
 	int locR, locL;
+	SymBucket *returnBucket;
 	SymBucket *bucketR, *bucketL;
 	bucketR = rhs->genCode(env, &regR);
 	bucketL = lhs->genCode(env, &regL);
 	if (regL == -1 && regR == -1) {
 		locL = bucketL->getLoc();
 		locR = bucketR->getLoc();
-	} else if (regL != -1 && regR != -1) {
+		int tmpSrc_1 = regManager->getTmpReg();
+		int tmpSrc_2 = regManager->getTmpReg();
+		int tmpDst = regManager->getTmpReg();
+		if (op == "=") {
+			CodeGenerator::emitCodeM("lw", locR, 29, tmpSrc_2);			
+			CodeGenerator::emitCodeM("sw", locL, 29, tmpSrc_2);
+			*reg = -1;
+			returnBucket = bucketL;
+		} else {
+			CodeGenerator::emitCodeM("lw", locL, 29, tmpSrc_1);
+			CodeGenerator::emitCodeM("lw", locR, 29, tmpSrc_2);
+			CodeGenerator::emitCodeR(op, tmpDst, tmpSrc_1, tmpSrc_2);
+			*reg = tmpDst;
+			returnBucket = NULL;
+		}
+		regManager->freeReg(tmpSrc_1);
+		regManager->freeReg(tmpSrc_2);
+	} else if (regL > 0 && regR > 0) {
 		cout << "L=" << regL << " R = " << regR <<endl;
 		if (op == "=") {
 			CodeGenerator::emitCodeR(op, regL, regR, 0);
-			return bucketR;
+			*reg = regL;
+			returnBucket = bucketL;
 		} else {
 			int tmpReg = regManager->getTmpReg();
 			CodeGenerator::emitCodeR(op, tmpReg, regR, regL);
 			*reg = tmpReg;
-			return NULL;
+			returnBucket = NULL;
 		}
-	} else if (regL != -1 && regR == -1) {
+		regManager->freeReg(regL);
+		regManager->freeReg(regR);
+	} else if (regL > 0 && regR == -1) {
 		locR = bucketL->getLoc();
 		int tmpReg = regManager->getTmpReg();
 		CodeGenerator::emitCodeM("lw", locR, 29, tmpReg);
-		CodeGenerator::emitCodeR(op, regR, tmpReg, 0);
-	} else if (regL == -1 && regR != -1) {
-
+		if (op == "=") {
+			CodeGenerator::emitCodeR(op, regL, tmpReg, 0);
+			*reg = regL;
+			returnBucket = bucketL;
+		} else {
+			int tmpDst = regManager->getTmpReg();
+			CodeGenerator::emitCodeR(op, tmpDst, regL, tmpReg);
+			*reg = tmpDst;
+			returnBucket = NULL;
+		}
+		regManager->freeReg(tmpReg);
+	} else if (regL == -1 && regR == -1) {
+		locL = bucketL->getLoc();
+		if (op == "=") {
+			CodeGenerator::emitCodeM("lw", locL, 29, regR);
+			*reg = -1;
+			returnBucket = bucketL;
+		} else {
+			int tmpSrc = regManager->getTmpReg();
+			int tmpDst = regManager->getTmpReg();
+			CodeGenerator::emitCodeM("lw", locL, 29, tmpSrc);
+			CodeGenerator::emitCodeR(op, tmpDst, tmpSrc, regR);
+			regManager->freeReg(tmpSrc);
+			*reg = tmpDst;
+			returnBucket = NULL;
+		}
+		regManager->freeReg(regR);
 	}
-	
-	return 0;
+	return returnBucket;
 }
-
 
 ////////////////////////////////////////////////////////////
 // type gen symtab bucket functions						  //

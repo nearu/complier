@@ -59,8 +59,8 @@ public:
 	virtual void insert(TreeNode* t) {}
 
 	// return 0-31 : it is a reg number
-	// return 32 
-	//
+	// return -1 : it is a variable at stack 
+	// return -2 : it is a immediate
 	virtual SymBucket *genCode(Symtab *symtab, int *reg = NULL) {
 		code << "default genCode" << endl;
 	}
@@ -387,9 +387,12 @@ public:
 	}
 	void printSelf() {
 		ast << "NumberTreeNode";
-	}	
+	}
 
-
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL) {
+		*reg = -2;
+		return NULL;
+	}
 };
 
 /*

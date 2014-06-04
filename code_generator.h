@@ -2,6 +2,8 @@
 #define __CODE_GENERATOR_H_
 #include <fstream>
 #include <iostream>
+#include <cctype>
+#include <cstdio>
 using namespace std;
 extern ofstream code;
 class RegManager;
@@ -58,9 +60,11 @@ public:
 	 	reg[i] = 1;
 	}
 
-	 void freeReg(int i) {
+	void freeReg(int i) {
+		if (regTable[i][1] != 't') return;
 		reg[i] = 0;
 	}
+
 };
 
 class CodeGenerator {
@@ -116,7 +120,9 @@ public:
 	// lw sw instruments
 	static void emitCodeM(const string op, int offset, int regAddr, int reg) {
 		string c;
-		//c = op + regTable[reg] + "," + offset + "(" + regTable[regAddr]+"),"+regTable[reg];
+		char ch[16] = {0,};
+		sprintf(ch,"%d",offset);
+		c = op + regTable[reg] + "," + ch + "(" + regTable[regAddr]+"),"+regTable[reg];
 		code << c << endl;
 	}
 };	
