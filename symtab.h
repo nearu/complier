@@ -15,9 +15,10 @@ typedef map<string, SYMQUEUE> SYMMAP;
 
 class SymBucket {
 	int 			lineNO;
-	// the address of this type
+	// the address of this type, default -1
 	int 			location;
 	int 			size;
+	// default -1
 	int 			regNum;
 	// type name
 	const string 	type;
@@ -29,12 +30,21 @@ class SymBucket {
 	// currnt symtab
 	Symtab 			*curSymtab;
 
+	void _print(ofstream &out) {
+		if (location != -1)
+			out << lineNO << " " << name << ":\t" << type << "\t at " << location;
+		else if (regNum != -1)
+			out << lineNO << " " << name << ":\t" << type << "\t at reg " << regNum;
+		else 
+			out << lineNO << " " << name << ":\t" << type;
+	}
+
 public:
 	// next bucket in the one complicated datastructure
 	SymBucket 		*next;
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
-		location(0), next(this), regNum(0)
+		location(-1), next(this), regNum(-1)
 		{}
 
 /////////////////////////////////////////////////////
@@ -80,19 +90,24 @@ public:
 		return name;
 	}
 
+	int getRegNum() {
+		return regNum;
+	}
+
 	int getSize() {
 		return size;
 	}
+
+
 	void printBucket(ofstream &out) {
-		out << lineNO << " " << name << ":\t" << type << "\t at " << location;
+		_print(out);
 		SymBucket *tmp = next;
 		while(tmp != this) {
 			out << " .. ";
-			out << tmp->getLineno() <<  "\t " << tmp->getName() << " :\t" << tmp->getType() << "\t at " << tmp->getLoc();
+			tmp->_print(out);
 			tmp = tmp->next;
 		}
 		out << endl;
-
 	}
 	~SymBucket() {
 
@@ -101,6 +116,8 @@ public:
 
 
 class Symtab {
+	const int BEGIN_REG_NUM;
+	const int END_REG_NUM;
 	// symtabName
 	const string symtabName;
 	// the parent symtab
@@ -109,10 +126,12 @@ class Symtab {
 	SYMMAP symMap;
 	// current offset in the stack
 	int curLoc;
+	// default reg num is -1
 	int curRegNum;
 public:
 	Symtab(const string _name, SymBucket *_pBucket = NULL)
-		:symtabName(_name), pBucket(_pBucket),curLoc(0){}
+		:symtabName(_name), pBucket(_pBucket),curLoc(0),curRegNum(-1),
+		BEGIN_REG_NUM(16), END_REG_NUM(23){}
 
 	void insert(SymBucket* b) {
 		SYMMAP::iterator iter;
@@ -167,9 +186,24 @@ public:
 		curLoc += size;
 		return l;
 	}
-
+	// if return num is -1, then this symbol has to be stored in the stack
+	// otherwise, return a num 
 	int genRegNum() {
-		
+		if (curRegNum == END_REG_NUM) return -1;
+		if (curRegNum == -1) {
+			curRegNum = BEGIN_REG_NUM;
+		} else {
+			curRegNum++;
+		}
+		return curRegNum;
+	}
+
+	int getCurReg() {
+		return curRegNum;
+	}
+
+	int isRegSpill() {
+		return curRegNum == END_REG_NUM;
 	}
 	void printSymtab(ofstream& out);
 	virtual ~Symtab() {}

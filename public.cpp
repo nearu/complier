@@ -5,7 +5,27 @@ ofstream ast("AST");
 ofstream code("CODE");
 ofstream sym("SYM");
 extern Symtab* mainSymtab;
+class RegManager {
+	static const int BEGIN_TMP = 8;
+	static const int END_TMP   = 15;
+	static int reg[32];
+public:
+	static int getTmpReg() {
+		for(int i = BEGIN_TMP; i <= END_TMP; i++) {
+			if (reg[i] == 0) {
+				return i;
+			}
+		}
+	}
 
+	static void useReg(int i) {
+		reg[i] = 1;
+	}
+
+	static void freeReg(int i) {
+		reg[i] = 0;
+	}
+};
 
 void printAST(TreeNode *root) {
 	queue<TreeNode *> q;
@@ -83,32 +103,39 @@ void ListTreeNode::updateSymtab(Symtab *symtab) {
 }
 
 void ConstTreeNode::updateSymtab(Symtab *symtab) {
+	cout << "cu" << endl;
 	env = symtab;
 	const string type = value->getType();
 	SymBucket *b = new SymBucket(name, lineNO, "const-" + type, symtab);
 	int size;
+
     if (type == "string") 
 		size = ((NumberTreeNode<string>*)value)->get().length();
 	else size = getSize(type);
+
 	b->setSize(size);
 	b->setLoc(symtab->genLoc(size));
 	symtab->insert(b);
+
 }
 
 void VariableTreeNode::updateSymtab(Symtab *symtab) {
+	cout << "vu" <<endl;
 	env = symtab;
+	vector<TreeNode*>& list = nameList->getList();
 	if (name != "") {
-		SymBucket *b = typeNode->genSymItem(name, symtab);
-		b->setLoc(symtab->genLoc(b->getSize()));
-		symtab->insert(b);
-	} else {
-		// name list 
-		vector<TreeNode*>& list = nameList->getList();
-		for(int i = 0; i < list.size(); i++) {
-			SymBucket *b = typeNode->genSymItem(list[i]->getName(), symtab);
+		list.push_back(new TreeNode(name));
+	}
+	for(int i = 0; i < list.size(); i++) {
+		SymBucket *b = typeNode->genSymItem(list[i]->getName(), symtab);
+		string type = b->getType();
+		if (!(type == "array" || type == "string" || type == "record") && !symtab->isRegSpill()) {
+			int reg = symtab->genRegNum();
+			b->setRegNum(reg);			
+		} else {
 			b->setLoc(symtab->genLoc(b->getSize()));
-			symtab->insert(b);	
 		}
+		symtab->insert(b);
 	}
 }
 
@@ -124,32 +151,33 @@ void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 ////////////////////////////////////////////////////////////
 // gen code functions 									  //
 ////////////////////////////////////////////////////////////
-int ProgramTreeNode::genCode() {
+SymBucket * ProgramTreeNode::genCode(int *reg) {
 	routine->genCode();
-	return 0;
+	return NULL;
 }
 
-int RoutineTreeNode::genCode() {
+SymBucket * RoutineTreeNode::genCode(int *reg) {
 	body->genCode();
-	return 0;
+	return NULL;
 }
 
-int ListTreeNode::genCode() {
+SymBucket * ListTreeNode::genCode(int *reg) {
 	childrenGenCode(children);
 	return 0;
 }
 
-int ConstTreeNode::genCode() {
+SymBucket * ConstTreeNode::genCode(int *reg) {
 	
 	return 0;
 }
 
-int RoutineHeadTreeNode::genCode() {
+SymBucket * RoutineHeadTreeNode::genCode(int *reg) {
 
 	return 0;
 }
-int BinaryExprTreeNode::genCode() {
-	
+
+SymBucket * BinaryExprTreeNode::genCode(int *reg) {
+
 	return 0;
 }
 

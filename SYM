@@ -1,6 +1,6 @@
 3 a:	const-integer	 at 0
-5 a:	integer	 at 4
-5 b:	integer	 at 8
-5 c:	integer	 at 12
-6 s:	string	 at 16
-7 t:	char	 at 272
+5 a:	integer	 at reg 16
+5 b:	integer	 at reg 17
+5 c:	integer	 at reg 18
+6 s:	string	 at 4
+7 t:	char	 at reg 19

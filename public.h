@@ -58,7 +58,10 @@ public:
 	}
 	virtual void insert(TreeNode* t) {}
 
-	virtual int genCode() {
+	// return 0-31 : it is a reg number
+	// return 32 
+	//
+	virtual SymBucket *genCode(int *reg = NULL) {
 		code << "default genCode" << endl;
 	}
 
@@ -149,7 +152,7 @@ public:
 		return list;
 	}
 
-	int genCode();
+	SymBucket *genCode(int *reg = NULL );
 	void updateSymtab(Symtab*);
 
 };
@@ -180,7 +183,7 @@ public:
 		ast << "RoutineHead";
 	}
 	void updateSymtab(Symtab *);
-	int genCode();
+	SymBucket *genCode(int *reg = NULL );
 };
 /*
 * node for routine
@@ -199,7 +202,7 @@ public:
 	void printSelf() {
 		ast << "RoutineTreeNode";
 	}					
-	int genCode();
+	SymBucket *genCode(int *reg = NULL );
 	void updateSymtab(Symtab*);
 
 };
@@ -233,7 +236,7 @@ public:
 	void printSelf() {
 		ast << "ProgramTreeNode";
 	}
-	int genCode();
+	SymBucket *genCode(int *reg = NULL );
 	void updateSymtab(Symtab*);
 };
 
@@ -403,7 +406,7 @@ public:
 	void printSelf() {
 		ast << "ConstTreeNode";
 	}
-	int genCode();
+	SymBucket *genCode(int *reg = NULL );
 	void updateSymtab(Symtab* symtab);
 };
 
@@ -517,7 +520,7 @@ public:
 		ast << "BinaryExprTreeNode";
 	}	
 
-	int genCode();
+	SymBucket *genCode(int *reg = NULL );
 };
 
 /*
