@@ -137,16 +137,19 @@ void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 
 
 SymBucket * ProgramTreeNode::genCode(int *reg) {
+	cout << "pg" << endl;
 	routine->genCode();
 	return NULL;
 }
 
 SymBucket * RoutineTreeNode::genCode(int *reg) {
+	cout << "rg" << endl;
 	body->genCode();
 	return NULL;
 }
 
 SymBucket * ListTreeNode::genCode(int *reg) {
+	cout << "lg" << endl;
 	childrenGenCode(children);
 	return 0;
 }
@@ -172,7 +175,14 @@ SymBucket * RoutineHeadTreeNode::genCode(int *reg) {
 	return 0;
 }
 
+SymBucket * CompoundStmtTreeNode::genCode(int *reg) {
+	*reg = -1;
+	stmtList->genCode();
+	return NULL;
+}
+
 SymBucket * BinaryExprTreeNode::genCode(int *reg) {
+	cout << "bg" << endl;
 	int regR, regL;
 	int locR, locL;
 	SymBucket *bucketR, *bucketL;

@@ -304,7 +304,6 @@ non_label_stmt :  assign_stmt       {tp("non_label_stmt 1");$$ = $1;}
                | if_stmt            {tp("non_label_stmt 4");$$ = $1;}
                | repeat_stmt        {tp("non_label_stmt 5");$$ = $1;}
 
-
                | while_stmt         {tp("non_label_stmt 6");$$ = $1;}
                | for_stmt           {tp("non_label_stmt 7");$$ = $1;}
                | case_stmt          {tp("non_label_stmt 8");$$ = $1;}
@@ -312,7 +311,6 @@ non_label_stmt :  assign_stmt       {tp("non_label_stmt 1");$$ = $1;}
                ;
 assign_stmt : ID 	{s = idstr;} ASSIGN  expression  {
                 tp("assign stmt 1");
-                cout << "name = " << idstr;
                 VariableTreeNode* x = new VariableTreeNode(s);
                 $$ = new BinaryExprTreeNode("=",x,$4);
             }
@@ -407,20 +405,20 @@ term :  term  MUL  factor           {tp("term 1");$$ = new BinaryExprTreeNode("*
      |  term  AND factor            {tp("term 4");$$ = new BinaryExprTreeNode("&&",$1,$3);}
      |  factor                      {tp("term 5");$$ = $1;}
 ;
-factor : ID                         {tp("factor 1");$$ = new VariableTreeNode(currentToken);}
-       |  ID                        {s = currentToken;}
+factor : ID                         {tp("factor 1");$$ = new VariableTreeNode(idstr);}
+       |  ID                        {s = idstr;}
        LP  args_list  RP            {tp("factor 2");$$ = new CallExprTreeNode(s,((ListTreeNode*)$4)->getList());}
-       |  SYS_FUNCT                 {tp("factor 3");$$ = new CallExprTreeNode(currentToken);}
-       |  SYS_FUNCT                 {s = currentToken;}
+       |  SYS_FUNCT                 {tp("factor 3");$$ = new CallExprTreeNode(idstr);}
+       |  SYS_FUNCT                 {s = idstr;}
        LP  args_list  RP            {tp("factor 4");$$ = new CallExprTreeNode(s,((ListTreeNode*)$4)->getList());}
        |  const_value               {tp("factor 5");$$ = $1;}
        |  LP  expression  RP        {tp("factor 6");$$ = $2;}
        |  NOT  factor               {tp("factor 7");$$ = new UnaryExprTreeNode("~",$2);}
        |  MINUS  factor             {tp("factor 8");$$ = new UnaryExprTreeNode("-",$2);}
-       |  ID                        {s = currentToken;}
+       |  ID                        {s = idstr;}
        LB  expression  RB           {tp("factor 9");$$ = new ArrayElemTreeNode(s,$4);}
-       |  ID                        {s1 = currentToken;}
-       DOT  ID                      {tp("factor 10");s2 = currentToken; $$ = new RecordElemTreeNode(s1,s2);}
+       |  ID                        {s1 = idstr;}
+       DOT  ID                      {tp("factor 10");s2 = idstr; $$ = new RecordElemTreeNode(s1,s2);}
 ;
 args_list : args_list  COMMA  expression  {
     tp("args_list 1");

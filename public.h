@@ -202,7 +202,7 @@ public:
 	void printSelf() {
 		ast << "RoutineTreeNode";
 	}					
-	SymBucket *genCode(int *reg = NULL );
+	SymBucket *genCode(int *reg = NULL);
 	void updateSymtab(Symtab*);
 
 };
@@ -619,6 +619,8 @@ public:
 	void printSelf() {
 		ast << "CompoundStmtTreeNode";
 	}	
+
+	SymBucket *genCode(int *reg = NULL );
 
 };
 
