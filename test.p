@@ -4,8 +4,8 @@ const
 var 
 a,b,c,e,f,g,h,i: integer;
 s : string;
-t : char;
+t : integer;
 begin	
-	a := b;
-	a := t;
+	
+	t := t + a;
 end.
