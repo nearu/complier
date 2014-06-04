@@ -52,8 +52,8 @@ public:
 		return -1;
 	}
 
-	 void useReg(int i) {
-		reg[i] = 1;
+	void useReg(int i) {
+	 	reg[i] = 1;
 	}
 
 	 void freeReg(int i) {
@@ -71,7 +71,37 @@ public:
 		if (op == "=") {
 			c = "add " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
 		} else if (op == "-") {
-
+			c = "sub" + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+		} else if (op == "*") {
+			c = "mul" + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+		} else if (op == "/") {
+			c = "div" + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+		} else if (op == "%") {
+			c = "rem" + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+		} else if (op == "&&") {
+			c = "and" + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+		} else if (op == "||") {
+			c = "or" + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+		} else if (op == ">=") {
+			int tmp = regManager->getTmpReg();
+            c = "slt" + regTable[tmp] + "," + regTable[src_1] + "," + regTable[src_2] + "\n";
+            c = c + "beq" + regTable[tmp] + "," + regTable[0] + "greater than or equal";
+		} else if (op == ">") {
+			int tmp = regManager->getTmpReg();
+            c = "slt" + regTable[tmp] + "," + regTable[src_2] + "," + regTable[src_1] + "\n";
+            c = c + "bne" + regTable[tmp] + "," + regTable[0] + "greater than";
+		} else if (op == "<=") {
+			int tmp = regManager->getTmpReg();
+            c = "slt" + regTable[tmp] + "," + regTable[src_2] + "," + regTable[src_1] + "\n";
+            c = c + "beq" + regTable[tmp] + "," + regTable[0] + "less than or equal"
+		} else if (op == "<") {
+			int tmp = regManager->getTmpReg();
+            c = "slt" + regTable[tmp] + "," + regTable[src_1] + "," + regTable[src_2] + "\n";
+            c = c + "bne" + regTable[tmp] + "," + regTable[0] + "less than";
+		} else if (op == "==") {
+            c = "beq" + regTable[tmp] + "," + regTable[0] + "equal";
+		} else if (op == "!=") {
+			c = "bne" + regTable[tmp] + "," + regTable[0] + "not equal";
 		}
 		code << c << endl;
 	}
