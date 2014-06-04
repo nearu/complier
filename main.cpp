@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
   //printAST(root);
   //mainSymtab = new Symtab("mainSymtab");
   //root->genCode();
-  //regManager = new RegManager();
+  regManager = new RegManager();
   //root->updateSymtab(mainSymtab);
   //mainSymtab->printSymtab(sym);
   //root->genCode(mainSymtab);

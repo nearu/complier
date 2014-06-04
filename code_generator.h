@@ -75,9 +75,9 @@ class CodeGenerator {
 public:
 	// R-type instruments
 	static void emitCodeR(const string op, int dst, int src_1, int src_2) {
-		cout << "emit R :" << dst << " " << src_1 << " " << src_2 <<endl;
+		cout << "emit R :" << op << dst << " " << src_1 << " " << src_2 <<endl;
 		string c;
-		if (op == "+" || "=") {
+		if (op == "+" || op == "=") {
 			c = "add " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
 		} else if (op == "-") {
 			c = "sub " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
@@ -127,11 +127,11 @@ public:
 
 	static void emitCodeI(const string op, int dst, int src, int imm)
 	{
-		cout << "emit I :" << dst << " " << src <<endl;
+		cout << "emit I :" << op << dst << " " << src <<endl;
 		string c;
 		char ch[16] = {0,};
 		sprintf(ch,"%d",imm);
-		if (op == "+" || "=") {
+		if (op == "+" || op == "=") {
 			c = "addi " + regTable[dst] + "," + regTable[src] + "," + ch;
 		} else if (op == "-") {
 			c = "addi " + regTable[dst] + "," + regTable[src] + "," + "-" + ch;
@@ -209,6 +209,7 @@ public:
 		c = op +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
 		code << c << endl;
 	}
+
 };	
 
 #endif
