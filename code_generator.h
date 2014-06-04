@@ -35,6 +35,8 @@ const string regTable[] = {
 	"$s7",
 	"$t8",
 	"$t9",
+	"",
+	"",
 	"$gp",
 	"$sp",
 	"$fp",
@@ -61,6 +63,7 @@ public:
 	}
 
 	void freeReg(int i) {
+		cout << "free " << i << endl;
 		if (regTable[i][1] != 't') return;
 		reg[i] = 0;
 	}
@@ -72,9 +75,13 @@ class CodeGenerator {
 public:
 	// R-type instruments
 	static void emitCodeR(const string op, int dst, int src_1, int src_2) {
-		cout << "emit" << dst << src_1 << src_2 <<endl;
+		cout << "emit R :" << dst << " " << src_1 << " " << src_2 <<endl;
 		string c;
+<<<<<<< HEAD
 		if (op == "+" || "=") {
+=======
+		if (op == "=" || op == "+") {
+>>>>>>> 81edde0964b97270ab213844ff44b8e14747efea
 			c = "add " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
 		} else if (op == "-") {
 			c = "sub " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
@@ -122,7 +129,7 @@ public:
 		string c;
 		char ch[16] = {0,};
 		sprintf(ch,"%d",offset);
-		c = op + regTable[reg] + "," + ch + "(" + regTable[regAddr]+"),"+regTable[reg];
+		c = op +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
 		code << c << endl;
 	}
 };	

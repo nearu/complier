@@ -29,17 +29,12 @@
 8 routine part 5
 8 routine head
 8 stmt list 2
-9 factor 1
-9 term 5
-9 expr 4
-9 expression 7
-9 assign stmt 1
-9 non_label_stmt 1
-9 stmt 2
-9 stmt list 1
 10 factor 1
 10 term 5
 10 expr 4
+10 factor 1
+10 term 5
+10 expr 1
 10 expression 7
 10 assign stmt 1
 10 non_label_stmt 1

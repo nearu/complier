@@ -514,7 +514,7 @@ private:
 	const string op;
 	TreeNode * rhs, *lhs;
 public:
-	BinaryExprTreeNode(const string _op,  TreeNode* r,  TreeNode* l)
+	BinaryExprTreeNode(const string _op,  TreeNode* l,  TreeNode* r)
 						:op(_op),rhs(r),lhs(l) 
 	{
 		children.push_back(rhs);

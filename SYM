@@ -8,4 +8,4 @@
 5 h:	integer	 at reg 22
 5 i:	integer	 at reg 23
 6 s:	string	 at 4
-7 t:	char	 at 260
+7 t:	integer	 at 260
