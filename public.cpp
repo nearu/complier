@@ -202,9 +202,20 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		locR = bucketR->getLoc();
 	} else if (regL != -1 && regR != -1) {
 		cout << "L=" << regL << " R = " << regR <<endl;
-		CodeGenerator::emitCodeR(op, regL, regR, 0);
+		if (op == "=") {
+			CodeGenerator::emitCodeR(op, regL, regR, 0);
+			return bucketR;
+		} else {
+			int tmpReg = regManager->getTmpReg();
+			CodeGenerator::emitCodeR(op, tmpReg, regR, regL);
+			*reg = tmpReg;
+			return NULL;
+		}
 	} else if (regL != -1 && regR == -1) {
-		
+		locR = bucketL->getLoc();
+		int tmpReg = regManager->getTmpReg();
+		CodeGenerator::emitCodeM("lw", locR, 29, tmpReg);
+		CodeGenerator::emitCodeR(op, regR, tmpReg, 0);
 	} else if (regL == -1 && regR != -1) {
 
 	}

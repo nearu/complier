@@ -64,6 +64,7 @@ public:
 class CodeGenerator {
 
 public:
+	// R-type instruments
 	static void emitCodeR(const string op, int dst, int src_1, int src_2) {
 		cout << "emit" << dst << src_1 << src_2 <<endl;
 		string c;
@@ -75,8 +76,12 @@ public:
 		code << c << endl;
 	}
 
-	static void emitCodeM(const string op, int offset, int regAddr, int reg) {
 
+	// lw sw instruments
+	static void emitCodeM(const string op, int offset, int regAddr, int reg) {
+		string c;
+		c = op + regTable[reg] + "," + offset + "(" + regTable[regAddr]+"),"+regTable[reg];
+		code << c << endl;
 	}
 };	
 
