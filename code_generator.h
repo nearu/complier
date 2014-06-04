@@ -6,6 +6,8 @@
 #include <cstdio>
 using namespace std;
 extern ofstream code;
+class RegManager;
+extern RegManager *regManager;
 const string regTable[] = {
 	"$zero",
 	"$at",
@@ -89,27 +91,27 @@ public:
 		} else if (op == ">=") {
 			int tmp = regManager->getTmpReg();
             c = "slt" + regTable[tmp] + "," + regTable[src_1] + "," + regTable[src_2] + "\n";
-            c = c + "beq" + regTable[tmp] + "," + regTable[0] + "greater than or equal";
-            regManager->freeReg[tmp]; 
+            c = c + "beq" + regTable[tmp] + "," + regTable[0] +  "greater than or equal";
+            regManager->freeReg(tmp); 
 		} else if (op == ">") {
 			int tmp = regManager->getTmpReg();
             c = "slt" + regTable[tmp] + "," + regTable[src_2] + "," + regTable[src_1] + "\n";
             c = c + "bne" + regTable[tmp] + "," + regTable[0] + "greater than";
-            regManager->freeReg[tmp]; 
+            regManager->freeReg(tmp); 
 		} else if (op == "<=") {
 			int tmp = regManager->getTmpReg();
             c = "slt" + regTable[tmp] + "," + regTable[src_2] + "," + regTable[src_1] + "\n";
-            c = c + "beq" + regTable[tmp] + "," + regTable[0] + "less than or equal"
-            regManager->freeReg[tmp]; 
+            c = c + "beq" + regTable[tmp] + "," + regTable[0] + "less than or equal";
+            regManager->freeReg(tmp);
 		} else if (op == "<") {
 			int tmp = regManager->getTmpReg();
             c = "slt" + regTable[tmp] + "," + regTable[src_1] + "," + regTable[src_2] + "\n";
             c = c + "bne" + regTable[tmp] + "," + regTable[0] + "less than";
-            regManager->freeReg[tmp]; 
+            regManager->freeReg(tmp); 
 		} else if (op == "==") {
-            c = "beq" + regTable[tmp] + "," + regTable[0] + "equal";
+            c = "beq" + regTable[src_1] + "," + regTable[src_2] + "equal";
 		} else if (op == "!=") {
-			c = "bne" + regTable[tmp] + "," + regTable[0] + "not equal";
+			c = "bne" + regTable[src_1] + "," + regTable[src_2] + "not equal";
 		}
 		code << c << endl;
 	}
