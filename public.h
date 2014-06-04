@@ -456,6 +456,7 @@ public:
 
 	}	
 	void updateSymtab(Symtab*);
+	SymBucket *genCode(int *reg = NULL );
 };
 
 class ArrayElemTreeNode : public IDTreeNode {

@@ -4,6 +4,7 @@
 ofstream ast("AST");
 ofstream code("CODE");
 ofstream sym("SYM");
+ofstream error("ERROR");
 extern Symtab* mainSymtab;
 class RegManager {
 	static const int BEGIN_TMP = 8;
@@ -26,6 +27,13 @@ public:
 		reg[i] = 0;
 	}
 };
+
+class CodeGenerator {
+public:
+	static emitCodeR(const string op, int dst, int src_1, int src_2) {
+
+	}
+};	
 
 void printAST(TreeNode *root) {
 	queue<TreeNode *> q;
@@ -151,6 +159,8 @@ void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 ////////////////////////////////////////////////////////////
 // gen code functions 									  //
 ////////////////////////////////////////////////////////////
+
+
 SymBucket * ProgramTreeNode::genCode(int *reg) {
 	routine->genCode();
 	return NULL;
@@ -167,17 +177,34 @@ SymBucket * ListTreeNode::genCode(int *reg) {
 }
 
 SymBucket * ConstTreeNode::genCode(int *reg) {
-	
-	return 0;
+	*reg = -1;
+	return env->find(name);
 }
 
+SymBucket * VariableTreeNode::genCode(int *reg) {
+	Symbucket *b = env->find(name);
+	if (b != NULL) {
+		int reg = b->getRegNum();
+	} else {
+		cout << lineNO << "variable " << name << " is not defined" << endl;
+	}
+	return b;
+}
+
+// const var parts will be processed later
 SymBucket * RoutineHeadTreeNode::genCode(int *reg) {
 
 	return 0;
 }
 
 SymBucket * BinaryExprTreeNode::genCode(int *reg) {
-
+	int regR, regL;
+	SymBucket *bucketR, *bucketL;
+	bucketR = rhs->genCode(&regR);
+	bucketL = lhs->genCode(&regL);
+	if (regR != -1) {
+		regR = RegManager::getTmpReg();
+	}
 	return 0;
 }
 
