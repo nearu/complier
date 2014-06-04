@@ -151,11 +151,9 @@ public:
 	SymBucket *find(string name) {
 		SYMMAP::iterator iter;
 		iter = symMap.find(name);
-		cout << "ff" << endl;
 		if (iter != symMap.end()) {
 			SYMQUEUE q = symMap[name];
 			for(int i = q->size()-1; i >= 0; i--) {
-				cout << "fq" << endl;
 				if ((*q)[i]->getName() == name) 
 					return (*q)[i];
 			}
