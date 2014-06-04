@@ -6,6 +6,6 @@ a,b,c,e,f,g,h,i: integer;
 s : string;
 t : integer;
 begin	
-	
-	t := t + a;
+	a := a >= t;
+
 end.

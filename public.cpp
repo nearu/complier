@@ -210,7 +210,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		if (op == "=") {
 			CodeGenerator::emitCodeM("lw", locR, 29, tmpSrc_2);			
 			CodeGenerator::emitCodeM("sw", locL, 29, tmpSrc_2);
-			if (reg != NULL) *reg = -1;
+			if (reg != NULL) *reg = tmpSrc_2;
 			returnBucket = bucketL;
 		} else {
 			CodeGenerator::emitCodeM("lw", locL, 29, tmpSrc_1);
@@ -254,7 +254,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		locL = bucketL->getLoc();
 		if (op == "=") {
 			CodeGenerator::emitCodeM("sw", locL, 29, regR);
-			if (reg != NULL) *reg = -1;
+			if (reg != NULL) *reg = regR;
 			returnBucket = bucketL;
 		} else {
 			int tmpSrc = regManager->getTmpReg();
@@ -266,8 +266,46 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 			returnBucket = NULL;
 		}
 		regManager->freeReg(regR);
+	} else if (regL == -2 || regR == -2) {
+		int tmpDst = regManager->getTmpReg();
+		int tmpSrc = regManager->getTmpReg();
+		if (regL == -2 && regR == -2) {
+			CodeGenerator::emitCodeI(op, tmpDst, 0, ((NumberTreeNode<int> *)rhs)->get());
+			CodeGenerator::emitCodeI(op, tmpDst, 0, ((NumberTreeNode<int> *)lhs)->get());
+			if (reg != NULL) *reg = tmpDst;
+			returnBucket = NULL;
+		} else if (regL == -2 && regR > 0) {
+			CodeGenerator::emitCodeI(op, tmpDst, regR, ((NumberTreeNode<int> *)lhs)->get());
+			if (reg != NULL) *reg = tmpDst;
+			returnBucket = NULL;
+		} else if (regL == -2 && regR == -1) {
+			locR = bucketR->getLoc();
+			CodeGenerator::emitCodeM("lw", locR, 29, tmpSrc);
+			CodeGenerator::emitCodeI(op, tmpDst, tmpSrc, ((NumberTreeNode<int> *)lhs)->get());
+			if (reg != NULL) *reg = tmpDst;
+		} else if (regL > 0 && regR == -2) {
+			if (op == "=") {
+				CodeGenerator::emitCodeI(op, regL, 0, ((NumberTreeNode<int> *)rhs)->get());
+				if (reg != NULL) *reg = regL;
+			} else {
+				CodeGenerator::emitCodeI(op, tmpDst, regL, ((NumberTreeNode<int> *)rhs)->get());
+				if (reg != NULL) *reg = tmpDst;
+			}
+			returnBucket = NULL;
+		} else if (regL == -1 && regR == -2) {
+			locL = bucketL->getLoc();
+			if (op == "=") {
+				CodeGenerator::emitCodeI(op, tmpDst, 0, ((NumberTreeNode<int> *)rhs)->get());
+				CodeGenerator::emitCodeM("sw", locL, 29, tmpDst);
+				if (reg != NULL) *reg = tmpDst;
+			} else {
+				CodeGenerator::emitCodeM("lw", locL, 29, tmpSrc);
+				CodeGenerator::emitCodeI(op, tmpDst, tmpSrc, ((NumberTreeNode<int> *)rhs)->get());
+				if (reg != NULL) *reg = tmpDst;
+			}
+		}
+		regManager->freeReg(tmpSrc);
 	}
-
 	return returnBucket;
 }
 

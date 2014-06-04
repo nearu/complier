@@ -128,6 +128,18 @@ public:
 		c = op +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
 		code << c << endl;
 	}
+
+	static void emitCodeI(const string op, int dst, int src, int imm)
+	{
+		string c;
+		char ch[16] = {0,};
+		sprintf(ch,"%d",imm);
+		if (op == "+" || "=") {
+			c = "addi " + regTable[dst] + "," + regTable[src] + "," + ch;
+		}
+		code << c << endl;
+	}
+
 };	
 
 #endif
