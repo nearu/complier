@@ -58,10 +58,10 @@ int main(int argc, char *argv[]) {
   // cout << "begin print symtab" << endl;
   
 
-  CodeGenerator cg;
-  cg.emitCodeR("+",11,9,10);
-  cg.emitCodeR("%",11,9,10);
-  cg.emitCodeR("<=",11,9,10);
+  
+  CodeGenerator::emitCodeR("+",11,9,10);
+  CodeGenerator::emitCodeR("%",11,9,10);
+  CodeGenerator::emitCodeR("<=",11,9,10);
 
   return 0;
 	
