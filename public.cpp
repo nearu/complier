@@ -321,3 +321,6 @@ SymBucket* SysTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
 	b->setSize(size);
 	return b;
 }
+
+
+SymBucket* 
