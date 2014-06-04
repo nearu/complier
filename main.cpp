@@ -44,24 +44,28 @@ int main(int argc, char *argv[]) {
 	// 	cout << "error can not open file listing" << endl;
 	// 	return 1;
 	// }
-  traceScan = TRUE;
+  //traceScan = TRUE;
   // cout << "begin parse" << endl;
-  yyparse();
+  //yyparse();
   // cout << "begin print AST" << endl;
-  printAST(root);
-  mainSymtab = new Symtab("mainSymtab");
+  //printAST(root);
+  //mainSymtab = new Symtab("mainSymtab");
   //root->genCode();
-  regManager = new RegManager();
-  root->updateSymtab(mainSymtab);
-  mainSymtab->printSymtab(sym);
-  root->genCode(mainSymtab);
+  //regManager = new RegManager();
+  //root->updateSymtab(mainSymtab);
+  //mainSymtab->printSymtab(sym);
+  //root->genCode(mainSymtab);
   // cout << "begin print symtab" << endl;
   
 
   
-  CodeGenerator::emitCodeR("+",11,9,10);
   CodeGenerator::emitCodeR("%",11,9,10);
   CodeGenerator::emitCodeR("<=",11,9,10);
+  CodeGenerator::emitCodeR("==",11,9,10);
+  CodeGenerator::emitCodeI("%",11,9,10);
+  CodeGenerator::emitCodeI("<=",11,9,10);
+  CodeGenerator::emitCodeI("==",11,9,10);
+
 
   return 0;
 	

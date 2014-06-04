@@ -1,3 +1,1 @@
-lw $t0, 260($sp)
-add $t1,$t0,$s0
-sw $t1, 260($sp)
+rem $t3,$t1,$t2

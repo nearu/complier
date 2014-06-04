@@ -94,34 +94,40 @@ public:
 		} else if (op == ">=") {
 			int tmp = regManager->getTmpReg();
             c = "slt " + regTable[tmp] + "," + regTable[src_1] + "," + regTable[src_2] + "\n";
-            c = c + "beq " + regTable[tmp] + "," + regTable[0] +  " greater than or equal";
+            c = c + "xori " + regTable[dst] + "," + regTable[tmp] + "," + "1";
             regManager->freeReg(tmp); 
 		} else if (op == ">") {
 			int tmp = regManager->getTmpReg();
             c = "slt " + regTable[tmp] + "," + regTable[src_2] + "," + regTable[src_1] + "\n";
-            c = c + "bne " + regTable[tmp] + "," + regTable[0] + " greater than";
+            c = c + "xori " + regTable[dst] + "," + regTable[tmp] + "," + "0";
             regManager->freeReg(tmp); 
 		} else if (op == "<=") {
 			int tmp = regManager->getTmpReg();
             c = "slt " + regTable[tmp] + "," + regTable[src_2] + "," + regTable[src_1] + "\n";
-            c = c + "beq " + regTable[tmp] + "," + regTable[0] + " less than or equal";
+            c = c + "xori " + regTable[dst] + "," + regTable[tmp] + "," + "1";
             regManager->freeReg(tmp);
 		} else if (op == "<") {
 			int tmp = regManager->getTmpReg();
             c = "slt " + regTable[tmp] + "," + regTable[src_1] + "," + regTable[src_2] + "\n";
-            c = c + "bne " + regTable[tmp] + "," + regTable[0] + " less than";
+            c = c + "xori " + regTable[dst] + "," + regTable[tmp] + "," + "0";
             regManager->freeReg(tmp); 
 		} else if (op == "==") {
-            c = "beq " + regTable[src_1] + "," + regTable[src_2] + " equal";
+			c = "addi " + regTable[dst] + "," + regTable[0] + ",0" + "\n";
+            c = c + "beq " + regTable[src_1] + "," + regTable[src_2] + ",equal" +"\n";
+            c = c + "addi " + regTable[dst] + "," + regTable[0] + ",-1" + "\n";
+            c = c + "equal:" + "addi " + regTable[dst] + "," + regTable[dst] + ",1";
 		} else if (op == "!=") {
-			c = "bne " + regTable[src_1] + "," + regTable[src_2] + " not equal";
+			c = "addi " + regTable[dst] + "," + regTable[0] + ",0" + "\n";
+            c = c + "bne " + regTable[src_1] + "," + regTable[src_2] + ",notequal" +"\n";
+            c = c + "addi " + regTable[dst] + "," + regTable[0] + ",-1" + "\n";
+            c = c + "notequal:" + "addi " + regTable[dst] + "," + regTable[dst] + ",1";
 		}
 		code << c << endl;
 	}
 
 	static void emitCodeI(const string op, int dst, int src, int imm)
 	{
-		cout << "emit R :" << dst << " " << src_1 << " " << src_2 <<endl;
+		cout << "emit I :" << dst << " " << src <<endl;
 		string c;
 		char ch[16] = {0,};
 		sprintf(ch,"%d",imm);
@@ -130,49 +136,66 @@ public:
 		} else if (op == "-") {
 			c = "addi " + regTable[dst] + "," + regTable[src] + "," + "-" + ch;
 		} else if (op == "*") {
-			c = "muli " + regTable[dst] + "," + regTable[src] + "," + ch;
+			int tmp = regManager->getTmpReg();
+			c = "addi " + regTable[tmp] + "," + regTable[0] + "," + ch + "\n";
+			c = c + "mul " + regTable[dst] + "," + regTable[src] + "," + regTable[tmp];
+			regManager->freeReg(tmp);
 		} else if (op == "/") {
-			c = "divi " + regTable[dst] + "," + regTable[src] + "," + ch;
+			int tmp = regManager->getTmpReg();
+			c = "addi " + regTable[tmp] + "," + regTable[0] + "," + ch + "\n";
+			c = c + "div " + regTable[dst] + "," + regTable[src] + "," + regTable[tmp];
+			regManager->freeReg(tmp);
 		} else if (op == "%") {
-			c = "remi " + regTable[dst] + "," + regTable[src] + "," + ch;
+			int tmp = regManager->getTmpReg();
+			c = "addi " + regTable[tmp] + "," + regTable[0] + "," + ch + "\n";
+			c = c + "rem " + regTable[dst] + "," + regTable[src] + "," + regTable[tmp];
+			regManager->freeReg(tmp);
 		} else if (op == "&&") {
 			c = "andi " + regTable[dst] + "," + regTable[src] + "," + ch;
 		} else if (op == "||") {
 			c = "ori " + regTable[dst] + "," + regTable[src] + "," + ch;
 		} else if (op == ">=") {
 			int tmp = regManager->getTmpReg();
-            c = "slti " + regTable[tmp] + "," + regTable[src_1] + "," + regTable[src_2] + "\n";
-            c = c + "beq " + regTable[tmp] + "," + regTable[0] +  " greater than or equal";
+            c = "slti " + regTable[tmp] + "," + regTable[src] + "," + ch + "\n";
+            c = c + "xori " + regTable[dst] + "," + regTable[tmp] + "," + "1";
             regManager->freeReg(tmp); 
 		} else if (op == ">") {
 			int tmp = regManager->getTmpReg();
-			int src2 = regManager->getTmpReg();
-			c = "addi " + regTable[src2] + "," + regTable[0] + "," + ch + "\n";
-            c = c + "slt " + regTable[tmp] + "," + regTable[src2] + "," + regTable[src] + "\n";
-            c = c + "bne " + regTable[tmp] + "," + regTable[0] + " greater than";
+			int tmp2 = regManager->getTmpReg();
+			c = "addi " + regTable[tmp2] + "," + regTable[0] + "," + ch + "\n";
+            c = c + "slt " + regTable[tmp] + "," + regTable[tmp2] + "," + regTable[src] + "\n";
+            c = c + "xori " + regTable[dst] + "," + regTable[tmp] + "," + "0";
             regManager->freeReg(tmp); 
-            regManager->freeReg(src2); 
+            regManager->freeReg(tmp2);
 		} else if (op == "<=") {
 			int tmp = regManager->getTmpReg();
-			int src2 = regManager->getTmpReg();
-			c = "addi " + regTable[src2] + "," + regTable[0] + "," + ch + "\n";
-            c = c + "slt " + regTable[tmp] + "," + regTable[src2] + "," + regTable[src] + "\n";
-            c = c + "beq " + regTable[tmp] + "," + regTable[0] + " less than or equal";
+			int tmp2 = regManager->getTmpReg();
+			c = "addi " + regTable[tmp2] + "," + regTable[0] + "," + ch + "\n";
+            c = c + "slt " + regTable[tmp] + "," + regTable[tmp2] + "," + regTable[src] + "\n";
+            c = c + "xori " + regTable[dst] + "," + regTable[tmp] + "," + "1";
             regManager->freeReg(tmp);
-            regManager->freeReg(src2); 
+            regManager->freeReg(tmp2);
 		} else if (op == "<") {
 			int tmp = regManager->getTmpReg();
-            c = "slti " + regTable[tmp] + "," + regTable[src_1] + "," + regTable[src_2] + "\n";
-            c = c + "bne " + regTable[tmp] + "," + regTable[0] + " less than";
+            c = "slt " + regTable[tmp] + "," + regTable[src] + "," + ch + "\n";
+            c = c + "xori " + regTable[dst] + "," + regTable[tmp] + "," + "0";
             regManager->freeReg(tmp); 
 		} else if (op == "==") {
 			int tmp = regManager->getTmpReg();
-            c = "beq " + regTable[src] + "," + regTable[tmp] + " equal";
+			c = "addi " + regTable[dst] + "," + regTable[0] + ",0" + "\n";
+			c = c + "addi " + regTable[tmp] + "," + regTable[0] + "," + ch + "\n";
+            c = c + "beq " + regTable[src] + "," + regTable[tmp] + ",equal" +"\n";
+            c = c + "addi " + regTable[dst] + "," + regTable[0] + ",-1" + "\n";
+            c = c + "equal:" + "addi " + regTable[dst] + "," + regTable[dst] + ",1";
             regManager->freeReg(tmp); 
 		} else if (op == "!=") {
 			int tmp = regManager->getTmpReg();
-			c = "bne " + regTable[src] + "," + regTable[tmp] + " not equal";
-			regManager->freeReg(tmp); 
+			c = "addi " + regTable[dst] + "," + regTable[0] + ",0" + "\n";
+			c = c + "addi " + regTable[tmp] + "," + regTable[0] + "," + ch + "\n";
+            c = c + "bne " + regTable[src] + "," + regTable[tmp] + ",notequal" +"\n";
+            c = c + "addi " + regTable[dst] + "," + regTable[0] + ",-1" + "\n";
+            c = c + "notequal:" + "addi " + regTable[dst] + "," + regTable[dst] + ",1";
+            regManager->freeReg(tmp); 
 		}
 		code << c << endl;
 	}
