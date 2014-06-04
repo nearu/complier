@@ -224,7 +224,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		cout << "L=" << regL << " R = " << regR <<endl;
 		if (op == "=") {
 			CodeGenerator::emitCodeR(op, regL, regR, 0);
-			*reg  = regL;
+			*reg = regL;
 			returnBucket = bucketL;
 		} else {
 			int tmpReg = regManager->getTmpReg();
