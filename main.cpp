@@ -3,6 +3,7 @@
 #include "scanner.h"
 #include "parser.hpp"
 #include "symtab.h"
+#include "code_generator.h"
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
@@ -55,8 +56,14 @@ int main(int argc, char *argv[]) {
   mainSymtab->printSymtab(sym);
   root->genCode(mainSymtab);
   // cout << "begin print symtab" << endl;
+  
+
+  CodeGenerator cg;
+  cg.emitCodeR("+",11,9,10);
+  cg.emitCodeR("%",11,9,10);
+  cg.emitCodeR("<=",11,9,10);
+
   return 0;
-	
 	
 	
 	
