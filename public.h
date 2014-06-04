@@ -61,7 +61,7 @@ public:
 	// return 0-31 : it is a reg number
 	// return 32 
 	//
-	virtual SymBucket *genCode(int *reg = NULL) {
+	virtual SymBucket *genCode(Symtab *symtab, int *reg = NULL) {
 		code << "default genCode" << endl;
 	}
 
@@ -152,7 +152,7 @@ public:
 		return list;
 	}
 
-	SymBucket *genCode(int *reg = NULL );
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 	void updateSymtab(Symtab*);
 
 };
@@ -183,7 +183,7 @@ public:
 		ast << "RoutineHead";
 	}
 	void updateSymtab(Symtab *);
-	SymBucket *genCode(int *reg = NULL );
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 /*
 * node for routine
@@ -202,7 +202,7 @@ public:
 	void printSelf() {
 		ast << "RoutineTreeNode";
 	}					
-	SymBucket *genCode(int *reg = NULL);
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL);
 	void updateSymtab(Symtab*);
 
 };
@@ -236,7 +236,7 @@ public:
 	void printSelf() {
 		ast << "ProgramTreeNode";
 	}
-	SymBucket *genCode(int *reg = NULL );
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 	void updateSymtab(Symtab*);
 };
 
@@ -406,7 +406,7 @@ public:
 	void printSelf() {
 		ast << "ConstTreeNode";
 	}
-	SymBucket *genCode(int *reg = NULL );
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 	void updateSymtab(Symtab* symtab);
 };
 
@@ -456,7 +456,7 @@ public:
 
 	}	
 	void updateSymtab(Symtab*);
-	SymBucket *genCode(int *reg = NULL );
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
 class ArrayElemTreeNode : public IDTreeNode {
@@ -521,7 +521,7 @@ public:
 		ast << "BinaryExprTreeNode";
 	}	
 
-	SymBucket *genCode(int *reg = NULL );
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
 /*
@@ -620,7 +620,7 @@ public:
 		ast << "CompoundStmtTreeNode";
 	}	
 
-	SymBucket *genCode(int *reg = NULL );
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
 };
 

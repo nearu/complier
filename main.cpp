@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   regManager = new RegManager();
   root->updateSymtab(mainSymtab);
   mainSymtab->printSymtab(sym);
-  root->genCode();
+  root->genCode(mainSymtab);
   // cout << "begin print symtab" << endl;
   return 0;
 	

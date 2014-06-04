@@ -1,10 +1,11 @@
 program HelloWorld;
 const
-	a = 1;
+	cc = 1;
 var 
-a,b,c: integer;
+a,b,c,e,f,g,h,i: integer;
 s : string;
 t : char;
 begin	
 	a := b;
+	c := t;
 end.

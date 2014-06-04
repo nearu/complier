@@ -65,6 +65,7 @@ class CodeGenerator {
 
 public:
 	static void emitCodeR(const string op, int dst, int src_1, int src_2) {
+		cout << "emit" << dst << src_1 << src_2 <<endl;
 		string c;
 		if (op == "=") {
 			c = "add " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];

@@ -1,3 +1,4 @@
+#include <typeinfo>
 #include <queue>
 #include "code_generator.h"
 #include "public.h"
@@ -52,9 +53,10 @@ int getSize(const string& type) {
 ////////////////////////////////////////////////////////////
 // utils functions										  //
 ////////////////////////////////////////////////////////////
-void childrenGenCode(vector<TreeNode*>& children) {
+void childrenGenCode(vector<TreeNode*>& children, Symtab *symtab) {
+	cout << children.size() << endl;
 	for(int i = 0; i < children.size(); i++) 
-		children[i]->genCode();
+		children[i]->genCode(symtab);
 }
 
 void childrenUpdateSymtab(vector<TreeNode*>& children, Symtab *symtab) {
@@ -69,18 +71,22 @@ void childrenUpdateSymtab(vector<TreeNode*>& children, Symtab *symtab) {
 ////////////////////////////////////////////////////////////
 
 void ProgramTreeNode::updateSymtab(Symtab *symtab) {
+	env = symtab;
 	routine->updateSymtab(symtab);	
 }
 
 void RoutineTreeNode::updateSymtab(Symtab* symtab) {
+	env = symtab;
 	head->updateSymtab(symtab);
 }	
 
 void RoutineHeadTreeNode::updateSymtab(Symtab *symtab) {
+	env = symtab;
 	childrenUpdateSymtab(children, symtab);
 }
 
 void ListTreeNode::updateSymtab(Symtab *symtab) {
+	env = symtab;
 	cout << typeName << " lu " << endl;
 	childrenUpdateSymtab(list, symtab);	
 }
@@ -103,7 +109,7 @@ void ConstTreeNode::updateSymtab(Symtab *symtab) {
 }
 
 void VariableTreeNode::updateSymtab(Symtab *symtab) {
-	cout << "vu" <<endl;
+	cout << "vu:" << name << " " << symtab << endl;
 	env = symtab;
 	vector<TreeNode*>& list = nameList->getList();
 	if (name != "") {
@@ -136,33 +142,36 @@ void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 ////////////////////////////////////////////////////////////
 
 
-SymBucket * ProgramTreeNode::genCode(int *reg) {
+SymBucket * ProgramTreeNode::genCode(Symtab *symtab, int *reg) {
 	cout << "pg" << endl;
-	routine->genCode();
+	routine->genCode(env);
 	return NULL;
 }
 
-SymBucket * RoutineTreeNode::genCode(int *reg) {
+SymBucket * RoutineTreeNode::genCode(Symtab *symtab, int *reg) {
 	cout << "rg" << endl;
-	body->genCode();
+	body->genCode(env);
 	return NULL;
 }
 
-SymBucket * ListTreeNode::genCode(int *reg) {
+SymBucket * ListTreeNode::genCode(Symtab *symtab, int *reg) {
 	cout << "lg" << endl;
-	childrenGenCode(children);
+	childrenGenCode(list, symtab);
 	return 0;
 }
 
-SymBucket * ConstTreeNode::genCode(int *reg) {
+SymBucket * ConstTreeNode::genCode(Symtab *symtab, int *reg) {
 	*reg = -1;
+	env = symtab;
 	return env->find(name);
 }
 
-SymBucket * VariableTreeNode::genCode(int *reg) {
+SymBucket * VariableTreeNode::genCode(Symtab *symtab, int *reg) {
+	cout << "vg"<< endl;
+	env = symtab;
 	SymBucket *b = env->find(name);
 	if (b != NULL) {
-		int reg = b->getRegNum();
+		*reg = b->getRegNum();
 	} else {
 		cout << lineNO << "variable " << name << " is not defined" << endl;
 	}
@@ -170,31 +179,32 @@ SymBucket * VariableTreeNode::genCode(int *reg) {
 }
 
 // const var parts will be processed later
-SymBucket * RoutineHeadTreeNode::genCode(int *reg) {
+SymBucket * RoutineHeadTreeNode::genCode(Symtab *symtab, int *reg) {
 
 	return 0;
 }
 
-SymBucket * CompoundStmtTreeNode::genCode(int *reg) {
-	*reg = -1;
-	stmtList->genCode();
+SymBucket * CompoundStmtTreeNode::genCode(Symtab *symtab, int *reg) {
+	stmtList->genCode(symtab);
 	return NULL;
 }
 
-SymBucket * BinaryExprTreeNode::genCode(int *reg) {
-	cout << "bg" << endl;
+SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
+	cout << "bg" << symtab << endl;
+	env = symtab;
 	int regR, regL;
 	int locR, locL;
 	SymBucket *bucketR, *bucketL;
-	bucketR = rhs->genCode(&regR);
-	bucketL = lhs->genCode(&regL);
+	bucketR = rhs->genCode(env, &regR);
+	bucketL = lhs->genCode(env, &regL);
 	if (regL == -1 && regR == -1) {
 		locL = bucketL->getLoc();
 		locR = bucketR->getLoc();
 	} else if (regL != -1 && regR != -1) {
+		cout << "L=" << regL << " R = " << regR <<endl;
 		CodeGenerator::emitCodeR(op, regL, regR, 0);
 	} else if (regL != -1 && regR == -1) {
-
+		
 	} else if (regL == -1 && regR != -1) {
 
 	}

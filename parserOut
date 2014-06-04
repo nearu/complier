@@ -6,6 +6,11 @@
 5 name list 2
 5 name list 1
 5 name list 1
+5 name list 1
+5 name list 1
+5 name list 1
+5 name list 1
+5 name list 1
 5 simple_type_decl 1
 5 type_decl 1
 5 var_decl
@@ -32,7 +37,15 @@
 9 non_label_stmt 1
 9 stmt 2
 9 stmt list 1
-10 compound stmt
-10 routine_body
-10 routine
-10 pargram
+10 factor 1
+10 term 5
+10 expr 4
+10 expression 7
+10 assign stmt 1
+10 non_label_stmt 1
+10 stmt 2
+10 stmt list 1
+11 compound stmt
+11 routine_body
+11 routine
+11 pargram
