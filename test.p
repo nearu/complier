@@ -1,8 +1,15 @@
 program HelloWorld;
+type 
+	r = record 
+		f : char;
+		end;
 var 
-	a,b,c : integer;
+	a : record
+		d : integer;
+		end;
+	d,b,c : integer;
 begin	
-	while a <= 1 do 
+	while d <= 1 do 
 		while b <= 1 do
 			begin
 				c := c+1;
