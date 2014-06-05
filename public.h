@@ -372,6 +372,7 @@ public:
 		return "record";
 	}
 	SymBucket *genSymItem(const string type, Symtab *symtab);
+
 };
 
 //==============================================================
@@ -503,7 +504,8 @@ public:
 	void printSelf() {
 		ast << "RecordElemTreeNode:"<<recordName<<"."<<elemName;
 	}		
-	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	SymBucket *genCode(Symtab *symtab, int *reg);
+	//SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
 };
 

@@ -7,7 +7,9 @@
 using namespace std;
 extern ofstream code;
 class RegManager;
+class LabelManager;
 extern RegManager *regManager;
+extern LabelManager  *labelManager;
 const string regTable[] = {
 	"$zero",
 	"$at",
@@ -68,6 +70,13 @@ public:
 		reg[i] = 0;
 	}
 
+};
+
+class LabelManager {
+	int loop_number;
+public:
+	int getLoopLabel(){return loop_number;}
+	void addLoopLabel(){loop_number++;} 
 };
 
 class CodeGenerator {
@@ -222,7 +231,7 @@ public:
 	}
 
 	static void addLabel(const string label){
-		code << label << ":";
+		code << label << ":" << endl;
 	}
 
 

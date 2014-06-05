@@ -9,7 +9,9 @@ ofstream ast("AST");
 ofstream code("CODE");
 ofstream sym("SYM");
 ofstream error("ERROR");
+LabelManager *labelManager;
 RegManager *regManager;
+
 extern Symtab* mainSymtab;
 
 /////////////////////////////////////////////////////////////
@@ -31,6 +33,7 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 		loc = bucket->getLoc();
 	}
 	cout << "in select : loc = " << loc << endl;
+
 }
 
 
@@ -351,12 +354,36 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 SymBucket * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	SymBucket *bucketR, *bucketL;
 	int regL, regR;
-	
+	int locL, LocR;
+	string loadOPR, storeOPR;
+	string loadOPL, storeOPL;
+	int x;
+	x=labelManager->getLoopLabel();
+	char ch[16] = {0,};
+	sprintf(ch,"%d",x);
+	string loop = "loop";
+	loop = loop + ch;
+	string breakn = "break";
+	breakn = breakn + ch;
+	labelManager->addLoopLabel();
 	bucketL = condition->genCode(symtab, &regL);
-	CodeGenerator::emitCodeJ("beq",regL,32,1,"break");
-	bucketR = body->genCode(symtab, &regR);
-	CodeGenerator::addLabel("break");
-	return bucketR;
+	CodeGenerator::addLabel(loop);
+	selectOP(bucketL,regL,loadOPL,storeOPL,locL);
+	if(regL == -1){
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, 29, tmp);
+		CodeGenerator::emitCodeJ("beq",tmp,0,0,breakn);
+		regManager->freeReg(tmp);
+	}
+	else {
+		CodeGenerator::emitCodeJ("beq",regL,0,0,breakn);
+	}
+	body->genCode(symtab, &regR);
+	CodeGenerator::emitCodeJ("j",0,0,0,loop);
+	CodeGenerator::addLabel(breakn);
+	//delete bucketL;
+	//delete bucketR;
+	return NULL;
 }
 
 
