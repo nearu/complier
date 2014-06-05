@@ -3,12 +3,11 @@ type
 	r = record 
 		f : char;
 		end;
+	ar = array [char] of char;
 var 
-	a : record
+	a : array [1..29] of char;
+	v : record 
 		d : integer;
-		end;
-	d,b,c,i : integer;
 begin	
-	for i:= 1 to 10 do
-		b:=b+i;
+
 end.

@@ -237,7 +237,7 @@ public:
 
 	// lw sw instruments
 	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
-		cout << "emit M" << " size = " << size << "offset = " << offset <<  endl;
+		cout << "emit M" << " size = " << size << " offset = " << offset <<  endl;
 		string c;
 		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
 		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
