@@ -59,12 +59,9 @@ int main(int argc, char *argv[]) {
   
 
   
-  CodeGenerator::emitCodeR("%",11,9,10);
-  CodeGenerator::emitCodeR("<=",11,9,10);
-  CodeGenerator::emitCodeR("==",11,9,10);
-  CodeGenerator::emitCodeI("%",11,9,10);
-  CodeGenerator::emitCodeI("<=",11,9,10);
-  CodeGenerator::emitCodeI("==",11,9,10);
+  CodeGenerator::emitCodeJ("beq",11,32,1,"123456");
+  CodeGenerator::emitCodeJ("j",0,0,0,"000000");
+
 
 
   return 0;

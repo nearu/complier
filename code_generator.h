@@ -200,6 +200,31 @@ public:
 		code << c << endl;
 	}
 
+	static void emitCodeJ(const string op, int reg1, int reg2, int imm, const string label){
+		string c;
+		if(op == "beq" || op == "bne"){
+			if(reg2 > 31){
+				char ch[16] = {0,};
+				sprintf(ch,"%d",imm);
+				int tmp = regManager->getTmpReg();
+				c = "addi " + regTable[tmp] + "," + regTable[0] + "," + ch + "\n";
+				c = c + op + " " + regTable[reg1] + "," + regTable[tmp] + "," + label;
+				regManager->freeReg(tmp); 
+			}
+			else {
+				c = op + " " + regTable[reg1] + "," + regTable[reg2] + "," + label;
+			}
+		}
+		else if(op == "j")
+			c = op + " " + label;
+		code << c << endl;
+
+	}
+
+	static void addLabel(const string label){
+		code << label << ":";
+	}
+
 
 	// lw sw instruments
 	static void emitCodeM(const string op, int offset, int regAddr, int reg) {

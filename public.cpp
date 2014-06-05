@@ -309,6 +309,18 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	return returnBucket;
 }
 
+SymBucket * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg){
+	SymBucket *bucketR, *bucketL;
+	int regL, regR;
+	
+	bucketL = condition->genCode(symtab, &regL);
+	CodeGenerator::emitCodeJ("beq",regL,32,1,"break");
+	bucketR = body->genCode(symtab, &regR);
+	CodeGenerator::addLabel("break");
+	return bucketR;
+}
+
+
 ////////////////////////////////////////////////////////////
 // type gen symtab bucket functions						  //
 ////////////////////////////////////////////////////////////
