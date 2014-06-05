@@ -2,10 +2,8 @@ program HelloWorld;
 const
 	cc = 1;
 var 
-a,b,c,e,f,g,h,i: integer;
-s : string;
-t : integer;
+a : 1..26;
+b : integer;
 begin	
-	a := a >= t;
-
+	
 end.

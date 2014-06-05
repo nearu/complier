@@ -1,4 +1,0 @@
-lw $t0, 260($sp)
-slt $t2,$s0,$t0
-beq $t2,$zerogreater than or equal
-add $s0,$t1,$zero

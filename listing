@@ -8,38 +8,16 @@
 	3 ;
 	4 var
 	5 a
-	5 ,
-	5 b
-	5 ,
-	5 c
-	5 ,
-	5 e
-	5 ,
-	5 f
-	5 ,
-	5 g
-	5 ,
-	5 h
-	5 ,
-	5 i
 	5 :
-	5 integer
+	5 1
+	5 ..
+	5 26
 	5 ;
-	6 s
+	6 b
 	6 :
-	6 string
+	6 integer
 	6 ;
-	7 t
-	7 :
-	7 integer
-	7 ;
-	8 begin
-	9 a
-	9 :=
-	9 a
-	9 >=
-	9 t
-	9 ;
-	11 end
-	11 .
-	11 
+	7 begin
+	9 end
+	9 .
+	9 

@@ -326,12 +326,15 @@ SymBucket* SysTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
 }
 
 
+// array need to consider about index type of sub range ,
 SymBucket *ArrayTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
 	cout << "array node" << endl;
 	SymBucket *array = new SymBucket(typeName, lineNO, "array", symtab);
 	SymBucket *indexBucket = indexType->genSymItem("index", symtab);
 	SymBucket *typeBucket = elemType->genSymItem("array", symtab);
+	
 	int len = pow(2,indexBucket->getSize()*8);
+
 	int size = len * typeBucket->getSize();
 	array->setSize(size);
 	array->setLoc(symtab->genLoc(size));
@@ -344,15 +347,23 @@ SymBucket *ArrayTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) 
 
 
 SymBucket *SubRangeTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
-	SymBucket *srbBucket = new SymBucket(typeName, lineNO, "subrange", symtab);
-	SymBucket *sreBucket = new SymBucket(typeName, lineNO, "subrange", symtab);
+	char cu[16] = {0,};
+	char cl[16] = {0,};
+	int u = ((NumberTreeNode<int>*)upperBound)->get();
+	int l = ((NumberTreeNode<int>*)lowerBound)->get();
+	sprintf(cu,"%d",u);
+	sprintf(cl,"%d",l);
+	SymBucket *srhBucket = new SymBucket(typeName, lineNO, "subrange", symtab);
+	SymBucket *srbBucket = new SymBucket("subrange", lineNO, cl, symtab);
+	SymBucket *sreBucket = new SymBucket("subrange", lineNO, cu, symtab);
 	srbBucket->setSize(getSize("integer"));
 	srbBucket->setSize(getSize("integer"));
+	sreBucket->setSize(getSize("integer"));
+	srhBucket->next = srbBucket;
 	srbBucket->next = sreBucket;
-	sreBucket->next = srbBucket;
-	srbBucket->last = sreBucket;
-	srbBucket->setSize(((NumberTreeNode<int>*)upperBound)->get() - ((NumberTreeNode<int>*)lowerBound)->get());
-	return srbBucket;
+	sreBucket->next = srhBucket;
+	srhBucket->last = sreBucket;
+	return srhBucket;
 }
 
 SymBucket *RecordTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
@@ -395,3 +406,4 @@ SymBucket *CustomTypeTreeNode::genSymItem(const string typeName, Symtab *symtab)
 	b->setSize(typeBucket->getSize());
 	return b;
 }
+

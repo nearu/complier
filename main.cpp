@@ -45,23 +45,21 @@ int main(int argc, char *argv[]) {
 	// 	return 1;
 	// }
   traceScan = TRUE;
-  // cout << "begin parse" << endl;
   yyparse();
-  // cout << "begin print AST" << endl;
   printAST(root);
   mainSymtab = new Symtab("mainSymtab");
-  //root->genCode();
   regManager = new RegManager();
   root->updateSymtab(mainSymtab);
   mainSymtab->printSymtab(sym);
   root->genCode(mainSymtab);
-  // cout << "begin print symtab" << endl;
-  
+ 
+  // CodeGenerator::emitCodeR("%",11,9,10);
+  // CodeGenerator::emitCodeR("<=",11,9,10);
+  // CodeGenerator::emitCodeR("==",11,9,10);
+  // CodeGenerator::emitCodeI("%",11,9,10);
+  // CodeGenerator::emitCodeI("<=",11,9,10);
+  // CodeGenerator::emitCodeI("==",11,9,10);
 
-  
-  CodeGenerator::emitCodeR("+",11,9,10);
-  CodeGenerator::emitCodeR("%",11,9,10);
-  CodeGenerator::emitCodeR("<=",11,9,10);
 
   return 0;
 	
