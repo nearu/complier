@@ -359,8 +359,8 @@ SymBucket * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	string breakn = "break";
 	breakn = breakn + ch;
 	labelManager->addLoopLabel();
-	bucketL = condition->genCode(symtab, &regL);
 	CodeGenerator::addLabel(loop);
+	bucketL = condition->genCode(symtab, &regL);
 	selectOP(bucketL,regL,loadOPL,storeOPL,locL);
 	if(regL == -1){
 		int tmp = regManager->getTmpReg();
@@ -395,8 +395,8 @@ SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	breakn = breakn + ch;
 	labelManager->addLoopLabel();
 	bucketL = assignExpr->genCode(symtab, &regL);
-	bucketR = dirExpr->genCode(symtab,&regR);
 	CodeGenerator::addLabel(loop);
+	bucketR = dirExpr->genCode(symtab,&regR);
 	selectOP(bucketR,regR,loadOPR,storeOPR,locR);
 	if(regR == -1){
 		int tmp = regManager->getTmpReg();
