@@ -703,7 +703,7 @@ public:
 	void printSelf() {
 		ast << "WhileStmtTreeNode";
 	}
-	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	SymBucket * genCode(Symtab *symtab, int *reg = NULL );
 
 };
 

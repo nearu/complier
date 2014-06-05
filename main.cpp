@@ -16,6 +16,7 @@ extern TreeNode *root;
 Symtab *mainSymtab;
 extern ofstream sym;
 extern RegManager *regManager;
+extern LabelManager *labelManager;
 int main(int argc, char *argv[]) {
 	// char option[MAX_OPTION];
 	// int opNumber = 0;
@@ -49,6 +50,8 @@ int main(int argc, char *argv[]) {
   printAST(root);
   mainSymtab = new Symtab("mainSymtab");
   regManager = new RegManager();
+  labelManager = new LabelManager();
+
 
   root->updateSymtab(mainSymtab);
   cout << "updateSymtab end" << endl;

@@ -1,15 +1,10 @@
 program HelloWorld;
-type 
-	d = 1..27;
-	ar = array [d] of char;
-	r = record
-		a : d;
-	end;
 var 
-	my : d;
-	a,b,c,d,e,f,g,h,i,t : integer;
-	b : integer;
+	a,b,c : integer;
 begin	
-	a := b;
-	a := 1;
+	while a <= 1 do 
+		while b <= 1 do
+			begin
+				c := c+1;
+			end;
 end.

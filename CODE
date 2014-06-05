@@ -1,0 +1,16 @@
+addi $t3,$zero,1
+slt $t2,$t3,$s0
+xori $t0,$t2,1
+loop0:
+beq $t0,$zero,break0
+addi $t4,$zero,1
+slt $t3,$t4,$s1
+xori $t1,$t3,1
+loop1:
+beq $t1,$zero,break1
+addi $t2,$s2,1
+add $s2,$t2,$zero
+j loop1
+break1:
+j loop0
+break0:

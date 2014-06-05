@@ -7,7 +7,9 @@
 using namespace std;
 extern ofstream code;
 class RegManager;
+class LabelManager;
 extern RegManager *regManager;
+extern LabelManager  *labelManager;
 const string regTable[] = {
 	"$zero",
 	"$at",
@@ -68,6 +70,13 @@ public:
 		reg[i] = 0;
 	}
 
+};
+
+class LabelManager {
+	int loop_number;
+public:
+	int getLoopLabel(){return loop_number;}
+	void addLoopLabel(){loop_number++;} 
 };
 
 class CodeGenerator {
@@ -222,7 +231,7 @@ public:
 	}
 
 	static void addLabel(const string label){
-		code << label << ":";
+		code << label << ":" << endl;
 	}
 
 
@@ -231,16 +240,24 @@ public:
 		string c;
 		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
 		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
-		string instr;
 		char ch[16] = {0,};
-		sprintf(ch,"%d",offset);
-		if (op == "load") {
-			instr = loadInstr[size];
-		} else {
-			instr = storeInstr[size];
+		string instr;
+		if (op == "load" || op == "load_reg") {
+				instr = loadInstr[size];
+			} else {
+				instr = storeInstr[size];
+			}
+		if (op == "load" || op == "store") {
+			sprintf(ch,"%d",offset);
+			c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
+			code << c << endl;
+		} else if (op == "load_reg" || op =="store_reg") {
+			sprintf(ch, "0");
+			string c1 = "add " + regTable[offset] + ", " + regTable[offset] + ", " + regTable[regAddr];
+			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[offset] + ")";
+			regManager->freeReg(offset);
+			code << c1 << endl << c << endl;
 		}
-		c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
-		code << c << endl;
 	}
 
 };	
