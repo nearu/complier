@@ -15,7 +15,7 @@ extern Symtab* mainSymtab;
 /////////////////////////////////////////////////////////////
 // utils												   //
 /////////////////////////////////////////////////////////////
-void selectOP(int reg, string &load, string &store) {
+void selectOP(SymBucket * b, int reg, string &load, string &store,int &loc) {
 	load = reg == -3 ? "load_reg" : "load";
 	store = reg == -3 ? "store_reg" : "store";
 }
@@ -337,15 +337,17 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	return returnBucket;
 }
 
-SymBucket * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg){
+void * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	SymBucket *bucketR, *bucketL;
 	int regL, regR;
 	
 	bucketL = condition->genCode(symtab, &regL);
-	CodeGenerator::emitCodeJ("beq",regL,32,1,"break");
-	bucketR = body->genCode(symtab, &regR);
+	CodeGenerator::addLabel("loop");
+	CodeGenerator::emitCodeJ("beq",regL,0,0,"break");
+	body->genCode(symtab, &regR);
+	CodeGenerator::emitCodeJ("j",0,0,0,"loop");
 	CodeGenerator::addLabel("break");
-	return bucketR;
+	return;
 }
 
 
