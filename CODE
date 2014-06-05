@@ -1,0 +1,3 @@
+lh $t0, 6($sp)
+add $s0,$t0,$zero
+addi $s0,$zero,1

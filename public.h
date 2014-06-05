@@ -62,8 +62,9 @@ public:
 	virtual void insert(TreeNode* t) {}
 
 	// return 0-31 : it is a reg number
-	// return -1 : it is a variable at stack 
+	// return -1 : it is a variable at stack , the offset is at bucket->loc
 	// return -2 : it is a immediate
+	// return -3 : the offset is at bucket->offsetReg
 	virtual SymBucket *genCode(Symtab *symtab, int *reg = NULL) {
 		code << "default genCode" << endl;
 	}
@@ -486,8 +487,8 @@ public:
 					{}
 	void printSelf() {
 		ast << "ArrayElemTreeNode:" << name;
-	}		
-	//SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	}
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
 };
 

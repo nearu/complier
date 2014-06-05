@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
   mainSymtab = new Symtab("mainSymtab");
   regManager = new RegManager();
   root->updateSymtab(mainSymtab);
+  cout << "updateSymtab end" << endl;
   mainSymtab->printSymtab(sym);
   root->genCode(mainSymtab);
  

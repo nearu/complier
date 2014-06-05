@@ -202,11 +202,19 @@ public:
 
 
 	// lw sw instruments
-	static void emitCodeM(const string op, int offset, int regAddr, int reg) {
+	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
 		string c;
+		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
+		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
+		string instr;
 		char ch[16] = {0,};
 		sprintf(ch,"%d",offset);
-		c = op +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
+		if (op == "load") {
+			instr = loadInstr[size];
+		} else {
+			instr = storeInstr[size];
+		}
+		c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
 		code << c << endl;
 	}
 
