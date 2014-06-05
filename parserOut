@@ -54,6 +54,7 @@
 10 name list 2
 10 name list 1
 10 name list 1
+10 name list 1
 10 simple_type_decl 1
 10 type_decl 1
 10 var_decl
@@ -62,7 +63,8 @@
 11 routine part 5
 11 routine head
 11 stmt list 2
-12 factor 1
+12 const value 1
+12 factor 5
 12 term 5
 12 expr 4
 12 expression 7
@@ -70,15 +72,14 @@
 12 factor 5
 12 term 5
 12 expr 4
-12 expression 3
+12 expression 7
 13 factor 1
 >>>>>>> e0dcad631a5dcf08dd7f1db52fd0a02a8e94a760
 13 term 5
 13 expr 4
-13 expression 7
-13 const value 1
-13 factor 5
+13 factor 1
 13 term 5
+<<<<<<< HEAD
 13 expr 4
 <<<<<<< HEAD
 13 expression 7
@@ -137,3 +138,18 @@
 17 routine
 17 pargram
 >>>>>>> e0dcad631a5dcf08dd7f1db52fd0a02a8e94a760
+=======
+13 expr 1
+13 expression 7
+13 assign stmt 1
+13 non_label_stmt 1
+13 stmt 2
+13 for stmt
+13 non_label_stmt 7
+13 stmt 2
+13 stmt list 1
+14 compound stmt
+14 routine_body
+14 routine
+14 pargram
+>>>>>>> 6cd9f34e8dbd9fa9a3ec58347c2e6dbff9d14461
