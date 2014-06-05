@@ -1,15 +1,8 @@
 program HelloWorld;
-type 
-	d = 1..27;
-	ar = array [d] of char;
-	r = record
-		a : d;
-	end;
 var 
-	my : d;
-	a,b,c,d,e,f,g,h,i,t : integer;
+	a : array [1..20] of integer;
 	b : integer;
-begin	
-	a := b;
-	a := 1;
+begin
+	b := 1;
+	a[b] := b + a[1];	
 end.

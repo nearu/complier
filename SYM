@@ -1,15 +1,2 @@
-10 a:	integer	 at reg 16
-4 ar:	custom-array .. 4 ar:	array .. 4 index:	ref-d-custom-subrange .. 4 array:	char
-10 b:	integer	 at reg 17
-11 b:	integer	 at 6
-10 c:	integer	 at reg 18
-3 d:	custom-subrange .. 3 d:	subrange .. 3 subrange:	1 .. 3 subrange:	27
-10 d:	integer	 at reg 19
-10 e:	integer	 at reg 20
-10 f:	integer	 at reg 21
-10 g:	integer	 at reg 22
-10 h:	integer	 at reg 23
-10 i:	integer	 at 2
-9 my:	ref-d-custom-subrange	 at 0
-7 r:	custom-record .. 7 r:	record .. 7 a:	ref-d-custom-subrange .. 6 :	ref-d-custom-subrange
-10 t:	integer	 at 4
+3 a:	array	 at 0 .. 3 index:	subrange .. 3 subrange:	1 .. 3 subrange:	20 .. 3 array:	integer
+4 b:	integer	 at reg 16

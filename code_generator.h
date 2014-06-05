@@ -228,6 +228,7 @@ public:
 
 	// lw sw instruments
 	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
+		cout << "emit M" << " size = " << size << "offset = " << offset <<  endl;
 		string c;
 		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
 		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
@@ -235,19 +236,20 @@ public:
 		string instr;
 		if (op == "load" || op == "load_reg") {
 				instr = loadInstr[size];
-			} else {
-				instr = storeInstr[size];
-			}
+		} else {
+			instr = storeInstr[size];
+		}
 		if (op == "load" || op == "store") {
 			sprintf(ch,"%d",offset);
 			c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
 			code << c << endl;
-		} else if (op == "load_reg" || op =="store_Reg") {
+		} else if (op == "load_reg" || op =="store_reg") {
+			ch[0] = '\0';
 			sprintf(ch, "0");
 			string c1 = "add " + regTable[offset] + ", " + regTable[offset] + ", " + regTable[regAddr];
 			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[offset] + ")";
 			regManager->freeReg(offset);
-			cout << c1 << endl << c << endl;
+			code << c1 << endl << c << endl;
 		}
 	}
 
