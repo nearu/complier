@@ -9,22 +9,70 @@
 5 type_decl 3
 5 type_definition
 5 type_decl_list 2
-6 type part 1
-7 name list 2
+6 simple_type_decl 1
+6 simple_type_decl 1
+6 type_decl 1
+6 array_type_decl
+6 type_decl 2
+6 type_definition
+6 type_decl_list 1
+7 type part 1
 8 name list 2
+8 const value 1
+8 const value 1
+8 simple_type_decl 4
 8 simple_type_decl 1
 8 type_decl 1
-8 field_decl
-8 field_decl_list 2
-9 record_type_decl
-9 type_decl 3
-9 var_decl
-9 var_decl_list 2
-10 var part 1
-10 routine part 5
-10 routine head
-10 stmt list 2
-12 compound stmt
-12 routine_body
-12 routine
-12 pargram
+8 array_type_decl
+8 type_decl 2
+8 var_decl
+8 var_decl_list 2
+9 name list 2
+10 name list 2
+10 simple_type_decl 1
+10 type_decl 1
+10 field_decl
+10 field_decl_list 2
+11 record_type_decl
+11 type_decl 3
+11 var_decl
+11 var_decl_list 1
+12 var part 1
+12 routine part 5
+12 routine head
+12 stmt list 2
+13 const value 1
+13 factor 5
+13 term 5
+13 expr 4
+13 expression 7
+13 const value 1
+13 factor 5
+13 term 5
+13 expr 4
+13 expression 7
+13 factor 9
+13 term 5
+13 expr 4
+13 expression 7
+13 assign stmt 2
+13 non_label_stmt 1
+13 stmt 2
+13 stmt list 1
+14 const value 1
+14 factor 5
+14 term 5
+14 expr 4
+14 expression 7
+14 factor 9
+14 term 5
+14 expr 4
+14 expression 7
+14 assign stmt 3
+14 non_label_stmt 1
+14 stmt 2
+14 stmt list 1
+16 compound stmt
+16 routine_body
+16 routine
+16 pargram

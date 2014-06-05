@@ -1,0 +1,4 @@
+lb $t1, 1($sp)
+sb $t1, 0($sp)
+lb $t1, 1($sp)
+sh $t1, 2($sp)

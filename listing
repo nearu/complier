@@ -11,17 +11,56 @@
 	4 ;
 	5 end
 	5 ;
-	6 var
-	7 a
-	7 :
-	7 record
-	8 d
+	6 ar
+	6 =
+	6 array
+	6 [
+	6 char
+	6 ]
+	6 of
+	6 char
+	6 ;
+	7 var
+	8 a
 	8 :
-	8 integer
+	8 array
+	8 [
+	8 1
+	8 ..
+	8 29
+	8 ]
+	8 of
+	8 char
 	8 ;
-	9 end
-	9 ;
-	10 begin
-	12 end
-	12 .
-	12 
+	9 v
+	9 :
+	9 record
+	10 d
+	10 :
+	10 integer
+	10 ;
+	11 end
+	11 ;
+	12 begin
+	13 a
+	13 [
+	13 0
+	13 ]
+	13 :=
+	13 a
+	13 [
+	13 1
+	13 ]
+	13 ;
+	14 v
+	14 .
+	14 d
+	14 :=
+	14 a
+	14 [
+	14 1
+	14 ]
+	14 ;
+	16 end
+	16 .
+	16 

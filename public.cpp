@@ -30,8 +30,10 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 	if (reg == -1) {
 		loc = bucket->getLoc();
 	}
-
+	cout << "in select : loc = " << loc << endl;
 }
+
+
 void printAST(TreeNode *root) {
 	queue<TreeNode *> q;
 	int curLevel = 0;
@@ -147,6 +149,7 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 			int reg = symtab->genRegNum();
 			b->setRegNum(reg);			
 		} else {
+			SymBucket *tmpBucket;
 			// need to gencode to allocate memory in stack for these variables.
 			if (type.find("record") != string::npos) {
 				SymBucket *member = b->next;
@@ -154,8 +157,10 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 					member->setLoc(member->getSize());
 					member = member->last->next;
 				} while(member != b);
+			} else {
+				cout << "in vu" << b->getName() << " size is " << b->getSize() << endl;
+				b->setLoc(symtab->genLoc(b->getSize()));
 			}
-			b->setLoc(symtab->genLoc(b->getSize()));
 		}
 		symtab->insert(b);
 	}
@@ -163,10 +168,10 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 // in type part
 void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 	env = symtab;
-	SymBucket *b = new SymBucket(name, lineNO, "custom-" +type->getType(), symtab);
-	b->next = type->genSymItem(name, symtab);
-	b->next->last->next = b;
-	b->setSize(b->next->getSize());
+	//SymBucket *b = new SymBucket(name, lineNO, "custom-" +type->getType(), symtab);
+	SymBucket *b = type->genSymItem(name, symtab);
+	//b->next->last->next = b;
+	//b->setSize(b->next->getSize());
 	symtab->insert(b);
 }
 	
@@ -400,19 +405,18 @@ SymBucket * RecordElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	env = symtab;
 	SymBucket *returnBucket = new SymBucket("recordElem", lineNO, "",symtab);
 	SymBucket *bucket = env->find(recordName);
-	string type = bucket->getType();
-	if (type.find("custom") != string::npos) {
-		bucket = bucket->next;
-	}
 	SymBucket *member = bucket->next;
 	do {
 		if (member->getName() == elemName) {
 			returnBucket->setLoc(member->getLoc());
-			returnBucket->setSize(member->setSize());
+			returnBucket->setSize(member->getSize());
+			break;
 		}
 		member = member->last->next;
 	} while (member != bucket);
-
+	if (reg != NULL) *reg = -1;
+	if (member == bucket) cout << lineNO << " : undefined record member :" << elemName << " in "  << recordName << endl;
+	return returnBucket;
 }
 
 ////////////////////////////////////////////////////////////
@@ -431,6 +435,7 @@ SymBucket* SysTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
 }
 
 
+
 // array need to consider about index type of sub range ,
 SymBucket *ArrayTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
 	cout << "array node" << endl;
@@ -444,8 +449,9 @@ SymBucket *ArrayTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) 
 		u = atoi(indexBucket->last->getType().c_str());
 		len = u - l;
 	}
-	else 
+	else {
 		len = pow(2,indexBucket->getSize()*8);
+	}
 	int size = len * typeBucket->getSize();
 	array->setSize(size);
 	array->next = indexBucket;
@@ -483,21 +489,17 @@ SymBucket *RecordTypeTreeNode::genSymItem(const string typeName, Symtab *symtab)
 	vector<TreeNode*>& list = elemList->getList();
 	for (int i = 0; i < list.size(); i++) {
 		VariableTreeNode* v = (VariableTreeNode *)list[i];
-		SymBucket *typeBucket = v->getTypeNode()->genSymItem(v->getName(), symtab);
+		
 		vector<TreeNode*>& nameList = v->getNameList()->getList();
 		if (v->getName() != "") 
 			nameList.push_back(new TreeNode(v->getName()));
 		for (int j = 0; j < nameList.size();j++) {
-			SymBucket *vb = new SymBucket(nameList[j]->getName(), lineNO, typeBucket->getType(),symtab);
-			vb->next = typeBucket;
-			vb->last = typeBucket->last;
-			typeBucket->next = vb;
-			vb->setSize(typeBucket->getSize());
+			SymBucket *vb = v->getTypeNode()->genSymItem(nameList[j]->getName(), symtab);
 			rb->setSize(rb->getSize() + vb->getSize());
 			if (rb->next == rb) {
 				rb->next = vb;
-				typeBucket->last->next = rb;
-				rb->last = typeBucket->last;
+				vb->last->next = rb;
+				rb->last = vb->last;
 			} else {
 				SymBucket *tmp = rb->next;
 				rb->next = vb;
@@ -512,6 +514,7 @@ SymBucket *CustomTypeTreeNode::genSymItem(const string typeName, Symtab *symtab)
 	// the predefined custom type in symtab
 	SymBucket *typeBucket = symtab->find(name);
 	SymBucket *b = new SymBucket(typeName, lineNO, "ref-" + typeBucket->getName() + "-" + typeBucket->getType() , symtab);
+	////////////// we should copy them !!!!
 	b->ref = typeBucket;
 	b->setSize(typeBucket->getSize());
 	return b;

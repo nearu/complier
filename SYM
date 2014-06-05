@@ -1,2 +1,4 @@
-9 a:	record	 at 0 .. 9 d:	integer	 at 2 .. 8 :	integer
-5 r:	custom-record .. 5 r:	record .. 5 f:	char .. 4 :	char
+8 a:	array	 at 0 .. 8 index:	subrange .. 8 subrange:	1 .. 8 subrange:	29 .. 8 array:	char
+6 ar:	array .. 6 index:	char .. 6 array:	char
+5 r:	record .. 4 f:	char
+11 v:	record .. 10 d:	integer	 at 2
