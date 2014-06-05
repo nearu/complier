@@ -213,9 +213,9 @@ routine_part : routine_part  function_decl  {
                 $$->insert($2);
               }
             |  routine_part  procedure_decl {
-              tp("routine part 2");
-              $$ = $1;
-              $$->insert($2);
+                tp("routine part 2");
+                $$ = $1;
+                $$->insert($2);
               }
             |  function_decl  {
                 tp("routine part 3");

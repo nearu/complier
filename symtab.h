@@ -44,9 +44,10 @@ class SymBucket {
 public:
 	// next bucket in the one complicated datastructure
 	SymBucket 		*next;
+	SymBucket 		*last;
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
-		location(-1), next(this), regNum(-1)
+		location(-1), next(this), regNum(-1),last(this)
 		{}
 
 /////////////////////////////////////////////////////
@@ -88,6 +89,9 @@ public:
 		return nextSymtab;
 	}
 
+	Symtab* getCurSymtab() {
+		return curSymtab;
+	}
 	const string& getName() {
 		return name;
 	}
@@ -157,6 +161,9 @@ public:
 				if ((*q)[i]->getName() == name) 
 					return (*q)[i];
 			}
+		}
+		if (pBucket != NULL) {
+			return pBucket->getCurSymtab()->find(name);
 		}
 		return NULL;
 	}

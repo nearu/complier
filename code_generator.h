@@ -77,11 +77,7 @@ public:
 	static void emitCodeR(const string op, int dst, int src_1, int src_2) {
 		cout << "emit R :" << dst << " " << src_1 << " " << src_2 <<endl;
 		string c;
-<<<<<<< HEAD
 		if (op == "+" || "=") {
-=======
-		if (op == "=" || op == "+") {
->>>>>>> 81edde0964b97270ab213844ff44b8e14747efea
 			c = "add " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
 		} else if (op == "-") {
 			c = "sub " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
