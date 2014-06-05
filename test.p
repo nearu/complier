@@ -1,11 +1,15 @@
 program HelloWorld;
-const
-	cc = 1;
+type 
+	d = 1..27;
+	ar = array [d] of char;
+	r = record
+		a : d;
+	end;
 var 
-a,b,c,e,f,g,h,i: integer;
-s : string;
-t : integer;
+	my : d;
+	a,b,c,d,e,f,g,h,i,t : integer;
+	b : integer;
 begin	
-	a := a >= t;
-
+	a := b;
+	a := 1;
 end.

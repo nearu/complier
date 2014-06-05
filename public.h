@@ -56,11 +56,15 @@ public:
 	const string& getName() {
 		return treeName;
 	}
+	int getLineNO() {
+		return lineNO;
+	}
 	virtual void insert(TreeNode* t) {}
 
 	// return 0-31 : it is a reg number
-	// return -1 : it is a variable at stack 
+	// return -1 : it is a variable at stack , the offset is at bucket->loc
 	// return -2 : it is a immediate
+	// return -3 : the offset is at bucket->offsetReg
 	virtual SymBucket *genCode(Symtab *symtab, int *reg = NULL) {
 		code << "default genCode" << endl;
 	}
@@ -261,7 +265,11 @@ public:
 	void printSelf() {
 		ast << "CustomTypeTreeNode:" << name;
 	}
+	const string getType() {
+		return type->getType();
+	}
 	void updateSymtab(Symtab *);
+	SymBucket *genSymItem(const string type, Symtab *symtab);
 };
 
 /*
@@ -291,7 +299,7 @@ private:
 	IDTreeNode *upperBound;
 	IDTreeNode *lowerBound;
 public:
-	SubRangeTypeTreeNode( TreeNode *_u, TreeNode *_l)
+	SubRangeTypeTreeNode( TreeNode *_l, TreeNode *_u)
 						:upperBound((IDTreeNode*)_u), lowerBound((IDTreeNode*)_l)
 						{}
 	void printSelf() {
@@ -300,6 +308,7 @@ public:
 	const string getType() {
 		return "subrange";
 	}
+	SymBucket *genSymItem(const string type, Symtab *symtab);
 };
 
 /*
@@ -341,6 +350,7 @@ public:
 	const string getType() {
 		return "array";
 	}
+	SymBucket *genSymItem(const string type, Symtab *symtab);
 };
 
 /*
@@ -360,7 +370,8 @@ public:
 	}	
 	const string getType() {
 		return "record";
-	}						
+	}
+	SymBucket *genSymItem(const string type, Symtab *symtab);
 };
 
 //==============================================================
@@ -458,6 +469,10 @@ public:
 		}
 
 	}	
+	TypeTreeNode *getTypeNode() {
+		return typeNode;
+	}
+
 	void updateSymtab(Symtab*);
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
@@ -472,7 +487,9 @@ public:
 					{}
 	void printSelf() {
 		ast << "ArrayElemTreeNode:" << name;
-	}					
+	}
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+
 };
 
 class RecordElemTreeNode : public IDTreeNode {
@@ -485,7 +502,9 @@ public:
 					{}
 	void printSelf() {
 		ast << "RecordElemTreeNode:"<<recordName<<"."<<elemName;
-	}						
+	}		
+	//SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+
 };
 
 //===============================================

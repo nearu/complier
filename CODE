@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 addi $t0,$zero,1
 beq $t3,$t0,123456
 j 000000
+=======
+lh $t0, 6($sp)
+add $s0,$t0,$zero
+addi $s0,$zero,1
+>>>>>>> 68c6550f41d3d065fbe2f9f839f75242d48ab20a

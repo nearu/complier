@@ -1969,7 +1969,7 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
 #line 157 "parser.y"
     {
                   tp("simple_type_decl 2");                
-                  (yyval) = new CustomTypeTreeNode(currentToken);
+                  (yyval) = new CustomTypeTreeNode(idstr);
                 }
     break;
 
@@ -1996,9 +1996,9 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
 #line 169 "parser.y"
     {
                   tp("simple_type_decl 5");                
-                  NumberTreeNode<int>* n = (NumberTreeNode<int>*)(yyvsp[(1) - (4)]);
+                  NumberTreeNode<int>* n = (NumberTreeNode<int>*)(yyvsp[(2) - (4)]);
                   n->set(-(int)(n->get()));
-                  (yyval) = new SubRangeTypeTreeNode((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)]));
+                  (yyval) = new SubRangeTypeTreeNode((yyvsp[(2) - (4)]),(yyvsp[(4) - (4)]));
                 }
     break;
 
@@ -2007,18 +2007,18 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
 #line 175 "parser.y"
     {
                   tp("simple_type_decl 6");                
-                  NumberTreeNode<int>* n1 = (NumberTreeNode<int>*)(yyvsp[(1) - (5)]);
-                  NumberTreeNode<int>* n2 = (NumberTreeNode<int>*)(yyvsp[(2) - (5)]);
+                  NumberTreeNode<int>* n1 = (NumberTreeNode<int>*)(yyvsp[(2) - (5)]);
+                  NumberTreeNode<int>* n2 = (NumberTreeNode<int>*)(yyvsp[(5) - (5)]);
                   n1->set(-(int)(n1->get()));
                   n2->set(-(int)(n2->get()));
-                  (yyval) = new SubRangeTypeTreeNode((yyvsp[(1) - (5)]),(yyvsp[(3) - (5)])); 
+                  (yyval) = new SubRangeTypeTreeNode((yyvsp[(2) - (5)]),(yyvsp[(5) - (5)])); 
                 }
     break;
 
   case 41:
 /* Line 1792 of yacc.c  */
 #line 183 "parser.y"
-    {s1 = currentToken;}
+    {s1 = idstr;}
     break;
 
   case 42:
@@ -2026,7 +2026,7 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
 #line 183 "parser.y"
     {
                   tp("simple_type_decl 7");                
-                  s2 = currentToken;
+                  s2 = idstr;
                   (yyval) = new RecordElemTreeNode(s1, s2);
                 }
     break;
@@ -2090,9 +2090,9 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
 /* Line 1792 of yacc.c  */
 #line 215 "parser.y"
     {
-              tp("routine part 2");
-              (yyval) = (yyvsp[(1) - (2)]);
-              (yyval)->insert((yyvsp[(2) - (2)]));
+                tp("routine part 2");
+                (yyval) = (yyvsp[(1) - (2)]);
+                (yyval)->insert((yyvsp[(2) - (2)]));
               }
     break;
 
@@ -3010,6 +3010,7 @@ static void tp(const string msg) {
 
 
 int yyerror(string s) {
+  cout << lineno << ": syntex error";
 	fprintf(stderr, "%s\n", s.c_str());
 	return 0;
 }

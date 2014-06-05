@@ -156,7 +156,7 @@ simple_type_decl : SYS_TYPE {
                 } 
                 |  ID {
                   tp("simple_type_decl 2");                
-                  $$ = new CustomTypeTreeNode(currentToken);
+                  $$ = new CustomTypeTreeNode(idstr);
                 }
                 |  LP  name_list  RP {
                   tp("simple_type_decl 3");                
@@ -168,21 +168,21 @@ simple_type_decl : SYS_TYPE {
                 }
                 |  MINUS  const_value  DOTDOT  const_value {
                   tp("simple_type_decl 5");                
-                  NumberTreeNode<int>* n = (NumberTreeNode<int>*)$1;
+                  NumberTreeNode<int>* n = (NumberTreeNode<int>*)$2;
                   n->set(-(int)(n->get()));
-                  $$ = new SubRangeTypeTreeNode($1,$3);
+                  $$ = new SubRangeTypeTreeNode($2,$4);
                 }
                 |  MINUS  const_value  DOTDOT  MINUS  const_value {
                   tp("simple_type_decl 6");                
-                  NumberTreeNode<int>* n1 = (NumberTreeNode<int>*)$1;
-                  NumberTreeNode<int>* n2 = (NumberTreeNode<int>*)$2;
+                  NumberTreeNode<int>* n1 = (NumberTreeNode<int>*)$2;
+                  NumberTreeNode<int>* n2 = (NumberTreeNode<int>*)$5;
                   n1->set(-(int)(n1->get()));
                   n2->set(-(int)(n2->get()));
-                  $$ = new SubRangeTypeTreeNode($1,$3); 
+                  $$ = new SubRangeTypeTreeNode($2,$5); 
                 }
-                |  ID {s1 = currentToken;} DOTDOT  ID {
+                |  ID {s1 = idstr;} DOTDOT  ID {
                   tp("simple_type_decl 7");                
-                  s2 = currentToken;
+                  s2 = idstr;
                   $$ = new RecordElemTreeNode(s1, s2);
                 }
 ;
@@ -213,9 +213,9 @@ routine_part : routine_part  function_decl  {
                 $$->insert($2);
               }
             |  routine_part  procedure_decl {
-              tp("routine part 2");
-              $$ = $1;
-              $$->insert($2);
+                tp("routine part 2");
+                $$ = $1;
+                $$->insert($2);
               }
             |  function_decl  {
                 tp("routine part 3");
@@ -448,6 +448,7 @@ static void tp(const string msg) {
 
 
 int yyerror(string s) {
+  cout << lineno << ": syntex error";
 	fprintf(stderr, "%s\n", s.c_str());
 	return 0;
 }

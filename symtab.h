@@ -20,8 +20,10 @@ class SymBucket {
 	// the address of this type, default -1
 	int 			location;
 	int 			size;
-	// default -1
+	// default -1, define the reg store this symbol
 	int 			regNum;
+	// the reg stores this symbol's stack offset
+	int 			offsetReg;
 	// type name
 	const string 	type;
 	// id name
@@ -44,9 +46,11 @@ class SymBucket {
 public:
 	// next bucket in the one complicated datastructure
 	SymBucket 		*next;
+	SymBucket 		*last;
+	SymBucket 		*ref;
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
-		location(-1), next(this), regNum(-1)
+		location(-1), next(this), regNum(-1),last(this),ref(NULL)
 		{}
 
 /////////////////////////////////////////////////////
@@ -69,6 +73,10 @@ public:
 		regNum = rn;
 	}
 
+	void setOffsetReg(int reg) {
+		offsetReg = reg;
+	}
+
 /////////////////////////////////////////////////////
 // get functions								   //
 /////////////////////////////////////////////////////	
@@ -88,6 +96,9 @@ public:
 		return nextSymtab;
 	}
 
+	Symtab* getCurSymtab() {
+		return curSymtab;
+	}
 	const string& getName() {
 		return name;
 	}
@@ -100,6 +111,9 @@ public:
 		return size;
 	}
 
+	int getOffsetReg(){
+		return offsetReg;
+	} 
 
 	void printBucket(ofstream &out) {
 		_print(out);
@@ -157,6 +171,9 @@ public:
 				if ((*q)[i]->getName() == name) 
 					return (*q)[i];
 			}
+		}
+		if (pBucket != NULL) {
+			return pBucket->getCurSymtab()->find(name);
 		}
 		return NULL;
 	}
