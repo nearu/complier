@@ -15,9 +15,17 @@ extern Symtab* mainSymtab;
 /////////////////////////////////////////////////////////////
 // utils												   //
 /////////////////////////////////////////////////////////////
-void selectOP(int reg, string &load, string &store) {
-	load = reg == -3 ? "load_reg" : "load";
-	store = reg == -3 ? "store_reg" : "store";
+void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc) {
+	if (reg == -3) {
+		reg = -1;
+		loc = bucket->getOffsetReg();
+		load = "load_reg";
+		store = "store_reg";
+	} else {
+		load = "load";
+		store = "store";
+	}
+
 }
 void printAST(TreeNode *root) {
 	queue<TreeNode *> q;
@@ -218,7 +226,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	cout << "bg : " << op << endl;
 	env = symtab;
 	int regR, regL;
-	int locR, locL;
+	int locR = 0, locL = 0;
 	// for arrayElem and recordElem
 	SymBucket *returnBucket;
 	SymBucket *bucketR, *bucketL;
@@ -227,11 +235,9 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	cout << "regL : " << regL << " regR " << regR << endl;
 	string loadOPR, storeOPR;
 	string loadOPL, storeOPL;
-	selectOP(regR, loadOPR, storeOPR);
-	selectOP(regL, loadOPL, storeOPL);
-	if (regL == -1 && regR == -1) {
-		locL = bucketL->getLoc();
-		locR = bucketR->getLoc();
+	selectOP(bucketR, regR, loadOPR, storeOPR, locR);
+	selectOP(bucketL, regL, loadOPL, storeOPL, locL);
+	if (regL == -1 && regR == -1) {		
 		int tmpSrc_1 = regManager->getTmpReg();
 		int tmpSrc_2 = regManager->getTmpReg();
 		int tmpDst = regManager->getTmpReg();
@@ -357,7 +363,11 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	SymBucket *returnBucket = new SymBucket("arrayElem", lineNO,  elemType->getType(), symtab );
 	int elemSize = elemType->getSize();
 	int exprReg;
+	// the stack offset of the index
+	int indexLoc; 
+	string loadOP, storeOP;
 	SymBucket *indexBucket = index->genCode(symtab, &exprReg);
+	selectOP(indexBucket, exprReg, loadOP, storeOP, indexLoc);
 	if (exprReg == -2) {
 		int offset = type->getLoc() + elemSize * ((NumberTreeNode<int>*)index)->get();
 		returnBucket->setLoc(offset);
@@ -366,7 +376,7 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 		int tmpSrc_1 = regManager->getTmpReg();
 		int tmpSrc_2 = regManager->getTmpReg();
 		int tmpDst = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(indexBucket->getSize(), "load", indexBucket->getLoc(), 29,tmpSrc_1);
+		CodeGenerator::emitCodeM(indexBucket->getSize(), "load", indexLoc, 29,tmpSrc_1);
 		CodeGenerator::emitCodeI("+", tmpSrc_2, 0, elemSize);
 		CodeGenerator::emitCodeR("*", tmpDst, tmpSrc_1, tmpSrc_2);
 		if (reg != NULL) *reg = -3;
@@ -374,9 +384,6 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 		regManager->freeReg(tmpSrc_1);
 		regManager->freeReg(tmpSrc_2);
 	} else if (exprReg > 0) {
-		///
-		//indexBucket->getName()
-		////
 		int tmpDst = regManager->getTmpReg();
 		int tmpSrc = regManager->getTmpReg();
 		CodeGenerator::emitCodeI("+", tmpSrc, 0, elemSize);

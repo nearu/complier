@@ -231,16 +231,24 @@ public:
 		string c;
 		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
 		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
-		string instr;
 		char ch[16] = {0,};
-		sprintf(ch,"%d",offset);
-		if (op == "load") {
-			instr = loadInstr[size];
-		} else {
-			instr = storeInstr[size];
+		string instr;
+		if (op == "load" || op == "load_reg") {
+				instr = loadInstr[size];
+			} else {
+				instr = storeInstr[size];
+			}
+		if (op == "load" || op == "store") {
+			sprintf(ch,"%d",offset);
+			c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
+			code << c << endl;
+		} else if (op == "load_reg" || op =="store_Reg") {
+			sprintf(ch, "0");
+			string c1 = "add " + regTable[offset] + ", " + regTable[offset] + ", " + regTable[regAddr];
+			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[offset] + ")";
+			regManager->freeReg(offset);
+			cout << c1 << endl << c << endl;
 		}
-		c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
-		code << c << endl;
 	}
 
 };	
