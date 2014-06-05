@@ -503,7 +503,7 @@ public:
 	void printSelf() {
 		ast << "RecordElemTreeNode:"<<recordName<<"."<<elemName;
 	}		
-	//SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
 };
 

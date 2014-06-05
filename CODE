@@ -1,7 +1,0 @@
-addi $s0,$zero,1
-lh $t1, 2($sp)
-add $t2,$s0,$t1
-addi $t3,$zero,2
-mul $t1,$t3,$s0
-add $t1, $t1, $sp
-sh $t2, 0($t1)

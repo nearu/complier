@@ -1,8 +1,12 @@
 program HelloWorld;
+type 
+	r = record 
+		f : char;
+		end;
 var 
-	a : array [1..20] of integer;
-	b : integer;
+	a : record
+		d : integer;
+		end;
 begin
-	b := 1;
-	a[b] := b + a[1];	
+	
 end.

@@ -215,7 +215,6 @@ SymBucket * VariableTreeNode::genCode(Symtab *symtab, int *reg) {
 
 // const var parts will be processed later
 SymBucket * RoutineHeadTreeNode::genCode(Symtab *symtab, int *reg) {
-
 	return 0;
 }
 
@@ -376,7 +375,7 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	} else if (exprReg == -1) { // stack
 		int tmpSrc_1 = regManager->getTmpReg();
 		int tmpSrc_2 = regManager->getTmpReg();
-		int tmpDst = regManager->getTmpReg();
+		int tmpDst   = regManager->getTmpReg();
 		CodeGenerator::emitCodeM(indexBucket->getSize(), "load", indexLoc, 29,tmpSrc_1);
 		CodeGenerator::emitCodeI("+", tmpSrc_2, 0, elemSize);
 		CodeGenerator::emitCodeR("*", tmpDst, tmpSrc_1, tmpSrc_2);
@@ -395,6 +394,24 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	}
 	returnBucket->setSize(elemSize);
 	return returnBucket;
+}
+
+SymBucket * RecordElemTreeNode::genCode(Symtab *symtab, int *reg) {
+	env = symtab;
+	SymBucket *returnBucket = new SymBucket("recordElem", lineNO, "",symtab);
+	SymBucket *bucket = env->find(recordName);
+	string type = bucket->getType();
+	if (type.find("custom") != string::npos) {
+		bucket = bucket->next;
+	}
+	SymBucket *member = bucket->next;
+	do {
+		if (member->getName() == elemName) {
+			returnBucket->setLoc(member->getLoc());
+			returnBucket->setSize(member->setSize());
+		}
+		member = member->last->next;
+	} while (member != bucket);
 
 }
 
