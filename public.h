@@ -731,13 +731,13 @@ public:
 class ForStmtTreeNode : public StmtTreeNode {
 private:
 	ExprTreeNode *assignExpr;
-	const string direction;
-	TreeNode *dirExpr; // may be a variable
+	const string direction; //to or downto
+	ExprTreeNode *dirExpr; // may be a variable
 	StmtTreeNode *body;
 public:
 	ForStmtTreeNode( TreeNode * _aExpr, const string _dire, 
 		 TreeNode *_dExpr,  TreeNode* _body)
-		: assignExpr((ExprTreeNode*)_aExpr), direction(_dire), dirExpr(_dExpr), body((StmtTreeNode*)_body)
+		: assignExpr((ExprTreeNode*)_aExpr), direction(_dire), dirExpr((ExprTreeNode*)_dExpr), body((StmtTreeNode*)_body)
 		{
 			children.push_back(assignExpr);
 			children.push_back(dirExpr);
@@ -746,6 +746,7 @@ public:
 	void printSelf() {
 		ast << "ForStmtTreeNode";
 	}		
+	SymBucket * genCode(Symtab *symtab, int *reg);
 };
 
 

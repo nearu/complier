@@ -2,10 +2,7 @@
  RoutineTreeNode 
  RoutineHead  CompoundStmtTreeNode 
  a list of non const part:0  a list of type_decl_list:1  a list of var_decl_list:2  a list of non routine part:0  a list of stmt:1 
- CustomTypeTreeNode:r  VariableTreeNode:a  VariableTreeNode:dbc  WhileStmtTreeNode 
- BinaryExprTreeNode  WhileStmtTreeNode 
- NumberTreeNode  VariableTreeNode:d  BinaryExprTreeNode  CompoundStmtTreeNode 
- NumberTreeNode  VariableTreeNode:b  a list of stmt:1 
- BinaryExprTreeNode 
- BinaryExprTreeNode  VariableTreeNode:c 
- NumberTreeNode  VariableTreeNode:c 
+ CustomTypeTreeNode:r  VariableTreeNode:a  VariableTreeNode:dbci  ForStmtTreeNode 
+ BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode 
+ NumberTreeNode  VariableTreeNode:i  NumberTreeNode  VariableTreeNode:i  BinaryExprTreeNode  VariableTreeNode:b 
+ VariableTreeNode:i  VariableTreeNode:b 

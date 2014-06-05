@@ -379,6 +379,62 @@ SymBucket * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	return NULL;
 }
 
+SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
+	SymBucket *bucketR, *bucketL;
+	int regL, regR ,regB;
+	int locL, locR;
+	string loadOPR, storeOPR;
+	string loadOPL, storeOPL;
+	int x;
+	x=labelManager->getLoopLabel();
+	char ch[16] = {0,};
+	sprintf(ch,"%d",x);
+	string loop = "loop";
+	loop = loop + ch;
+	string breakn = "break";
+	breakn = breakn + ch;
+	labelManager->addLoopLabel();
+	bucketL = assignExpr->genCode(symtab, &regL);
+	bucketR = dirExpr->genCode(symtab,&regR);
+	CodeGenerator::addLabel(loop);
+	selectOP(bucketR,regR,loadOPR,storeOPR,locR);
+	if(regR == -1){
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, 29, tmp);
+		CodeGenerator::emitCodeJ("beq",tmp,0,0,breakn);
+		regManager->freeReg(tmp);
+	}
+	else {
+		CodeGenerator::emitCodeJ("beq",regR,0,0,breakn);
+	}
+	body->genCode(symtab, &regB);
+	if(regL == -1){
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, 29, tmp);
+		if(direction == "to") {
+			CodeGenerator::emitCodeI("+",tmp,tmp,1);
+		}
+		else {
+			CodeGenerator::emitCodeI("-",tmp,tmp,1);
+		}
+		CodeGenerator::emitCodeM(bucketR->getSize(),storeOPR, locR, 29, tmp);
+		regManager->freeReg(tmp);
+	}
+	else {
+		if(direction == "to") {
+			CodeGenerator::emitCodeI("+",regL,regL,1);
+		}
+		else {
+			CodeGenerator::emitCodeI("-",regL,regL,1);
+		}
+	}
+
+	CodeGenerator::emitCodeJ("j",0,0,0,loop);
+	CodeGenerator::addLabel(breakn);
+	//delete bucketL;
+	//delete bucketR;
+	return NULL;
+}
 
 
 SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {

@@ -7,11 +7,8 @@ var
 	a : record
 		d : integer;
 		end;
-	d,b,c : integer;
+	d,b,c,i : integer;
 begin	
-	while d <= 1 do 
-		while b <= 1 do
-			begin
-				c := c+1;
-			end;
+	for i:= 1 to 10 do
+		b:=b+i;
 end.

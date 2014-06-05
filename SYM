@@ -2,4 +2,5 @@
 10 b:	integer	 at reg 17
 10 c:	integer	 at reg 18
 10 d:	integer	 at reg 16
+10 i:	integer	 at reg 19
 5 r:	custom-record .. 5 r:	record .. 5 f:	char .. 4 :	char
