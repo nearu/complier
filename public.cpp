@@ -1,5 +1,6 @@
 #include <typeinfo>
 #include <queue>
+#include <algorithm>
 #include "code_generator.h"
 #include "public.h"
 #include "symtab.h"
@@ -33,9 +34,11 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 		loc = bucket->getLoc();
 	}
 	cout << "in select : loc = " << loc << endl;
-
 }
 
+int cmp(SymBucket *x, SymBucket *y) {
+	return y->getOrder() - x->getOrder();
+}
 
 void printAST(TreeNode *root) {
 	queue<TreeNode *> q;
@@ -78,9 +81,6 @@ int getSize(const string& type) {
 }
 
 
-////////////////////////////////////////////////////////////
-// utils functions										  //
-////////////////////////////////////////////////////////////
 void childrenGenCode(vector<TreeNode*>& children, Symtab *symtab) {
 	cout << children.size() << endl;
 	for(int i = 0; i < children.size(); i++) 
@@ -168,13 +168,35 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 		symtab->insert(b);
 	}
 }
+
+void FunctionTreeNode::updateSymtab(Symtab *symtab) {
+	env = symtab;
+	SymBucket *bucket = new SymBucket(name, lineNO, "func", symtab);
+	Symtab *subSymtab = new Symtab(name+"-subSymtab");
+	subSymtab->setParentBucket(bucket);
+	bucket->setSubSymtab(subSymtab);
+	args->updateSymtab(subSymtab);
+	vector<SymBucket *> v;
+	subSymtab->getSymBucketList(v);
+	sort(v.begin(),v.end(), cmp);
+	SymBucket *tmpBucket = bucket;
+	for (int  i = 0; i < v.size(); i++) {
+		SymBucket *newBucket = new SymBucket(v[i]);
+		tmpBucket->next = newBucket;
+		tmpBucket = newBucket->last;
+	}
+	SymBucket *returnBucket = returnType->genSymItem("returnType", symtab);
+	bucket->last = returnBucket->last;
+	bucket->last->next = bucket;
+	tmpBucket->next = returnBucket;
+	symtab->insert(bucket);
+	body->updateSymtab(subSymtab);
+}
+
 // in type part
 void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 	env = symtab;
-	//SymBucket *b = new SymBucket(name, lineNO, "custom-" +type->getType(), symtab);
 	SymBucket *b = type->genSymItem(name, symtab);
-	//b->next->last->next = b;
-	//b->setSize(b->next->getSize());
 	symtab->insert(b);
 }
 	
@@ -216,7 +238,7 @@ SymBucket * VariableTreeNode::genCode(Symtab *symtab, int *reg) {
 	if (b != NULL) {
 		if (reg != NULL) *reg = b->getRegNum();
 	} else {
-		cout << lineNO << "variable " << name << " is not defined" << endl;
+		cout << lineNO << ":variable " << name << " is not defined" << endl;
 	}
 	return b;
 }
@@ -231,6 +253,12 @@ SymBucket * CompoundStmtTreeNode::genCode(Symtab *symtab, int *reg) {
 	return NULL;
 }
 
+SymBucket * FunctionTreeNode::genCode(Symtab *symtab, int *reg) {
+	string label;
+	labelManager->addFuncLabel(label);
+	CodeGenerator::addLabel(label);
+	return NULL;
+}
 
 // expression will only return 
 //
@@ -243,12 +271,12 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	SymBucket *returnBucket;
 	SymBucket *bucketR, *bucketL;
 	bucketR = rhs->genCode(env, &regR);
-	bucketL = lhs->genCode(env, &regL);
-	cout << "regL : " << regL << " regR " << regR << endl;
+	bucketL = lhs->genCode(env, &regL);	
 	string loadOPR, storeOPR;
 	string loadOPL, storeOPL;
 	selectOP(bucketR, regR, loadOPR, storeOPR, locR);
 	selectOP(bucketL, regL, loadOPL, storeOPL, locL);
+	cout << "regL : " << regL << " regR " << regR << endl;
 	if (regL == -1 && regR == -1) {		
 		int tmpSrc_1 = regManager->getTmpReg();
 		int tmpSrc_2 = regManager->getTmpReg();
@@ -596,14 +624,9 @@ SymBucket *RecordTypeTreeNode::genSymItem(const string typeName, Symtab *symtab)
 SymBucket *CustomTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
 	// the predefined custom type in symtab
 	SymBucket *typeBucket = symtab->find(name);
-	//SymBucket *b = new SymBucket(typeName, lineNO, "ref-" + typeBucket->getName() + "-" + typeBucket->getType() , symtab);
-	////////////// we should copy them !!!!
-	// b->ref = typeBucket;
-	// b->setSize(typeBucket->getSize());
 	SymBucket* b = typeBucket->deepCopyBucket();
 	b->setName(typeName);
-	
-	cout << " xxxxx " << b->getSize() << endl;
+	// cout << " xxxxx " << b->getSize() << endl;
 	return b;
 }
 

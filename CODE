@@ -1,5 +1,0 @@
-lh $t0, 0($sp)
-lb $t1, 2($sp)
-add $t2,$t0,$t1
-addi $t0,$t2,1
-sb $t0, 2($sp)

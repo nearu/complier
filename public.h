@@ -505,7 +505,6 @@ public:
 		ast << "RecordElemTreeNode:"<<recordName<<"."<<elemName;
 	}		
 	SymBucket *genCode(Symtab *symtab, int *reg);
-	//SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
 };
 
@@ -527,6 +526,7 @@ public:
 		ast << "UnaryExprTreeNode";
 	}	
 };
+
 /*
 * node for binary operaotr such as '+'  '='
 */
@@ -599,8 +599,9 @@ public:
 		}
 	void printSelf() {
 		ast << "FunctionTreeNode";
-	}		
-
+	}	
+	void updateSymtab(Symtab* symtab);	
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
 /*
@@ -622,7 +623,7 @@ public:
 	void printSelf() {
 		ast << "ProcedureTreeNode";
 	}		
-
+	// void updateSymtab(Symtab* symtab);
 };
 
 

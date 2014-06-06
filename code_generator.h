@@ -73,11 +73,22 @@ public:
 };
 
 class LabelManager {
-	int loop_number;
+
 public:
+	static int loop_number;
+	static int func_number;
 	int getLoopLabel(){return loop_number;}
 	void addLoopLabel(){loop_number++;} 
+
+	int getFuncLabel() {return func_number;}
+	void addFuncLabel(string &label) {
+		char labelNum[10] = {0,};
+		sprintf(labelNum, "%d", func_number++);
+		label = label + labelNum;	
+	}
 };
+
+
 
 class CodeGenerator {
 

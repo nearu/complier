@@ -229,14 +229,14 @@ routine_part : routine_part  function_decl  {
             }
             | {tp("routine part 5");$$ = new ListTreeNode("non routine part");}
 ;
-function_decl : FUNCTION  ID {name = currentToken;} parameters  COLON  simple_type_decl SEMI routine SEMI {
+function_decl : FUNCTION  ID  parameters  COLON  simple_type_decl SEMI routine SEMI {
   tp("function decl");  
-  $$ = new FunctionTreeNode(name, $4, $6, $8);
+  $$ = new FunctionTreeNode($2->getName(), $3, $5, $7);
 }
 ;
-procedure_decl : PROCEDURE ID {name = currentToken;} parameters  SEMI  routine  SEMI {
+procedure_decl : PROCEDURE ID parameters  SEMI  routine  SEMI {
   tp("procedure decl");
-  $$ = new ProcedureTreeNode(name, $4, $6); 
+  $$ = new ProcedureTreeNode($2->getName(), $3, $5); 
 }
 ;
 parameters : LP  para_decl_list  RP  {
@@ -261,7 +261,7 @@ para_type_list : var_para_list COLON  simple_type_decl  {
   tp("para_type_list 1");
   $$ = new VariableTreeNode($1, $3,1);
 }
-|  val_para_list  COLON  simple_type_decl {
+| val_para_list  COLON  simple_type_decl {
   tp("para_type_list 2");
   $$ = new VariableTreeNode($1, $3, 0); 
 }
@@ -416,7 +416,10 @@ factor : ID                         {tp("factor 1");$$ = new VariableTreeNode($1
        |  NOT  factor               {tp("factor 7");$$ = new UnaryExprTreeNode("~",$2);}
        |  MINUS  factor             {tp("factor 8");$$ = new UnaryExprTreeNode("-",$2);}
        |  ID                        
-       LB  expression  RB           {tp("factor 9");$$ = new ArrayElemTreeNode($1->getName(),$3);}
+       LB  expression  RB 
+
+
+                 {tp("factor 9");$$ = new ArrayElemTreeNode($1->getName(),$3);}
        |  ID                        
        DOT  ID                      {tp("factor 10");$$ = new RecordElemTreeNode($1->getName(),$3->getName());}
 ;

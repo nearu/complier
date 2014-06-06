@@ -2,39 +2,64 @@
 	1 HelloWorld
 	1 ;
 	2 type
-	3 re
+	3 int
 	3 =
-	3 record
-	4 c
+	3 integer
+	3 ;
+	4 function
+	4 max
+	4 (
+	4 num1
+	4 ,
+	4 num2
+	4 :
+	4 integer
+	4 ;
+	4 var
+	4 xx
 	4 :
 	4 char
+	4 )
+	4 :
+	4 integer
 	4 ;
-	5 d
-	5 :
-	5 integer
-	5 ;
-	6 end
+	5 var
+	6 result
+	6 :
+	6 int
 	6 ;
-	7 var
-	8 t
-	8 :
-	8 re
-	8 ;
-	9 begin
-	10 t
-	10 .
-	10 c
-	10 :=
-	10 t
-	10 .
-	10 d
-	10 +
-	10 t
-	10 .
-	10 c
-	10 +
-	10 1
-	10 ;
-	11 end
-	11 .
-	11 
+	7 function
+	7 min
+	7 (
+	7 num1
+	7 ,
+	7 num2
+	7 :
+	7 integer
+	7 )
+	7 :
+	7 integer
+	7 ;
+	8 var
+	9 r
+	9 :
+	9 int
+	9 ;
+	10 begin
+	11 min
+	11 :=
+	11 num2
+	11 ;
+	12 end
+	12 ;
+	13 begin
+	14 max
+	14 :=
+	14 num1
+	14 ;
+	15 end
+	15 ;
+	16 begin
+	18 end
+	18 .
+	18 
