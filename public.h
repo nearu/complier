@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-
+#define YYSTYPE TreeNode *
 using namespace std;
 typedef int TokenType;
 /*

@@ -47,12 +47,24 @@ public:
 	// next bucket in the one complicated datastructure
 	SymBucket 		*next;
 	SymBucket 		*last;
+	// deprecated
 	SymBucket 		*ref;
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
 		location(-1), next(this), regNum(-1),last(this),ref(NULL), offsetReg(-1)
 		{}
-
+	SymBucket(const SymBucket* that) : type(that->type){
+		lineNO 		= that->lineNO;
+		location 	= that->location;
+		size 		= that->size;
+		regNum 		= that->regNum;
+		offsetReg 	= that->offsetReg;
+		name 		= that->name;
+		// nextSymtab 	= that->nextSymtab;
+		// curSymtab 	= that->curSymtab;
+		// next 		= that->next;
+		// last 		= that->last;
+	}
 /////////////////////////////////////////////////////
 // set functions								   //
 /////////////////////////////////////////////////////		
@@ -76,7 +88,9 @@ public:
 	void setOffsetReg(int reg) {
 		offsetReg = reg;
 	}
-
+	void setName(string n) {
+		name = n;
+	}
 /////////////////////////////////////////////////////
 // get functions								   //
 /////////////////////////////////////////////////////	
@@ -125,6 +139,45 @@ public:
 		}
 		out << endl;
 	}
+
+	SymBucket* deepCopyBucket() {
+		SymBucket *head = new SymBucket(this);
+		SymBucket *tmpBucket = head;
+		SymBucket *member = next;
+
+		if (member == this) {
+			head->next = head;
+			head->last = head;
+			return head;
+		}
+		
+		do {
+			SymBucket *newBucket = new SymBucket(member);
+			SymBucket *subTmpBucket = newBucket;
+			if (member->last != member) {
+				SymBucket * subMem = member->next;
+				do {
+					SymBucket* subNewBucket = new SymBucket(subMem);
+					subTmpBucket->next = subNewBucket;
+					subTmpBucket = subNewBucket;
+					subMem = subMem->next;
+				} while(subMem != member->last->next);
+				newBucket->last = subTmpBucket;
+				tmpBucket->next = newBucket;
+				tmpBucket = newBucket->last;
+				member = member->last->next;
+			} else {
+				newBucket->last = newBucket;
+				tmpBucket->next = newBucket;
+				tmpBucket = newBucket;
+				member = member->next;
+			}
+		} while (member != this);
+		head->last = tmpBucket;
+		head->last->next = head;
+		return head;
+	}
+
 	~SymBucket() {
 
 	}

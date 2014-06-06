@@ -12,7 +12,6 @@ FILE *source;
 FILE *listing;
 std::string currentToken;
 int traceScan = TRUE;
-std::string idstr;
 %}
 
 digit [0-9]
@@ -64,7 +63,7 @@ name ({letter}|_)+({letter}|_|{digit})+
 "not" { return NOT;}
 "of" { return OF;}
 "+" { return PLUS;}
-"program" { return PROGRAM;}
+"program" { return PROGRAM;}	
 "procedure" {return PROCEDURE;}
 "]" { return RB;}
 "read" { return READ;}
@@ -87,7 +86,11 @@ name ({letter}|_)+({letter}|_|{digit})+
 "real"		{return SYS_TYPE;}
 "string"	{return SYS_TYPE;}
 "char"   	{return SYS_TYPE;}
-{id} {idstr = yytext;return ID;}
+{id} {
+	TreeNode *t = new TreeNode(yytext);
+	yylval = t;
+	return ID;
+}
 
 %%
 

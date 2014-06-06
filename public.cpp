@@ -157,7 +157,7 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 			if (type.find("record") != string::npos) {
 				SymBucket *member = b->next;
 				do {
-					member->setLoc(member->getSize());
+					member->setLoc(env->genLoc(member->getSize()));
 					member = member->last->next;
 				} while(member != b);
 			} else {
@@ -596,10 +596,14 @@ SymBucket *RecordTypeTreeNode::genSymItem(const string typeName, Symtab *symtab)
 SymBucket *CustomTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
 	// the predefined custom type in symtab
 	SymBucket *typeBucket = symtab->find(name);
-	SymBucket *b = new SymBucket(typeName, lineNO, "ref-" + typeBucket->getName() + "-" + typeBucket->getType() , symtab);
+	//SymBucket *b = new SymBucket(typeName, lineNO, "ref-" + typeBucket->getName() + "-" + typeBucket->getType() , symtab);
 	////////////// we should copy them !!!!
-	b->ref = typeBucket;
-	b->setSize(typeBucket->getSize());
+	// b->ref = typeBucket;
+	// b->setSize(typeBucket->getSize());
+	SymBucket* b = typeBucket->deepCopyBucket();
+	b->setName(typeName);
+	
+	cout << " xxxxx " << b->getSize() << endl;
 	return b;
 }
 

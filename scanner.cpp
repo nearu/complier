@@ -626,8 +626,7 @@ FILE *source;
 FILE *listing;
 std::string currentToken;
 int traceScan = TRUE;
-std::string idstr;
-#line 631 "scanner.cpp"
+#line 630 "scanner.cpp"
 
 #define INITIAL 0
 
@@ -809,10 +808,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 30 "scanner.l"
+#line 29 "scanner.l"
 
 
-#line 816 "scanner.cpp"
+#line 815 "scanner.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -897,307 +896,311 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 32 "scanner.l"
+#line 31 "scanner.l"
 { return AND;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 33 "scanner.l"
+#line 32 "scanner.l"
 { return ARRAY;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 34 "scanner.l"
+#line 33 "scanner.l"
 { return ASSIGN;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 35 "scanner.l"
+#line 34 "scanner.l"
 { return BEGINP;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 36 "scanner.l"
+#line 35 "scanner.l"
 { return CASE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 37 "scanner.l"
+#line 36 "scanner.l"
 { return CHAR;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 38 "scanner.l"
+#line 37 "scanner.l"
 { return COLON;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 39 "scanner.l"
+#line 38 "scanner.l"
 { return COMMA;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 40 "scanner.l"
+#line 39 "scanner.l"
 { return CONST;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 41 "scanner.l"
+#line 40 "scanner.l"
 { return DIV;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 42 "scanner.l"
+#line 41 "scanner.l"
 { return DO;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 43 "scanner.l"
+#line 42 "scanner.l"
 { return DOT;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 44 "scanner.l"
+#line 43 "scanner.l"
 { return DOTDOT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 45 "scanner.l"
+#line 44 "scanner.l"
 { return DOWNTO;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 46 "scanner.l"
+#line 45 "scanner.l"
 { return OR;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 47 "scanner.l"
+#line 46 "scanner.l"
 { return ELSE;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 48 "scanner.l"
+#line 47 "scanner.l"
 { return END;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 49 "scanner.l"
+#line 48 "scanner.l"
 { return EQUAL;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 50 "scanner.l"
+#line 49 "scanner.l"
 { return FOR;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 51 "scanner.l"
+#line 50 "scanner.l"
 { return FUNCTION;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 52 "scanner.l"
+#line 51 "scanner.l"
 { return GE;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 53 "scanner.l"
+#line 52 "scanner.l"
 { return GOTO;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 54 "scanner.l"
+#line 53 "scanner.l"
 { return GT;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 55 "scanner.l"
+#line 54 "scanner.l"
 { return IF;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 56 "scanner.l"
+#line 55 "scanner.l"
 {return INTEGER;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 57 "scanner.l"
+#line 56 "scanner.l"
 { return LB;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 58 "scanner.l"
+#line 57 "scanner.l"
 { return LE;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 59 "scanner.l"
+#line 58 "scanner.l"
 { return LP;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 60 "scanner.l"
+#line 59 "scanner.l"
 { return LT;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 61 "scanner.l"
+#line 60 "scanner.l"
 { return MINUS;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 62 "scanner.l"
+#line 61 "scanner.l"
 { return MOD;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 63 "scanner.l"
+#line 62 "scanner.l"
 { return MUL;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 64 "scanner.l"
+#line 63 "scanner.l"
 { return NOT;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 65 "scanner.l"
+#line 64 "scanner.l"
 { return OF;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 66 "scanner.l"
+#line 65 "scanner.l"
 { return PLUS;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 67 "scanner.l"
-{ return PROGRAM;}
+#line 66 "scanner.l"
+{ return PROGRAM;}	
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 68 "scanner.l"
+#line 67 "scanner.l"
 {return PROCEDURE;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 69 "scanner.l"
+#line 68 "scanner.l"
 { return RB;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 70 "scanner.l"
+#line 69 "scanner.l"
 { return READ;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 71 "scanner.l"
+#line 70 "scanner.l"
 { return REAL;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 72 "scanner.l"
+#line 71 "scanner.l"
 { return RECORD;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 73 "scanner.l"
+#line 72 "scanner.l"
 { return REPEAT;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 74 "scanner.l"
+#line 73 "scanner.l"
 { return RP;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 75 "scanner.l"
+#line 74 "scanner.l"
 { return SEMI;}
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 76 "scanner.l"
+#line 75 "scanner.l"
 { return STRING;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 77 "scanner.l"
+#line 76 "scanner.l"
 { return THEN;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 78 "scanner.l"
+#line 77 "scanner.l"
 { return TO;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 79 "scanner.l"
+#line 78 "scanner.l"
 { return TYPE;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 80 "scanner.l"
+#line 79 "scanner.l"
 { return UNEQUAL;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 81 "scanner.l"
+#line 80 "scanner.l"
 { return UNTIL;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 82 "scanner.l"
+#line 81 "scanner.l"
 { return VAR;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 83 "scanner.l"
+#line 82 "scanner.l"
 { return WHILE;}
 	YY_BREAK
 case 53:
 /* rule 53 can match eol */
 YY_RULE_SETUP
-#line 84 "scanner.l"
+#line 83 "scanner.l"
 {lineno++;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 85 "scanner.l"
+#line 84 "scanner.l"
 {}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 86 "scanner.l"
+#line 85 "scanner.l"
 {return SYS_TYPE;} 
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 87 "scanner.l"
+#line 86 "scanner.l"
 {return SYS_TYPE;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 88 "scanner.l"
+#line 87 "scanner.l"
 {return SYS_TYPE;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 89 "scanner.l"
+#line 88 "scanner.l"
 {return SYS_TYPE;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 90 "scanner.l"
-{idstr = yytext;return ID;}
+#line 89 "scanner.l"
+{
+	TreeNode *t = new TreeNode(yytext);
+	yylval = t;
+	return ID;
+}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 92 "scanner.l"
+#line 95 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1201 "scanner.cpp"
+#line 1204 "scanner.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2191,7 +2194,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 92 "scanner.l"
+#line 95 "scanner.l"
 
 
 

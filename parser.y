@@ -8,7 +8,6 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-#define YYSTYPE TreeNode *
 #ifndef YYPARSER
 #include "parser.hpp"
 #endif
@@ -23,7 +22,7 @@ TreeNode *id;
 extern char* yytext;
 extern FILE *yyin, *yyout;
 extern int traceScan;
-extern string idstr;
+
 ProgramTreeNode *root;
 int traceParse = TRUE;
 ofstream parserOut("parserOut");
@@ -156,7 +155,7 @@ simple_type_decl : SYS_TYPE {
                 } 
                 |  ID {
                   tp("simple_type_decl 2");                
-                  $$ = new CustomTypeTreeNode(idstr);
+                  $$ = new CustomTypeTreeNode($1->getName());
                 }
                 |  LP  name_list  RP {
                   tp("simple_type_decl 3");                
@@ -180,10 +179,9 @@ simple_type_decl : SYS_TYPE {
                   n2->set(-(int)(n2->get()));
                   $$ = new SubRangeTypeTreeNode($2,$5); 
                 }
-                |  ID {s1 = idstr;} DOTDOT  ID {
+                |  ID  DOTDOT  ID {
                   tp("simple_type_decl 7");                
-                  s2 = idstr;
-                  $$ = new RecordElemTreeNode(s1, s2);
+                  $$ = new RecordElemTreeNode($1->getName(), $3->getName());
                 }
 ;
 var_part : VAR  var_decl_list {
@@ -309,25 +307,25 @@ non_label_stmt :  assign_stmt       {tp("non_label_stmt 1");$$ = $1;}
                | case_stmt          {tp("non_label_stmt 8");$$ = $1;}
                | goto_stmt          {tp("non_label_stmt 9");$$ = $1;}
                ;
-assign_stmt : ID 	{s = idstr;} ASSIGN  expression  {
+assign_stmt : ID  ASSIGN  expression  {
                 tp("assign stmt 1");
-                VariableTreeNode* x = new VariableTreeNode(s);
-                $$ = new BinaryExprTreeNode("=",x,$4);
+                VariableTreeNode* x = new VariableTreeNode($1->getName());
+                $$ = new BinaryExprTreeNode("=",x,$3);
             }
-            | ID	{s = idstr;} LB expression RB ASSIGN expression {
+            | ID LB expression RB ASSIGN expression {
                 tp("assign stmt 2");
-                TreeNode* x = new ArrayElemTreeNode(s,$4);
-                $$ = new BinaryExprTreeNode("=",x,$7);
+                TreeNode* x = new ArrayElemTreeNode($1->getName(),$3);
+                $$ = new BinaryExprTreeNode("=",x,$6);
             }
-            | ID  {s1 = idstr;} DOT  ID  {s2 = idstr;} ASSIGN  expression	{
+            | ID DOT  ID ASSIGN  expression	{
                 tp("assign stmt 3");
-                TreeNode* x = new RecordElemTreeNode(s1,s2);
-                $$ = new BinaryExprTreeNode("=",x,$7);
+                TreeNode* x = new RecordElemTreeNode($1->getName(),$3->getName());
+                $$ = new BinaryExprTreeNode("=",x,$5);
             }
             ;
 proc_stmt :  ID                   {tp("proc_stmt 1");$$ = new CallExprTreeNode(currentToken);}
           |  ID                   {s = currentToken;}
-          LP  args_list  RP       {//cout << $1 << "," << $2 << ","<< $3 << "," << $4 << $5;
+          LP  args_list  RP       {
           tp("proc_stmt 2");$$ = new CallExprTreeNode(s,((ListTreeNode*)$4)->getList());}
           |  SYS_PROC             {tp("proc_stmt 3");$$ = new CallExprTreeNode(currentToken);}
           |  SYS_PROC             {s = currentToken;}
@@ -406,20 +404,21 @@ term :  term  MUL  factor           {tp("term 1");$$ = new BinaryExprTreeNode("*
      |  term  AND factor            {tp("term 4");$$ = new BinaryExprTreeNode("&&",$1,$3);}
      |  factor                      {tp("term 5");$$ = $1;}
 ;
-factor : ID                         {tp("factor 1");$$ = new VariableTreeNode(idstr);}
-       |  ID                        {s = idstr;}
-       LP  args_list  RP            {tp("factor 2");$$ = new CallExprTreeNode(s,((ListTreeNode*)$4)->getList());}
-       |  SYS_FUNCT                 {tp("factor 3");$$ = new CallExprTreeNode(idstr);}
-       |  SYS_FUNCT                 {s = idstr;}
+factor : ID                         {tp("factor 1");$$ = new VariableTreeNode($1->getName());}
+       |  ID LP  args_list  RP      {
+          tp("factor 2");$$ = new CallExprTreeNode($1->getName(),((ListTreeNode*)$3)->getList());
+          }
+       |  SYS_FUNCT                 {tp("factor 3");$$ = new CallExprTreeNode($1->getName());}
+       |  SYS_FUNCT                 {s = $1->getName();}
        LP  args_list  RP            {tp("factor 4");$$ = new CallExprTreeNode(s,((ListTreeNode*)$4)->getList());}
        |  const_value               {tp("factor 5");$$ = $1;}
        |  LP  expression  RP        {tp("factor 6");$$ = $2;}
        |  NOT  factor               {tp("factor 7");$$ = new UnaryExprTreeNode("~",$2);}
        |  MINUS  factor             {tp("factor 8");$$ = new UnaryExprTreeNode("-",$2);}
-       |  ID                        {s = idstr;}
-       LB  expression  RB           {tp("factor 9");$$ = new ArrayElemTreeNode(s,$4);}
-       |  ID                        {s1 = idstr;}
-       DOT  ID                      {tp("factor 10");s2 = idstr; $$ = new RecordElemTreeNode(s1,s2);}
+       |  ID                        
+       LB  expression  RB           {tp("factor 9");$$ = new ArrayElemTreeNode($1->getName(),$3);}
+       |  ID                        
+       DOT  ID                      {tp("factor 10");$$ = new RecordElemTreeNode($1->getName(),$3->getName());}
 ;
 args_list : args_list  COMMA  expression  {
     tp("args_list 1");
