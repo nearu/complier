@@ -1,1 +1,15 @@
+<<<<<<< HEAD
 3 r:	integer	 at reg 16
+=======
+3 int:	integer
+13 max:	proc .. 8 num1:	integer	 at 0 .. 8 num2:	integer	 at 2 .. 8 n:	integer	 at 4
+============begin max's symtab==================
+8 n:	integer	 at 4
+8 num1:	integer	 at 0
+8 num2:	integer	 at 2
+3 result:	integer	 at 6
+============end max's symtab==================
+3 n1:	integer	 at 0
+3 n2:	integer	 at 2
+3 n3:	integer	 at 4
+>>>>>>> 1340a71a5b9d7c78aa7eb4eda5857f2a370d46ad

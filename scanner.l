@@ -66,7 +66,10 @@ name ({letter}|_)+({letter}|_|{digit})+
 "program" { return PROGRAM;}	
 "procedure" {return PROCEDURE;}
 "]" { return RB;}
-"read" { return READ;}
+"read" { 	
+	TreeNode *t = new TreeNode(yytext);
+	yylval = t;
+	return READ;}
 {real} { return REAL;}
 "record" { return RECORD;}
 "repeat" { return REPEAT;}

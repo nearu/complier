@@ -1084,108 +1084,111 @@ YY_RULE_SETUP
 case 39:
 YY_RULE_SETUP
 #line 69 "scanner.l"
-{ return READ;}
+{ 	
+	TreeNode *t = new TreeNode(yytext);
+	yylval = t;
+	return READ;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 70 "scanner.l"
+#line 73 "scanner.l"
 { return REAL;}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 71 "scanner.l"
+#line 74 "scanner.l"
 { return RECORD;}
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 72 "scanner.l"
+#line 75 "scanner.l"
 { return REPEAT;}
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 73 "scanner.l"
+#line 76 "scanner.l"
 { return RP;}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 74 "scanner.l"
+#line 77 "scanner.l"
 { return SEMI;}
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 75 "scanner.l"
+#line 78 "scanner.l"
 { return STRING;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 76 "scanner.l"
+#line 79 "scanner.l"
 { return THEN;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 77 "scanner.l"
+#line 80 "scanner.l"
 { return TO;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 78 "scanner.l"
+#line 81 "scanner.l"
 { return TYPE;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 79 "scanner.l"
+#line 82 "scanner.l"
 { return UNEQUAL;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 80 "scanner.l"
+#line 83 "scanner.l"
 { return UNTIL;}
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 81 "scanner.l"
+#line 84 "scanner.l"
 { return VAR;}
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 82 "scanner.l"
+#line 85 "scanner.l"
 { return WHILE;}
 	YY_BREAK
 case 53:
 /* rule 53 can match eol */
 YY_RULE_SETUP
-#line 83 "scanner.l"
+#line 86 "scanner.l"
 {lineno++;}
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 84 "scanner.l"
+#line 87 "scanner.l"
 {}
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 85 "scanner.l"
+#line 88 "scanner.l"
 {return SYS_TYPE;} 
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 86 "scanner.l"
+#line 89 "scanner.l"
 {return SYS_TYPE;}
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 87 "scanner.l"
+#line 90 "scanner.l"
 {return SYS_TYPE;}
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 88 "scanner.l"
+#line 91 "scanner.l"
 {return SYS_TYPE;}
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 89 "scanner.l"
+#line 92 "scanner.l"
 {
 	TreeNode *t = new TreeNode(yytext);
 	yylval = t;
@@ -1194,10 +1197,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 95 "scanner.l"
+#line 98 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 1201 "scanner.cpp"
+#line 1204 "scanner.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2191,7 +2194,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 95 "scanner.l"
+#line 98 "scanner.l"
 
 
 

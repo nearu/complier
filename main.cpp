@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
   mainSymtab->printSymtab(sym);
   cout << "===========================begin gencode=======================" << endl;
   root->genCode(mainSymtab);
- 
+  // CodeGenerator::emitCodeM(4, "load_ref", 12, 30, 17);
   // CodeGenerator::emitCodeR("%",11,9,10);
   // CodeGenerator::emitCodeR("<=",11,9,10);
   // CodeGenerator::emitCodeR("==",11,9,10);
