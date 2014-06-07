@@ -10,6 +10,7 @@ class RegManager;
 class LabelManager;
 extern RegManager *regManager;
 extern LabelManager  *labelManager;
+extern int traceEmit;
 const string regTable[] = {
 	"$zero",
 	"$at",
@@ -57,6 +58,7 @@ public:
 				return i;
 			}
 		}
+		cout << "reg is run out" << endl;
 		return -1;
 	}
 
@@ -94,8 +96,9 @@ class CodeGenerator {
 
 public:
 	// R-type instruments
+	// if the op is "~" then src_1 = 0 and src_2 is the right hand variable
 	static void emitCodeR(const string op, int dst, int src_1, int src_2) {
-		cout << "emit R :" << op << dst << " " << src_1 << " " << src_2 <<endl;
+		if (traceEmit) cout << "emit R : " << op << " " << dst << " " << src_1 << " " << src_2 <<endl;
 		string c;
 		if (op == "+" || op == "=") {
 			c = "add " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
@@ -141,13 +144,15 @@ public:
             c = c + "bne " + regTable[src_1] + "," + regTable[src_2] + ",notequal" +"\n";
             c = c + "addi " + regTable[dst] + "," + regTable[0] + ",-1" + "\n";
             c = c + "notequal:" + "addi " + regTable[dst] + "," + regTable[dst] + ",1";
+		} else if (op == "~") {
+			c = c + "xori " + regTable[dst] + ", " + regTable[src_2] + ", -1" ;
 		}
 		code << c << endl;
 	}
 
 	static void emitCodeI(const string op, int dst, int src, int imm)
 	{
-		cout << "emit I :" << op << dst << " " << src <<endl;
+		if (traceEmit) cout << "emit I op = " << op << " dst = " << dst << " src = " << src <<endl;
 		string c;
 		char ch[16] = {0,};
 		sprintf(ch,"%d",imm);
@@ -247,8 +252,9 @@ public:
 
 
 	// lw sw instruments
+	// reg is the src or dst reg
 	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
-		cout << "emit M" << " size = " << size << " offset = " << offset <<  endl;
+		if (traceEmit) cout << "emit M" << " size = " << size << " offset = " << offset <<  endl;
 		string c;
 		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
 		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
@@ -271,6 +277,10 @@ public:
 			regManager->freeReg(offset);
 			code << c1 << endl << c << endl;
 		}
+	}
+
+	static void emitRet() {
+		code << "ret" << endl;
 	}
 
 };	

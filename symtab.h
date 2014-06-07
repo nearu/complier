@@ -15,6 +15,8 @@ typedef vector<SymBucket *> * SYMQUEUE;
 typedef map<string, SYMQUEUE> SYMMAP;
 extern RegManager *regManager;
 
+
+
 class SymBucket {
 	int 			lineNO;
 	// the address of this type, default -1
@@ -27,6 +29,8 @@ class SymBucket {
 	int 			offsetReg;
 	// the order being inserted into symtab
 	int 			order;
+	// does this bucket presents a type
+	int 			isType;
 	// type name
 	const string 	type;
 	// id name
@@ -80,7 +84,9 @@ public:
 		size = s;
 	}
 
-
+	void setIsType(int t) {
+		isType = t;
+	}
 	void setSubSymtab(Symtab *symtab) {
 		nextSymtab = symtab;
 	}
@@ -142,6 +148,10 @@ public:
 		return offsetReg;
 	} 
 
+	int getIsType() {
+		return isType;
+	}
+
 	void printBucket(ofstream &out) {
 		_print(out);
 		SymBucket *tmp = next;
@@ -195,6 +205,8 @@ public:
 
 	}
 };
+
+bool cmp(SymBucket *x, SymBucket *y);
 
 
 class Symtab {
@@ -304,9 +316,11 @@ public:
 		for (SYMMAP::iterator iter = symMap.begin(); iter != symMap.end(); iter++) {
 			SYMQUEUE q = iter->second;
 			for (int i = 0; i < q->size(); i++) {
-				v.push_back((*q)[i]);
+				if (!(*q)[i]->getIsType())
+					v.push_back((*q)[i]);
 			}
 		}
+		sort(v.begin(), v.end(), cmp);
 	}
 /////////////////////////////////////////////////////
 // set functions								   //

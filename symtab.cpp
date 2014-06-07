@@ -19,3 +19,6 @@ void Symtab::printSymtab(ofstream &out) {
 		}
 	}
 }
+bool cmp(SymBucket *x, SymBucket *y) {
+	return y->getOrder() > x->getOrder();
+}

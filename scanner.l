@@ -60,7 +60,7 @@ name ({letter}|_)+({letter}|_|{digit})+
 "-" { return MINUS;}
 "mod" { return MOD;}
 "*" { return MUL;}
-"not" { return NOT;}
+"~" { return NOT;}
 "of" { return OF;}
 "+" { return PLUS;}
 "program" { return PROGRAM;}	

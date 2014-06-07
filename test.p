@@ -1,6 +1,8 @@
 program HelloWorld;
 type 
 	int = integer;
+var 
+	kkk : int;
 function max(num1, num2 :integer; var xx:char) :integer;
 var
 	result:int;

@@ -1,8 +1,8 @@
  ProgramTreeNode 
  RoutineTreeNode 
  RoutineHead  CompoundStmtTreeNode 
- a list of non const part:0  a list of type_decl_list:1  a list of non var part:0  a list of function_decl_list:1  a list of stmt:0 
- CustomTypeTreeNode:int  FunctionTreeNode 
+ a list of non const part:0  a list of type_decl_list:1  a list of var_decl_list:1  a list of function_decl_list:1  a list of stmt:0 
+ CustomTypeTreeNode:int  VariableTreeNode:kkk  FunctionTreeNode 
  a list of para_type_list:2  RoutineTreeNode 
  VariableTreeNode:num1num2  VariableTreeNode:xx  RoutineHead  CompoundStmtTreeNode 
  a list of non const part:0  a list of non type part:0  a list of var_decl_list:1  a list of function_decl_list:1  a list of stmt:1 

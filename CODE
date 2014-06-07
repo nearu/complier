@@ -1,6 +1,7 @@
 &&&max&&&0:
-lh $t0, 0($sp)
-add $v0,$t0,$zero
+add $v0,$s0,$zero
+ret
 &&&min&&&1:
 lh $t0, 2($sp)
 add $v0,$t0,$zero
+ret

@@ -516,11 +516,11 @@ public:
 class UnaryExprTreeNode : public ExprTreeNode {
 private:
 	const string op;
-	TreeNode *oprand;
+	TreeNode *operand;
 public:
-	UnaryExprTreeNode(const string _op,  TreeNode *_operand):op(_op),oprand(_operand)
+	UnaryExprTreeNode(const string _op,  TreeNode *_operand):op(_op),operand(_operand)
 	{
-		children.push_back(oprand);
+		children.push_back(operand);
 	}
 	void printSelf() {
 		ast << "UnaryExprTreeNode";
