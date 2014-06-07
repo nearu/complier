@@ -44,7 +44,8 @@
 11 routine part 5
 11 routine head
 11 stmt list 2
-12 factor 1
+12 const value 1
+12 factor 5
 12 term 5
 12 expr 4
 12 expression 7
@@ -59,7 +60,29 @@
 13 routine part 4
 14 routine head
 14 stmt list 2
-16 compound stmt
-16 routine_body
-16 routine
-16 pargram
+15 const value 1
+15 factor 5
+15 factor 8
+15 term 5
+15 expr 4
+15 expression 7
+15 assign stmt 1
+15 non_label_stmt 1
+15 stmt 2
+15 stmt list 1
+16 factor 1
+16 factor 8
+16 term 5
+16 expr 4
+16 factor 1
+16 term 5
+16 expr 1
+16 expression 7
+16 assign stmt 1
+16 non_label_stmt 1
+16 stmt 2
+16 stmt list 1
+17 compound stmt
+17 routine_body
+17 routine
+17 pargram

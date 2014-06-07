@@ -33,6 +33,8 @@ class SymBucket {
 	int 			isType;
 	// whether it is copy by ref
 	int 		    isRef;
+	// var
+	int 			isVar;
 	// type name
 	const string 	type;
 	// id name
@@ -60,7 +62,7 @@ public:
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
 		location(-1), next(this), regNum(-1),last(this),ref(NULL), offsetReg(-1),isType(0),
-		isRef(0)
+		isRef(0), isVar(0)
 		{}
 	SymBucket(const SymBucket* that) : type(that->type){
 		lineNO 		= that->lineNO;
@@ -91,6 +93,9 @@ public:
 
 	void setIsRef(int r) {
 		isRef = r;
+	}
+	void setIsVar(int v) {
+		isVar = v;
 	}
 
 	void setIsType(int t) {
@@ -127,6 +132,10 @@ public:
 
 	int getOrder() {
 		return order;
+	}
+
+	int getIsVar() {
+		return isVar;
 	}
 
 	int getLineno() {

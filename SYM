@@ -4,7 +4,7 @@
 8 n:	integer	 at 4
 8 num1:	integer	 at 0
 8 num2:	integer	 at 2
-3 result:	integer	 at 8
+3 result:	integer	 at 6
 ============end max's symtab==================
 3 n1:	integer	 at 0
 3 n2:	integer	 at 2

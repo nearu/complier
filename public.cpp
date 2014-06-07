@@ -36,7 +36,7 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 
 	if (reg == -1 && bucket != NULL) {
 		if (bucket->getIsRef()) {
-			// 表明copy by referance
+			cout <<  bucket->getName() << " : copy by referance" << endl;
 			load += "_ref";
 			store += "_ref";
 		}
@@ -215,8 +215,8 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 				b->setLoc(symtab->genLoc(b->getSize()));
 			}
 		}
-		if (getRef()) {
-			b->setIsRef(1);
+		if (getIsVar()) {
+		 	b->setIsVar(1);
 		}
 		symtab->insert(b);
 	}
@@ -244,6 +244,9 @@ void FunctionTreeNode::updateSymtab(Symtab *symtab) {
 			v[i]->setLoc(subSymtab->genLoc(v[i]->getSize()));
 		else v[i]->setLoc(subSymtab->genLoc(4));
 		v[i]->setRegNum(-1);
+		if (v[i]->getIsVar()) {
+			v[i]->setIsRef(1);
+		}
 		// here we only need the first node of arguments' type
 		SymBucket *newBucket = new SymBucket(v[i]);
 		tmpBucket->next = newBucket;
@@ -310,9 +313,9 @@ SymBucket * RoutineTreeNode::genCode(Symtab *symtab, int *reg) {
 		CodeGenerator::emitCodeI("-", SP,SP,totalStackSize);
 	}
 	body->genCode(env);
-	if (!isMain) {
-		if (totalStackSize > 0) 
+	if (totalStackSize > 0) 
 			CodeGenerator::emitCodeI("+", SP,SP,totalStackSize);
+	if (!isMain) {
 		CodeGenerator::emitCodeJ("jr", 31, 0, 0, "");
 	}
 	if (isMain) {

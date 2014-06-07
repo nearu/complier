@@ -9,8 +9,9 @@ procedure max(num1, num2 :integer; var n :integer);
 var
 	result:int;
 begin
-	result := n;
+	n := 1;
 end;
 begin	
-	
+	n1 := -1;
+	n2 := -n1+n2;
 end.

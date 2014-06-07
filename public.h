@@ -445,13 +445,13 @@ private:
 	const string name;
 	TypeTreeNode * typeNode;
 	ListTreeNode *nameList;
-	int ref;
+	int isVar;
 public:
 	VariableTreeNode( const string _name = "",  TreeNode* _type=NULL, int _ref = 0)
-	:name(_name), typeNode((TypeTreeNode*)_type), nameList(NULL),ref(_ref)
+	:name(_name), typeNode((TypeTreeNode*)_type), nameList(NULL),isVar(_ref)
 	 {}
 	VariableTreeNode(TreeNode *_list, TreeNode* _type=NULL, int _ref = 0)
-	:name(""),typeNode((TypeTreeNode*)_type),ref(_ref),nameList((ListTreeNode*)_list)
+	:name(""),typeNode((TypeTreeNode*)_type),isVar(_ref),nameList((ListTreeNode*)_list)
 	{}
 	const string& getName() {
 		return name;
@@ -462,8 +462,8 @@ public:
 	ListTreeNode *getNameList() {
 		return nameList;
 	}
-	int getRef() {
-		return ref;
+	int getIsVar() {
+		return isVar;
 	}
 	void printSelf() {
 		ast << "VariableTreeNode:";
