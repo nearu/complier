@@ -8,6 +8,7 @@ void Symtab::printSymtab(ofstream &out) {
 		SYMQUEUE q = iter->second;
 		for(int i = 0; i < q->size(); i++) {
 			SymBucket *b = (*q)[i];
+			cout << "print " + b->getName() << endl;
 			b->printBucket(out);
 			Symtab * s = b->getNextSymtab();
 			if (s != NULL) {

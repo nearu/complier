@@ -16,11 +16,10 @@
 5 term 5
 5 expr 4
 5 expression 7
-5 const value 1
-5 factor 5
-5 term 5
-5 expr 4
-5 expression 7
+5 assign stmt 1
+5 non_label_stmt 1
+5 stmt 2
+5 stmt list 1
 6 factor 1
 6 term 5
 6 expr 4
@@ -29,14 +28,59 @@
 6 term 5
 6 expr 1
 6 expression 7
-6 assign stmt 1
-6 non_label_stmt 1
-6 stmt 2
-6 for stmt
-6 non_label_stmt 7
-6 stmt 2
-6 stmt list 1
+7 const value 1
+7 stmt list 2
+7 const value 1
+7 factor 5
+7 term 5
+7 expr 4
+7 expression 7
+7 assign stmt 1
+7 non_label_stmt 1
+7 stmt 2
+7 stmt list 1
 7 compound stmt
-7 routine_body
-7 routine
-7 pargram
+7 non_label_stmt 3
+7 stmt 2
+7 case expr 1
+7 case expr list 2
+8 const value 1
+8 stmt list 2
+8 const value 1
+8 factor 5
+8 term 5
+8 expr 4
+8 expression 7
+8 assign stmt 1
+8 non_label_stmt 1
+8 stmt 2
+8 stmt list 1
+8 compound stmt
+8 non_label_stmt 3
+8 stmt 2
+8 case expr 1
+8 case expr list 1
+9 const value 1
+9 stmt list 2
+9 const value 1
+9 factor 5
+9 term 5
+9 expr 4
+9 expression 7
+9 assign stmt 1
+9 non_label_stmt 1
+9 stmt 2
+9 stmt list 1
+9 compound stmt
+9 non_label_stmt 3
+9 stmt 2
+9 case expr 1
+9 case expr list 1
+10 case stmt
+10 non_label_stmt 8
+10 stmt 2
+10 stmt list 1
+13 compound stmt
+13 routine_body
+13 routine
+13 pargram

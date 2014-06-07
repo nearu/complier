@@ -74,9 +74,13 @@ public:
 
 class LabelManager {
 	int loop_number;
+	int case_number;
 public:
+	LabelManager(){loop_number=0;case_number=0;}
 	int getLoopLabel(){return loop_number;}
 	void addLoopLabel(){loop_number++;} 
+	int getCaseLabel(){return case_number;}
+	void addCaseLabel(){case_number++;}
 };
 
 class CodeGenerator {

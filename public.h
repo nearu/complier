@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-
+#define YYSTYPE TreeNode *
 using namespace std;
 typedef int TokenType;
 /*
@@ -98,6 +98,7 @@ public:
 		ast << "IDTreeNode";
 	}
 	virtual const string getType() {}
+	
 };
 
 /// expr node
@@ -107,6 +108,7 @@ public:
 	void printSelf() {
 		ast << "ExprTreeNode";
 	}
+	TreeNode * getlhs() { return NULL; }
 };
 
 /*
@@ -160,6 +162,8 @@ public:
 	void updateSymtab(Symtab*);
 
 };
+
+
 
 //=====================================================================
 /// struct node
@@ -402,6 +406,7 @@ public:
 	}
 
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL) {
+		cout<<"ng"<<endl;
 		*reg = -2;
 		return NULL;
 	}
@@ -418,6 +423,9 @@ public:
 	ConstTreeNode( const string _name,  TreeNode *_value)
 				:name(_name),value((IDTreeNode*)_value)
 				{}
+	const string& getName() {
+		return name;
+	}
 	void printSelf() {
 		ast << "ConstTreeNode";
 	}
@@ -473,7 +481,7 @@ public:
 	TypeTreeNode *getTypeNode() {
 		return typeNode;
 	}
-
+	virtual void print() {cout<<"I am a VariableTreeNode!"<<endl;}
 	void updateSymtab(Symtab*);
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
@@ -525,7 +533,8 @@ public:
 	}
 	void printSelf() {
 		ast << "UnaryExprTreeNode";
-	}	
+	}
+	TreeNode * getlhs() { return oprand; }
 };
 /*
 * node for binary operaotr such as '+'  '='
@@ -543,7 +552,8 @@ public:
 	}
 	void printSelf() {
 		ast << "BinaryExprTreeNode";
-	}	
+	}
+	TreeNode * getlhs() { return lhs; }
 
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
@@ -574,7 +584,9 @@ public:
 					: label((IDTreeNode*)_label), stmt((StmtTreeNode*)_stmt){}
 	void printSelf() {
 		ast << "CaseExprTreeNode";
-	}					
+	}
+	SymBucket *genCode(Symtab *symtab, int *reg);
+
 };
 
 
@@ -725,7 +737,8 @@ public:
 	}
 	void printSelf() {
 		ast << "SwitchStmtTreeNode";
-	}	
+	}
+	SymBucket * genCode(Symtab *symtab, int *reg);
 };
 
 class ForStmtTreeNode : public StmtTreeNode {
