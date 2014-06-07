@@ -20,8 +20,7 @@
 	6 :
 	6 integer
 	6 ;
-	6 var
-	6 xx
+	6 xxx
 	6 :
 	6 char
 	6 )
@@ -33,38 +32,20 @@
 	8 :
 	8 int
 	8 ;
-	9 function
-	9 min
-	9 (
-	9 num1
-	9 ,
-	9 num2
-	9 :
-	9 integer
-	9 )
-	9 :
-	9 integer
-	9 ;
-	10 var
-	11 r
-	11 :
-	11 int
+	9 begin
+	10 kkk
+	10 :=
+	10 num1
+	10 ;
+	11 end
 	11 ;
 	12 begin
-	13 min
+	13 kkk
 	13 :=
-	13 num2
+	13 2
+	13 *
+	13 kkk
 	13 ;
 	14 end
-	14 ;
-	15 begin
-	16 max
-	16 :=
-	16 num1
-	16 ;
-	17 end
-	17 ;
-	18 begin
-	20 end
-	20 .
-	20 
+	14 .
+	14 

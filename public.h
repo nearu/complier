@@ -595,7 +595,8 @@ private:
 public:
 	FunctionTreeNode( const string _name,  TreeNode* _args, 
 		 TreeNode* _returnType,  TreeNode* _body)
-		:name(_name), args((ListTreeNode*)_args), returnType((SimpleTypeTreeNode*)_returnType), body((ListTreeNode*)_body)
+		:name(_name), args((ListTreeNode*)_args)
+		, returnType((SimpleTypeTreeNode*)_returnType), body((ListTreeNode*)_body)
 		{
 			children.push_back(args);
 			children.push_back(body);

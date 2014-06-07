@@ -1,7 +1,12 @@
+addi $t2,$zero,2
+mul $t0,$s0,$t2
+add $s0,$t0,$zero
 &&&max&&&0:
-add $v0,$s0,$zero
-ret
-&&&min&&&1:
-lh $t0, 2($sp)
-add $v0,$t0,$zero
-ret
+sw $fp, 0($sp)
+addi $sp,$sp,-9
+lw $t1, 0($fp)
+lh $t1, 4($fp)
+add $s0,$t0,$zero
+lw $fp, 0($fp)
+addi $sp,$sp,9
+jr $ra

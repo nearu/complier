@@ -57,8 +57,9 @@ int main(int argc, char *argv[]) {
 
 
   root->updateSymtab(mainSymtab);
-  cout << "updateSymtab end" << endl;
+  cout << "======================updateSymtab end=========================" << endl;
   mainSymtab->printSymtab(sym);
+  cout << "===========================begin gencode=======================" << endl;
   root->genCode(mainSymtab);
  
   // CodeGenerator::emitCodeR("%",11,9,10);

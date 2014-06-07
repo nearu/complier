@@ -57,7 +57,7 @@ public:
 	SymBucket 		*ref;
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
-		location(-1), next(this), regNum(-1),last(this),ref(NULL), offsetReg(-1)
+		location(-1), next(this), regNum(-1),last(this),ref(NULL), offsetReg(-1),isType(0)
 		{}
 	SymBucket(const SymBucket* that) : type(that->type){
 		lineNO 		= that->lineNO;
@@ -70,6 +70,7 @@ public:
 		// curSymtab 	= that->curSymtab;
 		// next 		= that->next;
 		// last 		= that->last;
+		nextSymtab 	= NULL;
 		last = this;
 		next = this;
 	}
@@ -105,6 +106,9 @@ public:
 
 	void setOrder(int o) {
 		order = o;
+	}
+	void setCurSymtab(Symtab *s) {
+		curSymtab = s;
 	}
 /////////////////////////////////////////////////////
 // get functions								   //
@@ -214,13 +218,14 @@ class Symtab {
 	const int END_REG_NUM;
 	const int BEGIN_PARA_REG_NUM;
 	const int END_PARA_REG_NUM;
+	int level;
 	// symtabName
 	const string symtabName;
 	// the parent symtab
 	SymBucket *pBucket;
 	// inner hash map for symtab
 	SYMMAP symMap;
-	// current offset in the stack
+	// current offset in the stack, default 4, for fp
 	int curLoc;
 	// default reg num is -1
 	int curRegNum;
@@ -230,9 +235,9 @@ class Symtab {
 	int curParaReg;
 public:
 	Symtab(const string _name, SymBucket *_pBucket = NULL)
-		:symtabName(_name), pBucket(_pBucket),curLoc(0),curRegNum(-1),
+		:symtabName(_name), pBucket(_pBucket),curLoc(4),curRegNum(-1),
 		BEGIN_REG_NUM(16), END_REG_NUM(23), BEGIN_PARA_REG_NUM(4),END_PARA_REG_NUM(7),curOrder(0)
-		,curParaReg(-1){}
+		,curParaReg(-1),level(0) {}
 
 	void insert(SymBucket* b) {
 		SYMMAP::iterator iter;
@@ -322,6 +327,10 @@ public:
 		}
 		sort(v.begin(), v.end(), cmp);
 	}
+
+	int getLevel() {
+		return level;
+	}
 /////////////////////////////////////////////////////
 // set functions								   //
 /////////////////////////////////////////////////////	
@@ -342,7 +351,17 @@ public:
 		curRegNum = -1;
 	}
 
+	void setCurRegNum(int r)  {
+		curRegNum = r;
+	}
+
+	void setLevel(int l) {
+		level = l;
+	}
+
+
 	void printSymtab(ofstream& out);
+
 
 	virtual ~Symtab() {}
 

@@ -1,17 +1,10 @@
 3 int:	integer
 3 kkk:	integer	 at reg 16
-17 max:	func .. 6 xx:	char	 at 0 .. 6 returnType:	integer
+11 max:	func .. 6 num1:	integer	 at 4 .. 6 num2:	integer	 at 6 .. 6 xxx:	char	 at 8 .. 6 returnType:	integer
 ============begin max's symtab==================
 6 max:	integer	 at reg 2
-14 min:	func .. 9 num1:	integer	 at 0 .. 9 num2:	integer	 at 2 .. 9 returnType:	integer
-============begin min's symtab==================
-9 min:	integer	 at reg 2
-9 num1:	integer	 at 0
-9 num2:	integer	 at 2
-3 r:	integer	 at reg 16
-============end min's symtab==================
-6 num1:	integer	 at reg 16
-6 num2:	integer	 at reg 17
-3 result:	integer	 at reg 16
-6 xx:	char	 at 0
+6 num1:	integer	 at 4
+6 num2:	integer	 at 6
+3 result:	integer	 at reg 17
+6 xxx:	char	 at 8
 ============end max's symtab==================

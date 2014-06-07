@@ -5,7 +5,8 @@
 #include "public.h"
 #include "symtab.h"
 #include <cmath>
-
+#define FP 30
+#define SP 29
 ofstream ast("AST");
 ofstream code("CODE");
 ofstream sym("SYM");
@@ -20,7 +21,7 @@ extern Symtab* mainSymtab;
 /////////////////////////////////////////////////////////////
 // utils												   //
 /////////////////////////////////////////////////////////////
-void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc) {
+void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc, int currentLevel = 0) {
 	if (reg == -3) {
 		reg = -1;
 		loc = bucket->getOffsetReg();
@@ -34,7 +35,15 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 
 	if (reg == -1) {
 		loc = bucket->getLoc();
+		int level = bucket->getCurSymtab()->getLevel();
+		if (level < currentLevel) {
+			char ch[5] = {0,};
+			sprintf(ch, "%d", currentLevel - level);
+			load = load +  "-" + ch;
+			store = store + "-" +  ch;
+		}
 	}
+
 	// cout << "in select :" << bucket->getName() << " loc = " << loc << endl;
 }
 
@@ -187,21 +196,26 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 
 void FunctionTreeNode::updateSymtab(Symtab *symtab) {
 	env = symtab;
+	// new a bucket for function
 	SymBucket *bucket = new SymBucket(name, lineNO, "func", symtab);
 	Symtab *subSymtab = new Symtab(name+"-subSymtab");
+	subSymtab->setLevel(symtab->getLevel() + 1);
 	subSymtab->setParentBucket(bucket);
 	bucket->setSubSymtab(subSymtab);
 	args->updateSymtab(subSymtab);
+	// copy args into the function bucket
 	vector<SymBucket *> v;
 	subSymtab->getSymBucketList(v);
 	SymBucket *tmpBucket = bucket;
-	subSymtab->resetRegNum();
+	subSymtab->setCurRegNum(symtab->getCurReg());
 	for (int  i = 0; i < v.size(); i++) {
+		cout << name << " : " << v[i]->getName() << endl;
 		v[i]->setLoc(subSymtab->genLoc(v[i]->getSize()));
 		v[i]->setRegNum(-1);
+		// here we only need the first node of arguments' type
 		SymBucket *newBucket = new SymBucket(v[i]);
 		tmpBucket->next = newBucket;
-		tmpBucket = newBucket->last;
+		tmpBucket = newBucket;
 	}
 	SymBucket *returnTypeBucket = returnType->genSymItem("returnType", symtab);
 	bucket->last = returnTypeBucket->last;
@@ -212,8 +226,11 @@ void FunctionTreeNode::updateSymtab(Symtab *symtab) {
 	subTab = subSymtab;
 	// insert return node
 	SymBucket *returnNameBucket = new SymBucket(returnTypeBucket);
+	returnNameBucket->setCurSymtab(subSymtab);
 	returnNameBucket->setName(name);
+	// set return reg num
 	returnNameBucket->setRegNum(2);
+
 	subSymtab->insert(returnNameBucket);
 }
 
@@ -239,11 +256,35 @@ SymBucket * ProgramTreeNode::genCode(Symtab *symtab, int *reg) {
 
 SymBucket * RoutineTreeNode::genCode(Symtab *symtab, int *reg) {
 	traceGen("rg");
+	if (isMain) symtab->setCurLoc(0);
+	vector<SymBucket *> bucketList;
+	symtab->getSymBucketList(bucketList);
+	int totalStackSize = 0;
+	for (int i = 0; i < bucketList.size(); i++) {
+		SymBucket *b = bucketList[i];
+		if (b->getRegNum() == -1) {
+			totalStackSize += b->getSize();
+		}
+	}
+	// call expr's gencode will perform sp - curStackOffset operation
+	if (!isMain) totalStackSize += 4; // for fp
+	if (totalStackSize > 0) {
+		// store fp
+		if (!isMain)
+			CodeGenerator::emitCodeM(4, "store", 0, SP, FP);
+		CodeGenerator::emitCodeI("-", SP,SP,totalStackSize);
+	}
 	body->genCode(env);
 	if (!isMain) {
-		CodeGenerator::emitRet();
+		// restore fp
+		CodeGenerator::emitCodeM(4, "load", 0, FP, FP);
+		if (totalStackSize > 0) 
+			CodeGenerator::emitCodeI("+", SP,SP,totalStackSize);
+		CodeGenerator::emitCodeJ("jr", 31, 0, 0, "");
 	}
-	if (isMain) isMain = FALSE;
+	if (isMain) {
+		isMain = FALSE;
+	}
 	head->genCode(env);
 	return NULL;
 }
@@ -256,10 +297,12 @@ SymBucket * ListTreeNode::genCode(Symtab *symtab, int *reg) {
 
 SymBucket * ConstTreeNode::genCode(Symtab *symtab, int *reg) {
 	traceGen("cg");
-
 	if (reg != NULL) *reg = -1;
 	env = symtab;
-	return new SymBucket(env->find(name));
+	SymBucket *b = env->find(name);
+	SymBucket * returnBucket = new SymBucket(b);
+	returnBucket->setCurSymtab(b->getCurSymtab());
+	return returnBucket;
 }
 
 SymBucket * VariableTreeNode::genCode(Symtab *symtab, int *reg) {
@@ -271,21 +314,13 @@ SymBucket * VariableTreeNode::genCode(Symtab *symtab, int *reg) {
 	} else {
 		cout << lineNO << ":variable " << name << " is not defined" << endl;
 	}
-	return new SymBucket(b);
+	SymBucket * returnBucket = new SymBucket(b);
+	returnBucket->setCurSymtab(b->getCurSymtab());
+	return returnBucket;
 }
 
 // const var parts will be processed later
 SymBucket * RoutineHeadTreeNode::genCode(Symtab *symtab, int *reg) {
-	vector<SymBucket *> bucketList;
-	symtab->getSymBucketList(bucketList);
-	int totalStackSize = 0;
-	for (int i = 0; i < bucketList.size(); i++) {
-		SymBucket *b = bucketList[i];
-		if (b->getRegNum() == -1) {
-			// SP - SIZE
-			totalStackSize += b->getSize();
-		}
-	}
 	routinePart->genCode(symtab);
 	return 0;
 }
@@ -326,13 +361,13 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		int tmpSrc_2 = regManager->getTmpReg();
 		int tmpDst = regManager->getTmpReg();
 		if (op == "=") {
-			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, 29, tmpSrc_2);			
-			CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, 29, tmpSrc_2);
+			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmpSrc_2);			
+			CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmpSrc_2);
 			if (reg != NULL) *reg = tmpSrc_2;
 			returnBucket = new SymBucket(bucketL);
 		} else {
-			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, 29, tmpSrc_1);
-			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, 29, tmpSrc_2);
+			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmpSrc_1);
+			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmpSrc_2);
 			CodeGenerator::emitCodeR(op, tmpDst, tmpSrc_1, tmpSrc_2);
 			if (reg != NULL) *reg = tmpDst;
 		}
@@ -353,7 +388,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		regManager->freeReg(regR);
 	} else if (regL > 0 && regR == -1) {
 		int tmpReg = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, 29, tmpReg);
+		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmpReg);
 		if (op == "=") {
 			CodeGenerator::emitCodeR(op, regL, tmpReg, 0);
 			if (reg != NULL) *reg = regL;
@@ -366,13 +401,13 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		regManager->freeReg(tmpReg);
 	} else if (regL == -1 && regR > 0) {
 		if (op == "=") {
-			CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, 29, regR);
+			CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, regR);
 			if (reg != NULL) *reg = regR;
 			returnBucket = new SymBucket(bucketL);
 		} else {
 			int tmpSrc = regManager->getTmpReg();
 			int tmpDst = regManager->getTmpReg();
-			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, 29, tmpSrc);
+			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmpSrc);
 			CodeGenerator::emitCodeR(op, tmpDst, tmpSrc, regR);
 			regManager->freeReg(tmpSrc);
 			if (reg != NULL) *reg = tmpDst;
@@ -389,7 +424,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 			CodeGenerator::emitCodeI(op, tmpDst, regR, ((NumberTreeNode<int> *)lhs)->get());
 			if (reg != NULL) *reg = tmpDst;
 		} else if (regL == -2 && regR == -1) {
-			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, 29, tmpSrc);
+			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmpSrc);
 			CodeGenerator::emitCodeI(op, tmpDst, tmpSrc, ((NumberTreeNode<int> *)lhs)->get());
 			if (reg != NULL) *reg = tmpDst;
 		} else if (regL > 0 && regR == -2) {
@@ -403,10 +438,10 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		} else if (regL == -1 && regR == -2) {
 			if (op == "=") {
 				CodeGenerator::emitCodeI(op, tmpDst, 0, ((NumberTreeNode<int> *)rhs)->get());
-				CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, 29, tmpDst);
+				CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmpDst);
 				if (reg != NULL) *reg = tmpDst;
 			} else {
-				CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, 29, tmpSrc);
+				CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmpSrc);
 				CodeGenerator::emitCodeI(op, tmpDst, tmpSrc, ((NumberTreeNode<int> *)rhs)->get());
 				if (reg != NULL) *reg = tmpDst;
 			}
@@ -440,7 +475,7 @@ SymBucket * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	selectOP(bucketL,regL,loadOPL,storeOPL,locL);
 	if(regL == -1){
 		int tmp = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, 29, tmp);
+		CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);
 		CodeGenerator::emitCodeJ("beq",tmp,0,0,breakn);
 		regManager->freeReg(tmp);
 	}
@@ -476,7 +511,7 @@ SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	selectOP(bucketR,regR,loadOPR,storeOPR,locR);
 	if(regR == -1){
 		int tmp = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, 29, tmp);
+		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp);
 		CodeGenerator::emitCodeJ("beq",tmp,0,0,breakn);
 		regManager->freeReg(tmp);
 	}
@@ -486,14 +521,14 @@ SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	body->genCode(symtab, &regB);
 	if(regL == -1){
 		int tmp = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, 29, tmp);
+		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp);
 		if(direction == "to") {
 			CodeGenerator::emitCodeI("+",tmp,tmp,1);
 		}
 		else {
 			CodeGenerator::emitCodeI("-",tmp,tmp,1);
 		}
-		CodeGenerator::emitCodeM(bucketR->getSize(),storeOPR, locR, 29, tmp);
+		CodeGenerator::emitCodeM(bucketR->getSize(),storeOPR, locR, FP, tmp);
 		regManager->freeReg(tmp);
 	}
 	else {
@@ -533,7 +568,7 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 		int tmpSrc_1 = regManager->getTmpReg();
 		int tmpSrc_2 = regManager->getTmpReg();
 		int tmpDst   = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(indexBucket->getSize(), "load", indexLoc, 29,tmpSrc_1);
+		CodeGenerator::emitCodeM(indexBucket->getSize(), "load", indexLoc, FP,tmpSrc_1);
 		CodeGenerator::emitCodeI("+", tmpSrc_2, 0, elemSize);
 		CodeGenerator::emitCodeR("*", tmpDst, tmpSrc_1, tmpSrc_2);
 		if (reg != NULL) *reg = -3;
@@ -587,7 +622,7 @@ SymBucket * UnaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		CodeGenerator::emitCodeR(op, tmpDst, 0, operandReg);
 		if (reg != NULL) *reg = tmpDst;
 	} else if (operandReg == -1) {
-		CodeGenerator::emitCodeM(operandBucket->getSize(), loadOP, operandBucket->getLoc(),29,tmpDst);
+		CodeGenerator::emitCodeM(operandBucket->getSize(), loadOP, operandBucket->getLoc(),FP,tmpDst);
 		CodeGenerator::emitCodeR(op,tmpDst,0,tmpDst);
 		if (reg != NULL) *reg = tmpDst;
 	} else if (operandReg == -2) {

@@ -240,8 +240,11 @@ public:
 				c = op + " " + regTable[reg1] + "," + regTable[reg2] + "," + label;
 			}
 		}
-		else if(op == "j")
+		else if(op == "j") {
 			c = op + " " + label;
+		} else if (op == "jr") {
+			c = op + " " + regTable[reg1];
+		}
 		code << c << endl;
 
 	}
@@ -253,6 +256,7 @@ public:
 
 	// lw sw instruments
 	// reg is the src or dst reg
+	// load_reg , store_reg means that offset is stored in the register numbered "offset"
 	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
 		if (traceEmit) cout << "emit M" << " size = " << size << " offset = " << offset <<  endl;
 		string c;
@@ -260,16 +264,31 @@ public:
 		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
 		char ch[16] = {0,};
 		string instr;
-		if (op == "load" || op == "load_reg") {
-				instr = loadInstr[size];
+		string localOP = op;
+		int tmpFP = regManager->getTmpReg();
+
+		if (op.find("-") != string::npos) {
+			int pos = op.find('-');
+			int level = atoi(op.substr(pos+1, op.length()).c_str());
+			int curFP = 30;
+			for (int i = 0; i < level; i++) {
+				CodeGenerator::emitCodeM(4, "load", 0, curFP, tmpFP);
+				curFP = tmpFP;
+			}
+			reg = curFP;
+			localOP = op.substr(0,pos);
+		}
+
+		if (localOP == "load" || localOP == "load_reg") {
+			instr = loadInstr[size];
 		} else {
 			instr = storeInstr[size];
 		}
-		if (op == "load" || op == "store") {
+		if (localOP == "load" || localOP == "store") {
 			sprintf(ch,"%d",offset);
 			c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
 			code << c << endl;
-		} else if (op == "load_reg" || op =="store_reg") {
+		} else if (localOP == "load_reg" || localOP =="store_reg") {
 			ch[0] = '\0';
 			sprintf(ch, "0");
 			string c1 = "add " + regTable[offset] + ", " + regTable[offset] + ", " + regTable[regAddr];
@@ -277,6 +296,7 @@ public:
 			regManager->freeReg(offset);
 			code << c1 << endl << c << endl;
 		}
+		regManager->freeReg(tmpFP);
 	}
 
 	static void emitRet() {

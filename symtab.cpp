@@ -4,13 +4,16 @@ using namespace std;
 
 //// type name begin with '0' means it is only a reference
 void Symtab::printSymtab(ofstream &out) {
+	cout << "in printSymtab" << endl;
 	for(SYMMAP::iterator iter = symMap.begin();iter != symMap.end(); iter++) {
 		SYMQUEUE q = iter->second;
 		for(int i = 0; i < q->size(); i++) {
 			SymBucket *b = (*q)[i];
-
+			cout << "print " << b->getName() << endl;
 			b->printBucket(out);
+			cout << "111111" << endl;
 			Symtab * s = b->getNextSymtab();
+			cout << "22222" << endl;
 			if (s != NULL) {
 				out << "============begin "<<b->getName() << "'s symtab==================" << endl;
 				s->printSymtab(out);
@@ -18,6 +21,7 @@ void Symtab::printSymtab(ofstream &out) {
 			}
 		}
 	}
+	cout << "end printSymtab" << endl;
 }
 bool cmp(SymBucket *x, SymBucket *y) {
 	return y->getOrder() > x->getOrder();
