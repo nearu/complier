@@ -1,17 +1,9 @@
-&&&max&&&0:
-sw $fp, 0($sp)
-addi $sp,$sp,-13
-lh $t0, 8($fp)
-add $v0,$t0,$zero
-lw $fp, 0($fp)
-addi $sp,$sp,13
-jr $ra
-&&&min&&&1:
-sw $fp, 0($sp)
-addi $sp,$sp,-12
-lw $t1, 4($fp)
-lb $t0, 8($t1)
-add $v0,$t0,$zero
-lw $fp, 0($fp)
-addi $sp,$sp,12
+&&&max&&&:
+addi $sp,$sp,-6
+lw $t2, 4($fp)
+lw $t3, 0($fp)
+add $t3,$t2,$t3
+lh $t0, 0($t3)
+add $s4,$t0,$zero
+addi $sp,$sp,6
 jr $ra

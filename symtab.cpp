@@ -11,9 +11,7 @@ void Symtab::printSymtab(ofstream &out) {
 			SymBucket *b = (*q)[i];
 			cout << "print " << b->getName() << endl;
 			b->printBucket(out);
-			cout << "111111" << endl;
 			Symtab * s = b->getNextSymtab();
-			cout << "22222" << endl;
 			if (s != NULL) {
 				out << "============begin "<<b->getName() << "'s symtab==================" << endl;
 				s->printSymtab(out);

@@ -1,18 +1,16 @@
 program HelloWorld;
 type 
 	int = integer;
-function max(num1, num2 :integer; var xx:char) :integer;
+var 
+	n1 : int;
+	n2 : int;
+	n3 : int;
+procedure max(num1, num2 :integer; var n :integer);
 var
 	result:int;
-function min(num1, num2:integer):integer;
-var 
-	r : int;
-	begin
-		min := xx;
-	end;
 begin
-	max := num1;
+	result := n;
 end;
 begin	
-
+	
 end.

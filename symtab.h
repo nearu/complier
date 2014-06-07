@@ -31,6 +31,8 @@ class SymBucket {
 	int 			order;
 	// does this bucket presents a type
 	int 			isType;
+	// whether it is copy by ref
+	int 		    isRef;
 	// type name
 	const string 	type;
 	// id name
@@ -57,7 +59,8 @@ public:
 	SymBucket 		*ref;
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
-		location(-1), next(this), regNum(-1),last(this),ref(NULL), offsetReg(-1),isType(0)
+		location(-1), next(this), regNum(-1),last(this),ref(NULL), offsetReg(-1),isType(0),
+		isRef(0)
 		{}
 	SymBucket(const SymBucket* that) : type(that->type){
 		lineNO 		= that->lineNO;
@@ -70,9 +73,10 @@ public:
 		// curSymtab 	= that->curSymtab;
 		// next 		= that->next;
 		// last 		= that->last;
+		isRef 		= that->isRef;
 		nextSymtab 	= NULL;
-		last = this;
-		next = this;
+		last 		= this;
+		next 		= this;
 	}
 /////////////////////////////////////////////////////
 // set functions								   //
@@ -83,6 +87,10 @@ public:
 
 	void setSize(int s) {
 		size = s;
+	}
+
+	void setIsRef(int r) {
+		isRef = r;
 	}
 
 	void setIsType(int t) {
@@ -140,6 +148,9 @@ public:
 		return name;
 	}
 
+	int getIsRef() {
+		return isRef;
+	}
 	int getRegNum() {
 		return regNum;
 	}
@@ -225,17 +236,17 @@ class Symtab {
 	SymBucket *pBucket;
 	// inner hash map for symtab
 	SYMMAP symMap;
-	// current offset in the stack, default 8, for fp and access link
+	// current offset in the stack
 	int curLoc;
 	// default reg num is -1
 	int curRegNum;
 	// curOrder
 	int curOrder;
-	// cur $ax reg
+	// cur $ax reg , deprecated
 	int curParaReg;
 public:
 	Symtab(const string _name, SymBucket *_pBucket = NULL)
-		:symtabName(_name), pBucket(_pBucket),curLoc(8),curRegNum(-1),
+		:symtabName(_name), pBucket(_pBucket),curLoc(0),curRegNum(-1),
 		BEGIN_REG_NUM(16), END_REG_NUM(23), BEGIN_PARA_REG_NUM(4),END_PARA_REG_NUM(7),curOrder(0)
 		,curParaReg(-1),level(0) {}
 

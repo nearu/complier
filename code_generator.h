@@ -247,6 +247,8 @@ public:
 			c = op + " " + label;
 		} else if (op == "jr") {
 			c = op + " " + regTable[reg1];
+		} else if (op == "jal") {
+			c = op + " " + label;
 		}
 		code << c << endl;
 
@@ -273,16 +275,16 @@ public:
 		if (op.find("-") != string::npos) {
 			int pos = op.find('-');
 			int level = atoi(op.substr(pos+1, op.length()).c_str());
-			CodeGenerator::emitCodeM(4, "load", 4, FP, tmpAC);
+			CodeGenerator::emitCodeM(4, "load", -4, FP, tmpAC);
 			for (int i = 1; i < level; i++) {
 				CodeGenerator::emitCodeM(4, "load", 0, tmpAC, tmpAC);
 			}
+			CodeGenerator::emitCodeM(4, "load", -4, tmpAC, tmpAC);
 			regAddr = tmpAC;
-			offset -= 4;
 			localOP = op.substr(0,pos);
 		}
 
-		if (localOP == "load" || localOP == "load_reg") {
+		if (localOP == "load" || localOP == "load_reg" || localOP == "load_ref") {
 			instr = loadInstr[size];
 		} else {
 			instr = storeInstr[size];
@@ -298,6 +300,18 @@ public:
 			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[offset] + ")";
 			regManager->freeReg(offset);
 			code << c1 << endl << c << endl;
+		} else if (localOP == "load_ref" || localOP == "store_ref") {
+			int tmp0 = regManager->getTmpReg();
+			int tmp1 = regManager->getTmpReg();
+			CodeGenerator::emitCodeM(4, "load", offset, regAddr, tmp0);
+			CodeGenerator::emitCodeM(4, "load", 0, regAddr, tmp1);
+			CodeGenerator::emitCodeR("+", tmp1, tmp0, tmp1);
+			ch[0] = '\0';
+			sprintf(ch, "0");
+			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[tmp1] + ")";
+			regManager->freeReg(tmp0);
+			regManager->freeReg(tmp1);
+			code << c << endl;
 		}
 		regManager->freeReg(tmpAC);
 	}

@@ -565,11 +565,12 @@ class CallExprTreeNode : public ExprTreeNode {
 private:
 	const string name;
 	vector<TreeNode *> args;
+	int isProc;
 public:
-	CallExprTreeNode( const string _name,  vector<TreeNode *> _args )
-						:name(_name), args(_args){}
-	CallExprTreeNode( const string _name)
-						:name(_name){}
+	CallExprTreeNode( const string _name,  vector<TreeNode *> _args , int _proc = 0)
+						:name(_name), args(_args), isProc(_proc){}
+	CallExprTreeNode( const string _name, int _proc = 0)
+						:name(_name), isProc(_proc){}
 	void printSelf() {
 		ast << "BinaryExprTreeNode";
 	}
@@ -587,7 +588,6 @@ public:
 		ast << "CaseExprTreeNode";
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg);
-
 };
 
 
@@ -603,12 +603,16 @@ private:
 	SimpleTypeTreeNode* returnType;
 	ListTreeNode* body;
 	Symtab* subTab;
+	int isProc;
 public:
 	FunctionTreeNode( const string _name,  TreeNode* _args, 
-		 TreeNode* _returnType,  TreeNode* _body)
+		 TreeNode* _returnType,  TreeNode* _body, int _isProc = 0)
 		:name(_name), args((ListTreeNode*)_args)
-		, returnType((SimpleTypeTreeNode*)_returnType), body((ListTreeNode*)_body)
+		, body((ListTreeNode*)_body)
+		, isProc(_isProc)
 		{
+			if (_returnType != NULL)
+				returnType = (SimpleTypeTreeNode*)_returnType;
 			children.push_back(args);
 			children.push_back(body);
 		}
@@ -643,7 +647,7 @@ public:
 	void printSelf() {
 		ast << "ProcedureTreeNode";
 	}		
-	// void updateSymtab(Symtab* symtab);
+	void updateSymtab(Symtab* symtab);
 };
 
 

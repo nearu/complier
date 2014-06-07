@@ -236,7 +236,7 @@ function_decl : FUNCTION  ID  parameters  COLON  simple_type_decl SEMI routine S
 ;
 procedure_decl : PROCEDURE ID parameters  SEMI  routine  SEMI {
   tp("procedure decl");
-  $$ = new ProcedureTreeNode($2->getName(), $3, $5); 
+  $$ = new FunctionTreeNode($2->getName(), $3, new TypeTreeNode(), $5, 1);
 }
 ;
 parameters : LP  para_decl_list  RP  {
@@ -323,15 +323,11 @@ assign_stmt : ID  ASSIGN  expression  {
                 $$ = new BinaryExprTreeNode("=",x,$5);
             }
             ;
-proc_stmt :  ID                   {tp("proc_stmt 1");$$ = new CallExprTreeNode(currentToken);}
-          |  ID                   {s = currentToken;}
-          LP  args_list  RP       {
-          tp("proc_stmt 2");$$ = new CallExprTreeNode(s,((ListTreeNode*)$4)->getList());}
-          |  SYS_PROC             {tp("proc_stmt 3");$$ = new CallExprTreeNode(currentToken);}
-          |  SYS_PROC             {s = currentToken;}
-          LP  args_list  RP       {tp("proc_stmt 4");$$ = new CallExprTreeNode(s,((ListTreeNode*)$4)->getList());}
-          |  READ                 {s = currentToken;}
-          LP  factor  RP          {tp("proc_stmt 5");$$ = new CallExprTreeNode(s,((ListTreeNode*)$4)->getList());}
+proc_stmt :  ID                             {tp("proc_stmt 1");$$ = new CallExprTreeNode($1->getName(), 1);}
+          |  ID LP  args_list  RP           {tp("proc_stmt 2");$$ = new CallExprTreeNode($1->getName(),((ListTreeNode*)$3)->getList(), 1);}
+          |  SYS_PROC                       {tp("proc_stmt 3");$$ = new CallExprTreeNode($1->getName(),1);}
+          |  SYS_PROC LP  args_list  RP     {tp("proc_stmt 4");$$ = new CallExprTreeNode($1->getName(),((ListTreeNode*)$3)->getList(), 1);}
+          |  READ LP  factor  RP            {tp("proc_stmt 5");$$ = new CallExprTreeNode($1->getName(),((ListTreeNode*)$3)->getList(), 1);}
           ;
 
 compound_stmt : BEGINP  stmt_list  END {
