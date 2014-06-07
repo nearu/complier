@@ -200,6 +200,8 @@ public:
 class Symtab {
 	const int BEGIN_REG_NUM;
 	const int END_REG_NUM;
+	const int BEGIN_PARA_REG_NUM;
+	const int END_PARA_REG_NUM;
 	// symtabName
 	const string symtabName;
 	// the parent symtab
@@ -212,10 +214,13 @@ class Symtab {
 	int curRegNum;
 	// curOrder
 	int curOrder;
+	// cur $ax reg
+	int curParaReg;
 public:
 	Symtab(const string _name, SymBucket *_pBucket = NULL)
 		:symtabName(_name), pBucket(_pBucket),curLoc(0),curRegNum(-1),
-		BEGIN_REG_NUM(16), END_REG_NUM(23), curOrder(0){}
+		BEGIN_REG_NUM(16), END_REG_NUM(23), BEGIN_PARA_REG_NUM(4),END_PARA_REG_NUM(7),curOrder(0)
+		,curParaReg(-1){}
 
 	void insert(SymBucket* b) {
 		SYMMAP::iterator iter;
@@ -283,6 +288,14 @@ public:
 		return curRegNum;
 	}
 
+	int genParaRegNum() {
+		if (curParaReg == END_PARA_REG_NUM) return -1;
+		if (curParaReg == -1) curParaReg = BEGIN_PARA_REG_NUM;
+		else curParaReg++;
+		regManager->useReg(curParaReg);
+		return curParaReg;
+	}
+
 	int getCurReg() {
 		return curRegNum;
 	}
@@ -309,6 +322,10 @@ public:
 
 	int isRegSpill() {
 		return curRegNum == END_REG_NUM;
+	}
+
+	void resetRegNum() {
+		curRegNum = -1;
 	}
 
 	void printSymtab(ofstream& out);

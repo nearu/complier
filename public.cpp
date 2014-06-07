@@ -33,11 +33,11 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 	if (reg == -1) {
 		loc = bucket->getLoc();
 	}
-	cout << "in select : loc = " << loc << endl;
+	cout << "in select :" << bucket->getName() << " loc = " << loc << endl;
 }
 
-int cmp(SymBucket *x, SymBucket *y) {
-	return y->getOrder() - x->getOrder();
+bool cmp(SymBucket *x, SymBucket *y) {
+	return y->getOrder() > x->getOrder();
 }
 
 void printAST(TreeNode *root) {
@@ -178,19 +178,28 @@ void FunctionTreeNode::updateSymtab(Symtab *symtab) {
 	args->updateSymtab(subSymtab);
 	vector<SymBucket *> v;
 	subSymtab->getSymBucketList(v);
-	sort(v.begin(),v.end(), cmp);
+	sort(v.begin(), v.end(), cmp);
 	SymBucket *tmpBucket = bucket;
+	subSymtab->resetRegNum();
 	for (int  i = 0; i < v.size(); i++) {
+		v[i]->setLoc(subSymtab->genLoc(v[i]->getSize()));
+		v[i]->setRegNum(-1);
 		SymBucket *newBucket = new SymBucket(v[i]);
 		tmpBucket->next = newBucket;
 		tmpBucket = newBucket->last;
 	}
-	SymBucket *returnBucket = returnType->genSymItem("returnType", symtab);
-	bucket->last = returnBucket->last;
+	SymBucket *returnTypeBucket = returnType->genSymItem("returnType", symtab);
+	bucket->last = returnTypeBucket->last;
 	bucket->last->next = bucket;
-	tmpBucket->next = returnBucket;
+	tmpBucket->next = returnTypeBucket;
 	symtab->insert(bucket);
 	body->updateSymtab(subSymtab);
+	subTab = subSymtab;
+	// insert return node
+	SymBucket *returnNameBucket = new SymBucket(returnTypeBucket);
+	returnNameBucket->setName(name);
+	returnNameBucket->setRegNum(2);
+	subSymtab->insert(returnNameBucket);
 }
 
 // in type part
@@ -215,6 +224,7 @@ SymBucket * ProgramTreeNode::genCode(Symtab *symtab, int *reg) {
 SymBucket * RoutineTreeNode::genCode(Symtab *symtab, int *reg) {
 	cout << "rg" << endl;
 	body->genCode(env);
+	head->genCode(env);
 	return NULL;
 }
 
@@ -245,6 +255,7 @@ SymBucket * VariableTreeNode::genCode(Symtab *symtab, int *reg) {
 
 // const var parts will be processed later
 SymBucket * RoutineHeadTreeNode::genCode(Symtab *symtab, int *reg) {
+	routinePart->genCode(symtab);
 	return 0;
 }
 
@@ -254,9 +265,11 @@ SymBucket * CompoundStmtTreeNode::genCode(Symtab *symtab, int *reg) {
 }
 
 SymBucket * FunctionTreeNode::genCode(Symtab *symtab, int *reg) {
-	string label;
+	cout << "funtion gencode" <<endl;
+	string label = "&&&" + name + "&&&";
 	labelManager->addFuncLabel(label);
 	CodeGenerator::addLabel(label);
+	body->genCode(subTab);
 	return NULL;
 }
 
@@ -376,6 +389,8 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		}
 		regManager->freeReg(tmpSrc);
 	}
+	if (bucketL != NULL) delete bucketL;
+	if (bucketR != NULL) delete bucketR;
 	return returnBucket;
 }
 
@@ -529,7 +544,18 @@ SymBucket * RecordElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	if (member == bucket) cout << lineNO << " : undefined record member :" << elemName << " in "  << recordName << endl;
 	return returnBucket;
 }
+SymBucket * UnaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
+	env = symtab;
+	SymBucket *returnBucket = new SymBucket("unaryExpr", lineNO, "", symtab);
+	int operandReg;
+	string loadOP, storeOP;
+	int operandLoc;
+	SymBucket *operandBucket = operand->genCode(symtab, &operandReg);
+	selectOP(operandBucket, operandReg, loadOP, storeOP, operandLoc);
+}
 
+SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
+}
 ////////////////////////////////////////////////////////////
 // type gen symtab bucket functions						  //
 ////////////////////////////////////////////////////////////

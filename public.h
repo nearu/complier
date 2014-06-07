@@ -525,6 +525,7 @@ public:
 	void printSelf() {
 		ast << "UnaryExprTreeNode";
 	}	
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
 /*
@@ -563,6 +564,7 @@ public:
 	void printSelf() {
 		ast << "BinaryExprTreeNode";
 	}
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
@@ -589,6 +591,7 @@ private:
 	ListTreeNode* args;
 	SimpleTypeTreeNode* returnType;
 	ListTreeNode* body;
+	Symtab* subTab;
 public:
 	FunctionTreeNode( const string _name,  TreeNode* _args, 
 		 TreeNode* _returnType,  TreeNode* _body)
@@ -600,6 +603,11 @@ public:
 	void printSelf() {
 		ast << "FunctionTreeNode";
 	}	
+
+	void setSubSymtab(Symtab *s) {
+		subTab = s;
+	}
+
 	void updateSymtab(Symtab* symtab);	
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
