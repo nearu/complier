@@ -513,7 +513,6 @@ public:
 		ast << "RecordElemTreeNode:"<<recordName<<"."<<elemName;
 	}		
 	SymBucket *genCode(Symtab *symtab, int *reg);
-	//SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
 };
 
@@ -525,17 +524,18 @@ public:
 class UnaryExprTreeNode : public ExprTreeNode {
 private:
 	const string op;
-	TreeNode *oprand;
+	TreeNode *operand;
 public:
-	UnaryExprTreeNode(const string _op,  TreeNode *_operand):op(_op),oprand(_operand)
+	UnaryExprTreeNode(const string _op,  TreeNode *_operand):op(_op),operand(_operand)
 	{
-		children.push_back(oprand);
+		children.push_back(operand);
 	}
 	void printSelf() {
 		ast << "UnaryExprTreeNode";
-	}
-	TreeNode * getlhs() { return oprand; }
+	}	
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
+
 /*
 * node for binary operaotr such as '+'  '='
 */
@@ -573,6 +573,7 @@ public:
 	void printSelf() {
 		ast << "BinaryExprTreeNode";
 	}
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
@@ -601,6 +602,7 @@ private:
 	ListTreeNode* args;
 	SimpleTypeTreeNode* returnType;
 	ListTreeNode* body;
+	Symtab* subTab;
 public:
 	FunctionTreeNode( const string _name,  TreeNode* _args, 
 		 TreeNode* _returnType,  TreeNode* _body)
@@ -611,8 +613,14 @@ public:
 		}
 	void printSelf() {
 		ast << "FunctionTreeNode";
-	}		
+	}	
 
+	void setSubSymtab(Symtab *s) {
+		subTab = s;
+	}
+
+	void updateSymtab(Symtab* symtab);	
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
 /*
@@ -634,7 +642,7 @@ public:
 	void printSelf() {
 		ast << "ProcedureTreeNode";
 	}		
-
+	// void updateSymtab(Symtab* symtab);
 };
 
 

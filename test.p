@@ -9,5 +9,4 @@ begin
 		2: begin j:=2; end;
 	end;
 
-
 end.

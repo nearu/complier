@@ -15,20 +15,26 @@ typedef vector<SymBucket *> * SYMQUEUE;
 typedef map<string, SYMQUEUE> SYMMAP;
 extern RegManager *regManager;
 
+
+
 class SymBucket {
 	int 			lineNO;
 	// the address of this type, default -1
 	int 			location;
+
 	int 			size;
 	// default -1, define the reg store this symbol
 	int 			regNum;
 	// the reg stores this symbol's stack offset
 	int 			offsetReg;
+	// the order being inserted into symtab
+	int 			order;
+	// does this bucket presents a type
+	int 			isType;
 	// type name
 	const string 	type;
 	// id name
 	string 			name;
-
 	// the sub level symtab for funciton or procedure
 	Symtab 			*nextSymtab;
 	// currnt symtab
@@ -64,6 +70,8 @@ public:
 		// curSymtab 	= that->curSymtab;
 		// next 		= that->next;
 		// last 		= that->last;
+		last = this;
+		next = this;
 	}
 /////////////////////////////////////////////////////
 // set functions								   //
@@ -76,8 +84,10 @@ public:
 		size = s;
 	}
 
-
-	void setSymtab(Symtab *symtab) {
+	void setIsType(int t) {
+		isType = t;
+	}
+	void setSubSymtab(Symtab *symtab) {
 		nextSymtab = symtab;
 	}
 
@@ -88,14 +98,23 @@ public:
 	void setOffsetReg(int reg) {
 		offsetReg = reg;
 	}
+
 	void setName(string n) {
 		name = n;
+	}
+
+	void setOrder(int o) {
+		order = o;
 	}
 /////////////////////////////////////////////////////
 // get functions								   //
 /////////////////////////////////////////////////////	
 	int getLoc() {
 		return location;
+	}
+
+	int getOrder() {
+		return order;
 	}
 
 	int getLineno() {
@@ -128,6 +147,10 @@ public:
 	int getOffsetReg(){
 		return offsetReg;
 	} 
+
+	int getIsType() {
+		return isType;
+	}
 
 	void printBucket(ofstream &out) {
 		_print(out);
@@ -183,10 +206,14 @@ public:
 	}
 };
 
+bool cmp(SymBucket *x, SymBucket *y);
+
 
 class Symtab {
 	const int BEGIN_REG_NUM;
 	const int END_REG_NUM;
+	const int BEGIN_PARA_REG_NUM;
+	const int END_PARA_REG_NUM;
 	// symtabName
 	const string symtabName;
 	// the parent symtab
@@ -197,13 +224,19 @@ class Symtab {
 	int curLoc;
 	// default reg num is -1
 	int curRegNum;
+	// curOrder
+	int curOrder;
+	// cur $ax reg
+	int curParaReg;
 public:
 	Symtab(const string _name, SymBucket *_pBucket = NULL)
 		:symtabName(_name), pBucket(_pBucket),curLoc(0),curRegNum(-1),
-		BEGIN_REG_NUM(16), END_REG_NUM(23){}
+		BEGIN_REG_NUM(16), END_REG_NUM(23), BEGIN_PARA_REG_NUM(4),END_PARA_REG_NUM(7),curOrder(0)
+		,curParaReg(-1){}
 
 	void insert(SymBucket* b) {
 		SYMMAP::iterator iter;
+		b->setOrder(curOrder++);
 		string name = b->getName();
 		iter = symMap.find(name);
 		if (iter != symMap.end()) {
@@ -234,19 +267,15 @@ public:
 	void deleteSymBucket(string name) {
 
 	}
-
+/////////////////////////////////////////////////////
+// get functions								   //
+/////////////////////////////////////////////////////
 	const string getSymtabName() {
 		return symtabName;
 	}
 
 	const SymBucket * getParBucket() {
 		return pBucket;
-	}
-
-	
-
-	void setCurLoc(int loc) {
-		curLoc = loc;
 	}
 
 	int getCurLoc() {
@@ -271,14 +300,50 @@ public:
 		return curRegNum;
 	}
 
+	int genParaRegNum() {
+		if (curParaReg == END_PARA_REG_NUM) return -1;
+		if (curParaReg == -1) curParaReg = BEGIN_PARA_REG_NUM;
+		else curParaReg++;
+		regManager->useReg(curParaReg);
+		return curParaReg;
+	}
+
 	int getCurReg() {
 		return curRegNum;
+	}
+
+	void getSymBucketList(vector<SymBucket*>& v) {
+		for (SYMMAP::iterator iter = symMap.begin(); iter != symMap.end(); iter++) {
+			SYMQUEUE q = iter->second;
+			for (int i = 0; i < q->size(); i++) {
+				if (!(*q)[i]->getIsType())
+					v.push_back((*q)[i]);
+			}
+		}
+		sort(v.begin(), v.end(), cmp);
+	}
+/////////////////////////////////////////////////////
+// set functions								   //
+/////////////////////////////////////////////////////	
+
+	void setParentBucket(SymBucket *b) {
+		pBucket = b;
+	}
+
+	void setCurLoc(int loc) {
+		curLoc = loc;
 	}
 
 	int isRegSpill() {
 		return curRegNum == END_REG_NUM;
 	}
+
+	void resetRegNum() {
+		curRegNum = -1;
+	}
+
 	void printSymtab(ofstream& out);
+
 	virtual ~Symtab() {}
 
 };
