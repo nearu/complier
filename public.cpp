@@ -41,6 +41,7 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 			store += "_ref";
 		}
 		loc = bucket->getLoc();
+		cout << "in select " << bucket->getCurSymtab() <<endl;
 		int level = bucket->getCurSymtab()->getLevel();
 		if (level < currentLevel) {
 			char ch[5] = {0,};
@@ -48,11 +49,9 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 			load = load +  "-" + ch;
 			store = store + "-" +  ch;
 		}
-
-
 	}
 
-	// cout << "in select :" << bucket->getName() << " loc = " << loc << endl;
+	cout << "out select" <<endl;
 }
 
 void traceGen(string msg) {
@@ -195,10 +194,12 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 	for(int i = 0; i < list.size(); i++) {
 		SymBucket *b = typeNode->genSymItem(list[i]->getName(), symtab);
 		string type = b->getType();
+		b->setCurSymtab(symtab);
 		if ((type.find("integer") != string::npos || type.find("real") != string::npos 
 			|| type.find("char")!=string::npos) && !symtab->isRegSpill()) {
 
 			int reg = symtab->genRegNum();
+			b->setLoc(symtab->genLoc(b->getSize()));
 			b->setRegNum(reg);			
 		} else {
 			SymBucket *tmpBucket;
@@ -236,6 +237,7 @@ void FunctionTreeNode::updateSymtab(Symtab *symtab) {
 	subSymtab->getSymBucketList(v);
 	SymBucket *tmpBucket = bucket;
 	subSymtab->setCurRegNum(symtab->getCurReg());
+	subSymtab->setCurLoc(0);
 	for (int  i = 0; i < v.size(); i++) {
 		cout << name << " : " << v[i]->getName() << endl;
 		if (!v[i]->getIsRef())
@@ -267,7 +269,6 @@ void FunctionTreeNode::updateSymtab(Symtab *symtab) {
 	} else {
 		bucket->last = tmpBucket;		
 		tmpBucket->next = bucket;
-		body->updateSymtab(subSymtab);
 		symtab->insert(bucket);
 	}
 }
@@ -339,14 +340,14 @@ SymBucket * ConstTreeNode::genCode(Symtab *symtab, int *reg) {
 
 SymBucket * VariableTreeNode::genCode(Symtab *symtab, int *reg) {
 	//traceGen("vg : " + name + " env" + symtab);
-	cout << "vg : " <<  name <<  " env" << symtab << endl;
+	cout << "vg : " <<  name <<  " env : " << symtab << endl;
 	env = symtab;
 	SymBucket *b = env->find(name);
 	cout << "b = " << b << endl;
 	if (b != NULL) {
 		if (reg != NULL) *reg = b->getRegNum();
 	} else {
-		cout << lineNO << ":variable " << name << " is not defined" << endl;
+		cout << lineNO << ": variable " << name << " is not defined" << endl;
 	}
 	SymBucket * returnBucket = new SymBucket(b);
 	returnBucket->setCurSymtab(b->getCurSymtab());
@@ -387,6 +388,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	bucketL = lhs->genCode(env, &regL);	
 	string loadOPR, storeOPR;
 	string loadOPL, storeOPL;
+	cout << "regL : " << regL << " regR " << regR << endl;
 	selectOP(bucketR, regR, loadOPR, storeOPR, locR, symtab->getLevel());
 	selectOP(bucketL, regL, loadOPL, storeOPL, locL, symtab->getLevel());
 	cout << "regL : " << regL << " regR " << regR << endl;
@@ -844,6 +846,7 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 // type name is the l-side of type-definition, and type is the r-side
 SymBucket* SysTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
 	traceGen("type name :"  + typeName);
+	cout << " env : " << symtab << endl;
 	SymBucket *b = new SymBucket(typeName, lineNO, type, symtab);
 	int size = getSize(type);
 	b->setSize(size);
@@ -931,6 +934,7 @@ SymBucket *CustomTypeTreeNode::genSymItem(const string typeName, Symtab *symtab)
 	// the predefined custom type in symtab
 	SymBucket *typeBucket = symtab->find(name);
 	SymBucket* b = typeBucket->deepCopyBucket();
+	b->setCurSymtab(symtab);
 	b->setName(typeName);
 	// cout << " xxxxx " << b->getSize() << endl;
 	return b;

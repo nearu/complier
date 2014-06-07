@@ -1,9 +1,13 @@
-&&&max&&&:
 addi $sp,$sp,-6
-lw $t2, 4($fp)
-lw $t3, 0($fp)
-add $t3,$t2,$t3
-lh $t0, 0($t3)
-add $s4,$t0,$zero
-addi $sp,$sp,6
+&&&max&&&:
+addi $sp,$sp,-8
+lw $t4, 4($fp)
+lw $t5, 0($fp)
+add $t5,$t4,$t5
+lh $t1, 0($t5)
+lw $t4, 8($fp)
+lw $t5, 0($fp)
+add $t5,$t4,$t5
+sh $t1, 0($t5)
+addi $sp,$sp,8
 jr $ra

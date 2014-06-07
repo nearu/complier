@@ -246,8 +246,8 @@ class Symtab {
 	int curParaReg;
 public:
 	Symtab(const string _name, SymBucket *_pBucket = NULL)
-		:symtabName(_name), pBucket(_pBucket),curLoc(0),curRegNum(-1),
-		BEGIN_REG_NUM(16), END_REG_NUM(23), BEGIN_PARA_REG_NUM(4),END_PARA_REG_NUM(7),curOrder(0)
+		:symtabName(_name), pBucket(_pBucket),curLoc(0),curRegNum(-1)
+		,BEGIN_REG_NUM(16), END_REG_NUM(23), BEGIN_PARA_REG_NUM(4),END_PARA_REG_NUM(7),curOrder(0)
 		,curParaReg(-1),level(0) {}
 
 	void insert(SymBucket* b) {
@@ -306,6 +306,7 @@ public:
 	// if return num is -1, then this symbol has to be stored in the stack
 	// otherwise, return a num 
 	int genRegNum() {
+		return -1;
 		if (curRegNum == END_REG_NUM) return -1;
 		if (curRegNum == -1) {
 			curRegNum = BEGIN_REG_NUM;

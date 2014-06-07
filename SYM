@@ -4,9 +4,8 @@
 8 n:	integer	 at 4
 8 num1:	integer	 at 0
 8 num2:	integer	 at 2
-3 result:	integer	 at reg 19
-3 result:	integer	 at reg 20
+3 result:	integer	 at 8
 ============end max's symtab==================
-3 n1:	integer	 at reg 16
-3 n2:	integer	 at reg 17
-3 n3:	integer	 at reg 18
+3 n1:	integer	 at 0
+3 n2:	integer	 at 2
+3 n3:	integer	 at 4
