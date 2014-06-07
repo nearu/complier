@@ -360,7 +360,7 @@ while_stmt : WHILE  expression  DO stmt {
 for_stmt : FOR  ID {name = currentToken;} ASSIGN  expression  direction  expression  DO stmt {
     tp("for stmt");
     VariableTreeNode * v = new VariableTreeNode(name);
-    BinaryExprTreeNode *be = new BinaryExprTreeNode(":=",v,$5);
+    BinaryExprTreeNode *be = new BinaryExprTreeNode("=",v,$5);
     BinaryExprTreeNode *br = new BinaryExprTreeNode("==",v,$7);
     $$ = new ForStmtTreeNode(be,$6->getName(),br,$9);
 }

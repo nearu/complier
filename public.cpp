@@ -6,7 +6,7 @@
 #include "symtab.h"
 #include <cmath>
 #define FP 30
-#define SP 29
+#define SP FP
 ofstream ast("AST");
 ofstream code("CODE");
 ofstream sym("SYM");
@@ -50,6 +50,16 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 void traceGen(string msg) {
 	if (traceGenCode)
 		cout << msg << endl;
+}
+
+
+string intTostring(int x){
+	char t[256];
+    string s;
+ 
+    sprintf(t, "%d", x);
+    s = t;
+    return s;
 }
 
 bool isTmpReg(int r) {
@@ -107,9 +117,15 @@ int getSize(const string& type) {
 }
 
 
-void childrenGenCode(vector<TreeNode*>& children, Symtab *symtab) {
-	for(int i = 0; i < children.size(); i++) 
-		children[i]->genCode(symtab);
+
+////////////////////////////////////////////////////////////
+// utils functions										  //
+////////////////////////////////////////////////////////////
+void childrenGenCode(vector<TreeNode*>& children, Symtab *symtab ,int *reg) {
+	cout << children.size() << endl;
+	for(int i = 0; i < children.size(); i++) {
+		children[i]->genCode(symtab,reg);
+	}
 }
 
 void childrenUpdateSymtab(vector<TreeNode*>& children, Symtab *symtab) {
@@ -291,7 +307,7 @@ SymBucket * RoutineTreeNode::genCode(Symtab *symtab, int *reg) {
 
 SymBucket * ListTreeNode::genCode(Symtab *symtab, int *reg) {
 	traceGen("lg");
-	childrenGenCode(list, symtab);
+	childrenGenCode(list, symtab ,reg);
 	return 0;
 }
 
@@ -353,8 +369,8 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	bucketL = lhs->genCode(env, &regL);	
 	string loadOPR, storeOPR;
 	string loadOPL, storeOPL;
-	selectOP(bucketR, regR, loadOPR, storeOPR, locR);
-	selectOP(bucketL, regL, loadOPL, storeOPL, locL);
+	selectOP(bucketR, regR, loadOPR, storeOPR, locR, symtab->getLevel());
+	selectOP(bucketL, regL, loadOPL, storeOPL, locL, symtab->getLevel());
 	cout << "regL : " << regL << " regR " << regR << endl;
 	if (regL == -1 && regR == -1) {		
 		int tmpSrc_1 = regManager->getTmpReg();
@@ -446,6 +462,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 				if (reg != NULL) *reg = tmpDst;
 			}
 		}
+
 		regManager->freeReg(tmpSrc);
 	}
 	if (bucketL != NULL) delete bucketL;
@@ -472,7 +489,7 @@ SymBucket * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	labelManager->addLoopLabel();
 	CodeGenerator::addLabel(loop);
 	bucketL = condition->genCode(symtab, &regL);
-	selectOP(bucketL,regL,loadOPL,storeOPL,locL);
+	selectOP(bucketL,regL,loadOPL,storeOPL,locL, symtab->getLevel());
 	if(regL == -1){
 		int tmp = regManager->getTmpReg();
 		CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);
@@ -506,17 +523,18 @@ SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	breakn = breakn + ch;
 	labelManager->addLoopLabel();
 	bucketL = assignExpr->genCode(symtab, &regL);
+	cout << "for reg L = " << regL << endl; 
 	CodeGenerator::addLabel(loop);
 	bucketR = dirExpr->genCode(symtab,&regR);
-	selectOP(bucketR,regR,loadOPR,storeOPR,locR);
+	selectOP(bucketR,regR,loadOPR,storeOPR,locR, symtab->getLevel());
 	if(regR == -1){
 		int tmp = regManager->getTmpReg();
 		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp);
-		CodeGenerator::emitCodeJ("beq",tmp,0,0,breakn);
+		CodeGenerator::emitCodeJ("bne",tmp,0,0,breakn);
 		regManager->freeReg(tmp);
 	}
 	else {
-		CodeGenerator::emitCodeJ("beq",regR,0,0,breakn);
+		CodeGenerator::emitCodeJ("bne",regR,0,0,breakn);
 	}
 	body->genCode(symtab, &regB);
 	if(regL == -1){
@@ -547,6 +565,64 @@ SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	return NULL;
 }
 
+SymBucket * SwitchStmtTreeNode::genCode(Symtab *symtab, int *reg){
+	SymBucket *bucketE, *bucketLD;
+	int regE;	
+	string loadOPE, storeOPE;
+	int locE;
+	bucketE = expr->genCode(symtab,&regE);
+	selectOP(bucketE,regE,loadOPE,storeOPE,locE, symtab->getLevel());
+	if(regE == -1){
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeM(bucketE ->getSize(),loadOPE, locE, FP, tmp);
+		bucketLD = caseExprList->genCode(symtab,&tmp);
+		regManager->freeReg(tmp);
+	}
+	else{
+		bucketLD = caseExprList->genCode(symtab,&regE);
+	}
+	return NULL;
+}
+
+SymBucket * CaseExprTreeNode::genCode(Symtab *symtab, int *reg){
+
+	SymBucket *bucketID;
+	int regID,regE;
+	int locID;
+	string loadOPID, storeOPID;
+	string s;
+	int x;
+	
+	regE = *reg;
+
+	bucketID = label->genCode(symtab,&regID);
+	
+	selectOP(bucketID,regID,loadOPID,storeOPID,locID, symtab->getLevel());
+	if(regID == -1){
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeM(bucketID ->getSize(),loadOPID, locID, FP, tmp);
+		x = labelManager->getCaseLabel();
+		s = "nextcase" + intTostring(x);
+		CodeGenerator::emitCodeJ("bne",tmp,regE,0,s); 
+		labelManager->addCaseLabel();
+		regManager->freeReg(tmp);
+	}
+	else if (regID > 0){
+		x = labelManager->getCaseLabel();
+		s = "nextcase" + intTostring(x);
+		CodeGenerator::emitCodeJ("bne",regID,regE,0,s); 
+		labelManager->addCaseLabel();
+	}
+	else {
+		x = labelManager->getCaseLabel();
+		s = "nextcase" + intTostring(x);
+		CodeGenerator::emitCodeJ("bne", regE, 32, ((NumberTreeNode<int> *)label)->get(),s);
+		labelManager->addCaseLabel();
+	}
+	
+	stmt->genCode(symtab);
+	CodeGenerator::addLabel(s);
+}
 
 SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	env = symtab;
@@ -559,7 +635,7 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	int indexLoc; 
 	string loadOP, storeOP;
 	SymBucket *indexBucket = index->genCode(symtab, &exprReg);
-	selectOP(indexBucket, exprReg, loadOP, storeOP, indexLoc);
+	selectOP(indexBucket, exprReg, loadOP, storeOP, indexLoc, symtab->getLevel());
 	if (exprReg == -2) {
 		int offset = type->getLoc() + elemSize * ((NumberTreeNode<int>*)index)->get();
 		returnBucket->setLoc(offset);
@@ -614,7 +690,7 @@ SymBucket * UnaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	string loadOP, storeOP;
 	int operandLoc;
 	SymBucket *operandBucket = operand->genCode(symtab, &operandReg);
-	selectOP(operandBucket, operandReg, loadOP, storeOP, operandLoc);
+	selectOP(operandBucket, operandReg, loadOP, storeOP, operandLoc,, symtab->getLevel());
 	cout << "in unaryExpr reg = " << operandReg  << " with op = " << op << endl;
 	int tmpDst;
 	tmpDst = regManager->getTmpReg();

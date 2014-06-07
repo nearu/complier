@@ -2,11 +2,10 @@ addi $t2,$zero,2
 mul $t0,$s0,$t2
 add $s0,$t0,$zero
 &&&max&&&0:
-sw $fp, 0($sp)
-addi $sp,$sp,-9
-lw $t1, 0($fp)
-lh $t1, 4($fp)
+sw $fp, 0($fp)
+addi $fp,$fp,-9
+lh $t0, 4($fp)
 add $s0,$t0,$zero
 lw $fp, 0($fp)
-addi $sp,$sp,9
+addi $fp,$fp,9
 jr $ra

@@ -19,6 +19,7 @@ extern RegManager *regManager;
 extern LabelManager *labelManager;
 int LabelManager::loop_number = 0;
 int LabelManager::func_number = 0;
+int LabelManager::case_number = 0;
 
 int main(int argc, char *argv[]) {
 	// char option[MAX_OPTION];

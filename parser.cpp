@@ -2444,7 +2444,7 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
     {
     tp("for stmt");
     VariableTreeNode * v = new VariableTreeNode(name);
-    BinaryExprTreeNode *be = new BinaryExprTreeNode(":=",v,(yyvsp[(5) - (9)]));
+    BinaryExprTreeNode *be = new BinaryExprTreeNode("=",v,(yyvsp[(5) - (9)]));
     BinaryExprTreeNode *br = new BinaryExprTreeNode("==",v,(yyvsp[(7) - (9)]));
     (yyval) = new ForStmtTreeNode(be,(yyvsp[(6) - (9)])->getName(),br,(yyvsp[(9) - (9)]));
 }
