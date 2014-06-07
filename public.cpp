@@ -624,6 +624,69 @@ SymBucket * CaseExprTreeNode::genCode(Symtab *symtab, int *reg){
 	CodeGenerator::addLabel(s);
 }
 
+SymBucket * IfStmtTreeNode::genCode(Symtab *symtab, int *reg){
+	SymBucket *bucketC;
+	int regC,regB,regE;
+	int locC;
+	string loadOPC,storeOPC;
+	selectOP(bucketC,regC,loadOPC,storeOPC,locC, symtab->getLevel());
+	bucketC=condition->genCode(symtab,&regC);
+	string s;
+	s = "endif" + intTostring(labelManager->getIfLabel());
+	if(regC == -1){
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeM(bucketC ->getSize(),loadOPC, locC, FP, tmp);
+		CodeGenerator::emitCodeJ("beq",tmp,0,0,s); 
+		regManager->freeReg(tmp);
+	}
+	else if(regC > 0){
+		CodeGenerator::emitCodeJ("beq",regC,0,0,s); 
+	}
+	else{
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeI("+", tmp, 0,((NumberTreeNode<int> *)label)->get());
+		CodeGenerator::emitCodeJ("beq",tmp,0,0,s); 
+		regManager->freeReg(tmp);
+	}
+	body->genCode(symtab,&regB);
+	CodeGenerator::addLabel(s);
+	labelManager->addIfLabel();
+	if(elsePart!=NULL){
+		elsePart->genCode(symtab,&regE);
+	}
+	return NULL;
+}
+
+SymBucket * RepeatStmtTreeNode::genCode(Symtab *symtab, int *reg){
+	SymBucket *bucketB,*bucketC;
+	int regB,regC;
+	int locC;
+	string loadOPC,storeOPC;
+	string s;
+	s = "do" + intTostring(labelManager->getRepeatLabel());
+	labelManager->addRepeatLabel();
+	CodeGenerator::addLabel(s);
+	bucketB = body->genCode(symtab,&regB);
+	bucketC = condition->genCode(symtab,&regC);
+	selectOP(bucketC,regC,loadOPC,storeOPC,locC, symtab->getLevel());
+	if(regC == -1){
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeM(bucketC ->getSize(),loadOPC, locC, FP, tmp);
+		CodeGenerator::emitCodeJ("bne",tmp,0,0,s); 
+		regManager->freeReg(tmp);
+	}
+	else if(regC > 0){
+		CodeGenerator::emitCodeJ("bne",regC,0,0,s); 
+	}
+	else{
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeI("+", tmp, 0,((NumberTreeNode<int> *)label)->get());
+		CodeGenerator::emitCodeJ("bne",tmp,0,0,s); 
+		regManager->freeReg(tmp);
+	}
+	return NULL;
+}
+
 SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	env = symtab;
 	SymBucket *type = env->find(name);
@@ -664,6 +727,13 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	autoFreeReg(exprReg, reg);
 	return returnBucket;
 }
+
+
+
+
+// SymBucket * GotoStmtTreeNode::genCode(Symtab *symtab, int *reg){
+
+// }
 
 SymBucket * RecordElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	env = symtab;

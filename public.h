@@ -693,7 +693,7 @@ public:
 	void printSelf() {
 		ast << "IfStmtTreeNode";
 	}							
-
+	SymBucket * genCode(Symtab *symtab, int *reg);
 };
 
 class RepeatStmtTreeNode : public StmtTreeNode {
@@ -709,7 +709,8 @@ public:
 	}
 	void printSelf() {
 		ast << "RepeatStmtTreeNode";
-	}	
+	}
+	SymBucket * genCode(Symtab *symtab, int *reg);
 };
 
 class WhileStmtTreeNode : public StmtTreeNode {
@@ -779,7 +780,8 @@ public:
 	GotoStmtTreeNode(const string _label):label(_label){}
 	void printSelf() {
 		ast << "GotoStmtTreeNode";
-	}	
+	}
+	// SymBucket * genCode(Symtab *symtab, int *reg);
 };
 /*
 * if treceScan = TRUE, every token along with lineno will be 

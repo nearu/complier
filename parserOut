@@ -1,82 +1,42 @@
 1 program head
 2 const part 2
+2 type part 2
+3 name list 2
 3 simple_type_decl 1
 3 type_decl 1
-3 type_definition
-3 type_decl_list 2
-4 type part 1
-4 var part 2
-4 name list 2
-4 name list 1
-4 val_para_list
-4 simple_type_decl 1
-4 para_type_list 2
-4 para_decl_list 2
-4 name list 2
-4 var_para_list
-4 simple_type_decl 1
-4 para_type_list 1
-4 para_decl_list 1
-4 paramters 1
-4 simple_type_decl 1
-5 const part 2
-5 type part 2
-6 name list 2
-6 simple_type_decl 2
-6 type_decl 1
-6 var_decl
-6 var_decl_list 2
-7 var part 1
-7 name list 2
-7 name list 1
-7 val_para_list
-7 simple_type_decl 1
-7 para_type_list 2
-7 para_decl_list 2
-7 paramters 1
-7 simple_type_decl 1
-8 const part 2
-8 type part 2
-9 name list 2
-9 simple_type_decl 2
-9 type_decl 1
-9 var_decl
-9 var_decl_list 2
-10 var part 1
-10 routine part 5
-10 routine head
-10 stmt list 2
-11 factor 1
-11 term 5
-11 expr 4
-11 expression 7
-11 assign stmt 1
-11 non_label_stmt 1
-11 stmt 2
-11 stmt list 1
-12 compound stmt
-12 routine_body
-12 routine
-12 function decl
-12 routine part 3
-13 routine head
-13 stmt list 2
-14 factor 1
-14 term 5
-14 expr 4
-14 expression 7
-14 assign stmt 1
-14 non_label_stmt 1
-14 stmt 2
-14 stmt list 1
-15 compound stmt
-15 routine_body
-15 routine
-15 function decl
-15 routine part 3
-16 routine head
-16 stmt list 2
-18 compound stmt
-18 routine_body
-18 routine
-18 pargram
+3 var_decl
+3 var_decl_list 2
+4 var part 1
+4 routine part 5
+4 routine head
+4 stmt list 2
+5 stmt list 2
+5 factor 1
+5 term 5
+5 expr 4
+5 const value 1
+5 factor 5
+5 term 5
+5 expr 1
+5 expression 7
+5 assign stmt 1
+5 non_label_stmt 1
+5 stmt 2
+5 stmt list 1
+6 factor 1
+6 term 5
+6 expr 4
+6 expression 7
+6 const value 1
+6 factor 5
+6 term 5
+6 expr 4
+6 expressoin 2
+6 repeat stmt
+6 non_label_stmt 5
+6 stmt 2
+6 stmt list 1
+7 compound stmt
+7 routine_body
+7 routine
+7 pargram
