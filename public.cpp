@@ -6,7 +6,7 @@
 #include "symtab.h"
 #include <cmath>
 #define FP 30
-#define SP FP
+#define SP 29
 ofstream ast("AST");
 ofstream code("CODE");
 ofstream sym("SYM");
@@ -283,7 +283,7 @@ SymBucket * RoutineTreeNode::genCode(Symtab *symtab, int *reg) {
 		}
 	}
 	// call expr's gencode will perform sp - curStackOffset operation
-	if (!isMain) totalStackSize += 4; // for fp
+	if (!isMain) totalStackSize += 8; // for fp and access link
 	if (totalStackSize > 0) {
 		// store fp
 		if (!isMain)
@@ -690,7 +690,7 @@ SymBucket * UnaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	string loadOP, storeOP;
 	int operandLoc;
 	SymBucket *operandBucket = operand->genCode(symtab, &operandReg);
-	selectOP(operandBucket, operandReg, loadOP, storeOP, operandLoc,, symtab->getLevel());
+	selectOP(operandBucket, operandReg, loadOP, storeOP, operandLoc, symtab->getLevel());
 	cout << "in unaryExpr reg = " << operandReg  << " with op = " << op << endl;
 	int tmpDst;
 	tmpDst = regManager->getTmpReg();
@@ -715,7 +715,8 @@ SymBucket * UnaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 }
 
 SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
-
+	env = symtab;
+	
 }
 
 ////////////////////////////////////////////////////////////

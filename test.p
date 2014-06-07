@@ -1,14 +1,18 @@
 program HelloWorld;
 type 
 	int = integer;
-var 
-	kkk : int;
-function max(num1, num2 :integer; xxx : char) :integer;
+function max(num1, num2 :integer; var xx:char) :integer;
 var
 	result:int;
+function min(num1, num2:integer):integer;
+var 
+	r : int;
+	begin
+		min := xx;
+	end;
 begin
-	kkk := num1;
+	max := num1;
 end;
 begin	
-	kkk := 2 * kkk;
+
 end.

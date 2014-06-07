@@ -225,7 +225,7 @@ class Symtab {
 	SymBucket *pBucket;
 	// inner hash map for symtab
 	SYMMAP symMap;
-	// current offset in the stack, default 4, for fp
+	// current offset in the stack, default 8, for fp and access link
 	int curLoc;
 	// default reg num is -1
 	int curRegNum;
@@ -235,7 +235,7 @@ class Symtab {
 	int curParaReg;
 public:
 	Symtab(const string _name, SymBucket *_pBucket = NULL)
-		:symtabName(_name), pBucket(_pBucket),curLoc(4),curRegNum(-1),
+		:symtabName(_name), pBucket(_pBucket),curLoc(8),curRegNum(-1),
 		BEGIN_REG_NUM(16), END_REG_NUM(23), BEGIN_PARA_REG_NUM(4),END_PARA_REG_NUM(7),curOrder(0)
 		,curParaReg(-1),level(0) {}
 

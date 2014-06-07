@@ -268,17 +268,17 @@ public:
 		char ch[16] = {0,};
 		string instr;
 		string localOP = op;
-		int tmpFP = regManager->getTmpReg();
-
+		const int FP = 30;
+		int tmpAC = regManager->getTmpReg();
 		if (op.find("-") != string::npos) {
 			int pos = op.find('-');
 			int level = atoi(op.substr(pos+1, op.length()).c_str());
-			int curFP = 30;
-			for (int i = 0; i < level; i++) {
-				CodeGenerator::emitCodeM(4, "load", 0, curFP, tmpFP);
-				curFP = tmpFP;
+			CodeGenerator::emitCodeM(4, "load", 4, FP, tmpAC);
+			for (int i = 1; i < level; i++) {
+				CodeGenerator::emitCodeM(4, "load", 0, tmpAC, tmpAC);
 			}
-			reg = curFP;
+			regAddr = tmpAC;
+			offset -= 4;
 			localOP = op.substr(0,pos);
 		}
 
@@ -299,7 +299,7 @@ public:
 			regManager->freeReg(offset);
 			code << c1 << endl << c << endl;
 		}
-		regManager->freeReg(tmpFP);
+		regManager->freeReg(tmpAC);
 	}
 
 	static void emitRet() {

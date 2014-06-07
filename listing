@@ -6,46 +6,60 @@
 	3 =
 	3 integer
 	3 ;
+	4 function
+	4 max
+	4 (
+	4 num1
+	4 ,
+	4 num2
+	4 :
+	4 integer
+	4 ;
 	4 var
-	5 kkk
-	5 :
-	5 int
-	5 ;
-	6 function
-	6 max
-	6 (
-	6 num1
-	6 ,
-	6 num2
+	4 xx
+	4 :
+	4 char
+	4 )
+	4 :
+	4 integer
+	4 ;
+	5 var
+	6 result
 	6 :
-	6 integer
+	6 int
 	6 ;
-	6 xxx
-	6 :
-	6 char
-	6 )
-	6 :
-	6 integer
-	6 ;
-	7 var
-	8 result
-	8 :
-	8 int
-	8 ;
-	9 begin
-	10 kkk
-	10 :=
-	10 num1
-	10 ;
-	11 end
+	7 function
+	7 min
+	7 (
+	7 num1
+	7 ,
+	7 num2
+	7 :
+	7 integer
+	7 )
+	7 :
+	7 integer
+	7 ;
+	8 var
+	9 r
+	9 :
+	9 int
+	9 ;
+	10 begin
+	11 min
+	11 :=
+	11 xx
 	11 ;
-	12 begin
-	13 kkk
-	13 :=
-	13 2
-	13 *
-	13 kkk
-	13 ;
-	14 end
-	14 .
-	14 
+	12 end
+	12 ;
+	13 begin
+	14 max
+	14 :=
+	14 num1
+	14 ;
+	15 end
+	15 ;
+	16 begin
+	18 end
+	18 .
+	18 
