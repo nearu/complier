@@ -1,4 +1,4 @@
-9 ar:	array	 at 4 .. 9 index:	char .. 6 array:	record	 at 0 .. 5 name:	char .. 4 id:	integer
-6 b:	record	 at 0 .. 5 name:	char	 at 0 .. 4 id:	integer	 at 1
-6 book:	record	 at 0 .. 5 name:	char .. 4 id:	integer
-10 s:	string	 at 1028
+8 ar:	array	 at 20 .. 8 index:	char .. 5 array:	record	 at 0 .. 4 id:	array .. 4 index:	subrange .. 4 subrange:	1 .. 4 subrange:	20 .. 4 array:	char
+5 b:	record	 at 0 .. 4 id:	array	 at 0 .. 4 index:	subrange .. 4 subrange:	1 .. 4 subrange:	20 .. 4 array:	char
+5 book:	record	 at 0 .. 4 id:	array .. 4 index:	subrange .. 4 subrange:	1 .. 4 subrange:	20 .. 4 array:	char
+9 s:	string	 at 5140

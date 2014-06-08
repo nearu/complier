@@ -7,40 +7,43 @@
 	3 record
 	4 id
 	4 :
-	4 integer
+	4 array
+	4 [
+	4 1
+	4 ..
+	4 20
+	4 ]
+	4 of
+	4 char
 	4 ;
-	5 name
-	5 :
-	5 char
+	5 end
 	5 ;
-	6 end
-	6 ;
-	7 var
-	8 b
+	6 var
+	7 b
+	7 :
+	7 book
+	7 ;
+	8 ar
 	8 :
+	8 array
+	8 [
+	8 char
+	8 ]
+	8 of
 	8 book
 	8 ;
-	9 ar
+	9 s
 	9 :
-	9 array
-	9 [
-	9 char
-	9 ]
-	9 of
-	9 book
+	9 string
 	9 ;
-	10 s
-	10 :
-	10 string
-	10 ;
-	11 begin
-	13 ar
-	13 [
-	13 0
-	13 ]
-	13 :=
-	13 c
-	13 ;
-	14 end
-	14 .
-	14 
+	10 begin
+	11 ar
+	11 [
+	11 0
+	11 ]
+	11 :=
+	11 b
+	11 ;
+	12 end
+	12 .
+	12 

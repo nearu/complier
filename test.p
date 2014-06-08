@@ -1,13 +1,12 @@
 program HelloWorld;
 type 
 	book = record 
-		id : integer;
-		name : char;
+		id : array [1..20] of char;
 	end;
 var 
 	b : book;
 	ar : array[char] of book;
 	s : string;
 begin	
-	ar[0] := c;
+	ar[0] := b;
 end.

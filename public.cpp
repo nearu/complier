@@ -404,10 +404,19 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		int tmpSrc_2 = regManager->getTmpReg();
 		int tmpDst = regManager->getTmpReg();
 		if (op == "=") {
-			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmpSrc_2);			
-			CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmpSrc_2);
-			if (reg != NULL) *reg = tmpSrc_2;
-			returnBucket = new SymBucket(bucketL);
+			if (bucketR->getSize() > 4)  {
+				if (bucketL->getSize() == bucketR->getSize()) {
+					CodeGenerator::emitCodeB(loadOPR,storeOPL, bucketR->getSize(), locL, locR,FP);
+				} else {
+					cout << lineNO << ": error two record has different size" << endl;
+					exit(-1);
+				}
+			} else {
+				CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmpSrc_2);			
+				CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmpSrc_2);
+				if (reg != NULL) *reg = tmpSrc_2;
+				returnBucket = new SymBucket(bucketL);
+			}
 		} else {
 			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmpSrc_1);
 			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmpSrc_2);
@@ -465,6 +474,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 			string s = immeNodeR->get();
 			// regL have to be -1 and the type is string
 			// CodeGenerator::emitCodeS(storeOPL, s, locL);
+			// CodeGenerator::emitCodeS("load", s.length(), locL, locR,FP);
 		} else {
 			NumberTreeNode<int> * immeNodeR = dynamic_cast<NumberTreeNode<int>*>(rhs);
 			NumberTreeNode<int> * immeNodeL = dynamic_cast<NumberTreeNode<int>*>(lhs);
