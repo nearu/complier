@@ -9,6 +9,6 @@ lw $t3, 12($fp)
 sw $t3, 12($fp)
 lw $t3, 16($fp)
 sw $t3, 16($fp)
-Äü( $t1, 0($fp)
-dé¡ $t1, 20($fp)
 addi $sp,$sp,5396
+j exit
+exit:

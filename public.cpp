@@ -297,6 +297,7 @@ void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 SymBucket * ProgramTreeNode::genCode(Symtab *symtab, int *reg) {
 	traceGen("pg");
 	routine->genCode(env);
+	CodeGenerator::addLabel("exit");
 	return NULL;
 }
 
@@ -321,6 +322,8 @@ SymBucket * RoutineTreeNode::genCode(Symtab *symtab, int *reg) {
 			CodeGenerator::emitCodeI("+", SP,SP,totalStackSize);
 	if (!isMain) {
 		CodeGenerator::emitCodeJ("jr", 31, 0, 0, "");
+	} else {
+		CodeGenerator::emitCodeJ("j", 31, 0, 0, "exit");
 	}
 	if (isMain) {
 		isMain = FALSE;
