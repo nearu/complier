@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
 	// }
   traceScan = TRUE;
   yyparse();
+  cout << "======================yyparse end=========================" << endl;
   printAST(root);
   mainSymtab = new Symtab("mainSymtab");
   regManager = new RegManager();

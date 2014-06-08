@@ -261,6 +261,7 @@ public:
 	// lw sw instruments
 	// reg is the src or dst reg
 	// load_reg , store_reg means that offset现在保存了一个寄存器号，这个寄存器中有偏移量
+	// 为了支持record的拷贝，需要支持循环lw/sw
 	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
 		if (traceEmit) cout << "emit M" << " size = " << size << " offset = " << offset <<  endl;
 		string c;
@@ -283,32 +284,37 @@ public:
 			localOP = op.substr(0,pos);
 		}
 
-		if (localOP == "load" || localOP == "load_reg" || localOP == "load_ref") {
-			instr = loadInstr[size];
+
+		if (size <= 4) {
+			if ( (localOP == "load" || localOP == "load_reg" || localOP == "load_ref")) {
+				instr = loadInstr[size];
+			} else {
+				instr = storeInstr[size];
+			}
+			if (localOP == "load" || localOP == "store") {
+				sprintf(ch,"%d",offset);
+				c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
+				code << c << endl;
+			} else if (localOP == "load_reg" || localOP =="store_reg") {
+				ch[0] = '\0';
+				sprintf(ch, "0");
+				string c1 = "add " + regTable[offset] + ", " + regTable[offset] + ", " + regTable[regAddr];
+				c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[offset] + ")";
+				regManager->freeReg(offset);
+				code << c1 << endl << c << endl;
+			} else if (localOP == "load_ref" || localOP == "store_ref") {
+				int tmp = regManager->getTmpReg();
+				CodeGenerator::emitCodeM(4, "load", offset, regAddr, tmp);
+				ch[0] = '\0';
+				sprintf(ch, "0");
+				c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[tmp] + ")";
+				regManager->freeReg(tmp);
+				code << c << endl;
+			}
+			regManager->freeReg(tmpAC);
 		} else {
-			instr = storeInstr[size];
+			// support for record copy
 		}
-		if (localOP == "load" || localOP == "store") {
-			sprintf(ch,"%d",offset);
-			c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
-			code << c << endl;
-		} else if (localOP == "load_reg" || localOP =="store_reg") {
-			ch[0] = '\0';
-			sprintf(ch, "0");
-			string c1 = "add " + regTable[offset] + ", " + regTable[offset] + ", " + regTable[regAddr];
-			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[offset] + ")";
-			regManager->freeReg(offset);
-			code << c1 << endl << c << endl;
-		} else if (localOP == "load_ref" || localOP == "store_ref") {
-			int tmp = regManager->getTmpReg();
-			CodeGenerator::emitCodeM(4, "load", offset, regAddr, tmp);
-			ch[0] = '\0';
-			sprintf(ch, "0");
-			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[tmp] + ")";
-			regManager->freeReg(tmp);
-			code << c << endl;
-		}
-		regManager->freeReg(tmpAC);
 	}
 
 

@@ -22,7 +22,7 @@ TreeNode *id;
 extern char* yytext;
 extern FILE *yyin, *yyout;
 extern int traceScan;
-
+extern string curLine;
 ProgramTreeNode *root;
 int traceParse = TRUE;
 ofstream parserOut("parserOut");
@@ -41,9 +41,9 @@ $$ = root;
 ;
 }
 ;
-program_head : PROGRAM  ID { name = currentToken; } SEMI {
+program_head : PROGRAM  ID  SEMI {
   tp("program head");
-  $$ = new ProgramHeadTreeNode(currentToken);
+  $$ = new ProgramHeadTreeNode($2->getName());
 }
 ;
 routine : routine_head  routine_body {
@@ -54,12 +54,12 @@ routine : routine_head  routine_body {
 name_list : name_list  COMMA  ID  {
   tp("name list 1");
   $$ = $1;
-  $$->insert(new TreeNode(currentToken));
+  $$->insert(new TreeNode($3->getName()));
 }
 |  ID {
    tp("name list 2");
    vector<TreeNode *> list;
-   list.push_back(new TreeNode(currentToken));
+   list.push_back(new TreeNode($1->getName()));
    $$ = new ListTreeNode("name_list", list);
 }
 ;
@@ -75,18 +75,17 @@ const_part : CONST  const_expr_list {
   $$ = $2;
 } |  {tp("const part 2"); $$ = new ListTreeNode("non const part");}
 ;
-const_expr_list : const_expr_list  ID { name = currentToken; }
+const_expr_list : const_expr_list  ID 
 EQUAL  const_value  SEMI {
   tp("const expr list 1");
   $$ = $1;
-  $$->insert(new ConstTreeNode(name, $5));
+  $$->insert(new ConstTreeNode($2->getName(), $4));
 }
-|  ID  {name = currentToken;}
-EQUAL  const_value  SEMI {
+|  ID  EQUAL  const_value  SEMI {
   tp("const expr list 2");
   vector<TreeNode *> list;
   $$ = new ListTreeNode("const_value_list",list);
-  $$->insert(new ConstTreeNode(name, $4));
+  $$->insert(new ConstTreeNode($1->getName(), $3));
 }
 ;
 const_value : INTEGER     {tp("const value 1");$$ = new NumberTreeNode<int>(atoi(currentToken), "integer");}
@@ -113,9 +112,9 @@ type_decl_list : type_decl_list  type_definition
   $$ = new ListTreeNode("type_decl_list",list);
 }
 ;
-type_definition : ID  {name = currentToken;}EQUAL  type_decl  SEMI {
+type_definition : ID EQUAL  type_decl  SEMI {
   tp("type_definition");
-  $$ = new CustomTypeTreeNode(name, $4);
+  $$ = new CustomTypeTreeNode($1->getName(), $3);
 }
 ;
 type_decl : simple_type_decl  {tp("type_decl 1");$$ = $1;} 
@@ -447,8 +446,9 @@ static void tp(const string msg) {
 
 
 int yyerror(string s) {
-  cout << lineno << ": syntex error";
-	fprintf(stderr, "%s\n", s.c_str());
+  cout << lineno << ": " << curLine << " \n syntex error at token '" << currentToken << "'";
+	// fprintf(stderr, "%s\n", s.c_str());
+  exit(-1);
 	return 0;
 }
 

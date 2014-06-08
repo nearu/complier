@@ -1,0 +1,4 @@
+9 ar:	array	 at 4 .. 9 index:	char .. 6 array:	record	 at 0 .. 5 name:	char .. 4 id:	integer
+6 b:	record	 at 0 .. 5 name:	char	 at 0 .. 4 id:	integer	 at 1
+6 book:	record	 at 0 .. 5 name:	char .. 4 id:	integer
+10 s:	string	 at 1028

@@ -172,7 +172,7 @@ void ConstTreeNode::updateSymtab(Symtab *symtab) {
 	traceGen("cu");
 	env = symtab;
 	const string type = value->getType();
-	SymBucket *b = new SymBucket(name, lineNO, "const-" + type, symtab);
+	SymBucket *b = new SymBucket(name, lineNO, type, symtab);
 	int size;
 
     if (type == "string") 
@@ -211,6 +211,8 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 					member->setLoc(env->genLoc(member->getSize()));
 					member = member->last->next;
 				} while(member != b);
+				// 为了对齐
+				symtab->genLoc(b->getSize()+b->getLoc()-symtab->getCurLoc());
 			} else {
 				//cout << "in vu" << b->getName() << " size is " << b->getSize() << endl;
 				b->setLoc(symtab->genLoc(b->getSize()));
@@ -458,43 +460,50 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		int tmpDst = regManager->getTmpReg();
 		int tmpSrc = regManager->getTmpReg();
 		int immeR = -1, immeL = -1;
-		NumberTreeNode<int> * immeNodeR = dynamic_cast<NumberTreeNode<int>*>(rhs);
-		NumberTreeNode<int> * immeNodeL = dynamic_cast<NumberTreeNode<int>*>(lhs);
-		if (immeNodeR != NULL) {
-			immeR = immeNodeR->get();
-		}
-		if (immeNodeL != NULL) {
-			immeL = immeNodeL->get();
-		}
-		cout << "immeR = " << immeR << " immeL = " << immeL << endl;
-		if (regL == -2 && regR == -2) {
-			CodeGenerator::emitCodeI(op, tmpDst, 0, immeR);
-			CodeGenerator::emitCodeI(op, tmpDst, 0, immeL);
-			if (reg != NULL) *reg = tmpDst;
-		} else if (regL == -2 && regR > 0) {
-			CodeGenerator::emitCodeI(op, tmpDst, regR, immeL);
-			if (reg != NULL) *reg = tmpDst;
-		} else if (regL == -2 && regR == -1) {
-			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmpSrc);
-			CodeGenerator::emitCodeI(op, tmpDst, tmpSrc, immeL);
-			if (reg != NULL) *reg = tmpDst;
-		} else if (regL > 0 && regR == -2) {
-			if (op == "=") {
-				CodeGenerator::emitCodeI(op, regL, 0, immeR);
-				if (reg != NULL) *reg = regL;
-			} else {
-				CodeGenerator::emitCodeI(op, tmpDst, regL, immeR);
-				if (reg != NULL) *reg = tmpDst;
+		if (regL == -2 &&((IDTreeNode *)rhs)->getType() == "string") {
+			NumberTreeNode<string> * immeNodeR = dynamic_cast<NumberTreeNode<string>*>(rhs);	
+			string s = immeNodeR->get();
+			// regL have to be -1 and the type is string
+			// CodeGenerator::emitCodeS(storeOPL, s, locL);
+		} else {
+			NumberTreeNode<int> * immeNodeR = dynamic_cast<NumberTreeNode<int>*>(rhs);
+			NumberTreeNode<int> * immeNodeL = dynamic_cast<NumberTreeNode<int>*>(lhs);
+			if (immeNodeR != NULL) {
+				immeR = immeNodeR->get();
 			}
-		} else if (regL == -1 && regR == -2) {
-			if (op == "=") {
+			if (immeNodeL != NULL) {
+				immeL = immeNodeL->get();
+			}
+			cout << "immeR = " << immeR << " immeL = " << immeL << endl;
+			if (regL == -2 && regR == -2) {
 				CodeGenerator::emitCodeI(op, tmpDst, 0, immeR);
-				CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmpDst);
+				CodeGenerator::emitCodeI(op, tmpDst, 0, immeL);
 				if (reg != NULL) *reg = tmpDst;
-			} else {
-				CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmpSrc);
-				CodeGenerator::emitCodeI(op, tmpDst, tmpSrc, immeR);
+			} else if (regL == -2 && regR > 0) {
+				CodeGenerator::emitCodeI(op, tmpDst, regR, immeL);
 				if (reg != NULL) *reg = tmpDst;
+			} else if (regL == -2 && regR == -1) {
+				CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmpSrc);
+				CodeGenerator::emitCodeI(op, tmpDst, tmpSrc, immeL);
+				if (reg != NULL) *reg = tmpDst;
+			} else if (regL > 0 && regR == -2) {
+				if (op == "=") {
+					CodeGenerator::emitCodeI(op, regL, 0, immeR);
+					if (reg != NULL) *reg = regL;
+				} else {
+					CodeGenerator::emitCodeI(op, tmpDst, regL, immeR);
+					if (reg != NULL) *reg = tmpDst;
+				}
+			} else if (regL == -1 && regR == -2) {
+				if (op == "=") {
+					CodeGenerator::emitCodeI(op, tmpDst, 0, immeR);
+					CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmpDst);
+					if (reg != NULL) *reg = tmpDst;
+				} else {
+					CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmpSrc);
+					CodeGenerator::emitCodeI(op, tmpDst, tmpSrc, immeR);
+					if (reg != NULL) *reg = tmpDst;
+				}
 			}
 		}
 
@@ -988,6 +997,7 @@ SymBucket *SubRangeTypeTreeNode::genSymItem(const string typeName, Symtab *symta
 SymBucket *RecordTypeTreeNode::genSymItem(const string typeName, Symtab *symtab) {
 	SymBucket *rb = new SymBucket(typeName, lineNO, "record",symtab);
 	rb->setSize(0);
+	rb->setLoc(symtab->genLoc(0));
 	// 每个都是variableTreeNode
 	vector<TreeNode*>& list = elemList->getList();
 	for (int i = 0; i < list.size(); i++) {
@@ -1010,6 +1020,13 @@ SymBucket *RecordTypeTreeNode::genSymItem(const string typeName, Symtab *symtab)
 			}
 		}
 	}
+	int size = rb->getSize();
+	int t = size / 4;
+	if (t * 4 < size) {
+		size = t * 4 + 4;
+		rb->setSize(size);
+	}
+
 	return rb;
 }
 
@@ -1023,4 +1040,9 @@ SymBucket *CustomTypeTreeNode::genSymItem(const string typeName, Symtab *symtab)
 	// cout << " xxxxx " << b->getSize() << endl;
 	return b;
 }
+
+////////////////////////////////////////////////////////////
+// type check functions for each node					  //
+////////////////////////////////////////////////////////////
+
 

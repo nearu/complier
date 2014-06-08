@@ -72,6 +72,10 @@ public:
 	virtual void updateSymtab(Symtab *symtab) {
 		sym << "default updateSymtab" << endl;
 	}
+
+	virtual void typeCheck(Symtab *symtab) {
+
+	}
 	void setEnv(Symtab *e) {
 		env = e;
 	}

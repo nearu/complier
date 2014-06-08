@@ -12,6 +12,8 @@ FILE *source;
 FILE *listing;
 std::string currentToken;
 int traceScan = TRUE;
+string curLine;
+string space(" ");
 %}
 
 digit [0-9]
@@ -52,7 +54,11 @@ name ({letter}|_)+({letter}|_|{digit})+
 "goto" { return GOTO;}
 ">" { return GT;}
 "if" { return IF;}
-{integer} {return INTEGER;}
+{integer} {
+	TreeNode *t = new TreeNode(yytext);
+	yylval = t;
+	return INTEGER;
+}
 "[" { return LB;}
 "<=" { return LE;}
 "(" { return LP;}
@@ -83,7 +89,8 @@ name ({letter}|_)+({letter}|_|{digit})+
 "until" { return UNTIL;}
 "var" { return VAR;}
 "while" { return WHILE;}
-{newline} {lineno++;}
+{newline} {lineno++;
+curLine = space;}
 {whitespace} {}
 "integer"	{return SYS_TYPE;} 
 "real"		{return SYS_TYPE;}
@@ -102,6 +109,7 @@ name ({letter}|_)+({letter}|_|{digit})+
 int getToken(void) {
 	static int firstIn = TRUE;
 	int curToken;
+	
 	if (firstIn) {
 		firstIn = FALSE;
 		source = fopen("test.p","r");
@@ -112,6 +120,7 @@ int getToken(void) {
 	}
 	curToken = yylex();
 	currentToken = yytext;
+	curLine = curLine + yytext;
 	if (traceScan) {
 		fprintf(listing, "\t%d %s\n", lineno, yytext);
 		fflush(listing);
