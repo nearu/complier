@@ -22,10 +22,11 @@ extern Symtab* mainSymtab;
 // utils												   //
 /////////////////////////////////////////////////////////////
 void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc, int currentLevel = 0) {
-	if (reg == -3) {
+	if (reg == -3 && bucket != NULL) {
 		reg = -1;
-		loc = bucket->getOffsetReg();
-		// 表明 reg中存放的是地址，array和record的情形
+		// loc = bucket->getOffsetReg();
+		// 表明 loc是一个寄存器号，array和record的情形
+		loc = bucket->getLoc();
 		load = "load_reg";
 		store = "store_reg";
 		return;
@@ -35,13 +36,13 @@ void selectOP(SymBucket *bucket, int &reg, string &load, string &store, int &loc
 	}
 
 	if (reg == -1 && bucket != NULL) {
+		loc = bucket->getLoc();
 		if (bucket->getIsRef()) {
 			cout <<  bucket->getName() << " : copy by referance" << endl;
 			load += "_ref";
 			store += "_ref";
 		}
-		loc = bucket->getLoc();
-		cout << "in select " << bucket->getCurSymtab() <<endl;
+		cout << "in select " << bucket->getCurSymtab() << endl;
 		int level = bucket->getCurSymtab()->getLevel();
 		if (level < currentLevel) {
 			char ch[5] = {0,};
@@ -673,6 +674,7 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 	if (exprReg == -2) {
 		int offset = 0;
 		NumberTreeNode<int> * immeNode = dynamic_cast<NumberTreeNode<int>*>(index);
+		//NumberTreeNode<int> * immeNode = (NumberTreeNode<int>*)(index);
 		if (immeNode != NULL) {
 			offset = type->getLoc() + elemSize * (immeNode->get());
 		} else {
@@ -687,8 +689,10 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 		CodeGenerator::emitCodeM(indexBucket->getSize(), "load", indexLoc, FP,tmpSrc_1);
 		CodeGenerator::emitCodeI("+", tmpSrc_2, 0, elemSize);
 		CodeGenerator::emitCodeR("*", tmpDst, tmpSrc_1, tmpSrc_2);
+		CodeGenerator::emitCodeI("+", tmpDst, tmpDst, type->getLoc());
 		if (reg != NULL) *reg = -3;
-		returnBucket->setOffsetReg(tmpDst);
+		//returnBucket->setOffsetReg(tmpDst);
+		returnBucket->setLoc(tmpDst);
 		regManager->freeReg(tmpSrc_1);
 		regManager->freeReg(tmpSrc_2);
 	} else if (exprReg > 0) {	// reg
@@ -696,8 +700,10 @@ SymBucket * ArrayElemTreeNode::genCode(Symtab *symtab, int *reg) {
 		int tmpSrc = regManager->getTmpReg();
 		CodeGenerator::emitCodeI("+", tmpSrc, 0, elemSize);
 		CodeGenerator::emitCodeR("*", tmpDst, tmpSrc, exprReg);
+		CodeGenerator::emitCodeI("+", tmpDst, tmpDst, type->getLoc());
 		if (reg != NULL) *reg = -3;
-		returnBucket->setOffsetReg(tmpDst);
+		//returnBucket->setOffsetReg(tmpDst);
+		returnBucket->setLoc(tmpDst);
 		regManager->freeReg(tmpSrc);
 	}
 	returnBucket->setSize(elemSize);
@@ -781,10 +787,10 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	CodeGenerator::emitCodeM(4, "store", 12,  SP, 2);
 	CodeGenerator::emitCodeM(4, "store", 8,  SP, FP);
 	int tmp = regManager->getTmpReg();
-	CodeGenerator::emitCodeI("+", tmp, FP, 4);
+	CodeGenerator::emitCodeI("+", tmp, FP, 4);		
 	CodeGenerator::emitCodeM(4, "store", 4,  SP, tmp);
-	CodeGenerator::emitCodeI("+", FP, SP, 0);
-	CodeGenerator::emitCodeI("-", tmp, tmp, 4);
+	regManager->freeReg(tmp);
+	//CodeGenerator::emitCodeI("+", FP, SP, 0);
 	int tmpDst;
 	for (int i = 0; i < args.size(); i++) {
 		tmpDst = regManager->getTmpReg();
@@ -797,15 +803,16 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		if (argReg == -1) {
 			if (argType->getIsRef()) {
 				if (isElem) {
-					CodeGenerator::emitCodeM(4, "load", 0, argReg, tmpDst);
+					CodeGenerator::emitCodeR("+", tmpDst, FP, argLoc);   // addr = old fp + offset, argLoc现在存放的就是放地址的寄存器号
+				} else if (argBucket->getIsRef()) {
+					CodeGenerator::emitCodeM(4, "store", argLoc, FP, tmpDst);
 				} else {
-					CodeGenerator::emitCodeI("+", tmpDst, 0, argLoc); // what if it is a reg stores addr !!!!
+					CodeGenerator::emitCodeI("+", tmpDst, FP, argLoc);   // addr = old fp + offset
 				}
-				CodeGenerator::emitCodeR("+", tmpDst, tmp, tmpDst);   // addr = old fp + offset
-				CodeGenerator::emitCodeM(4, "store", argType->getLoc(), FP, tmpDst);
+				CodeGenerator::emitCodeM(4, "store", argType->getLoc(), SP, tmpDst);
 			} else {
 				CodeGenerator::emitCodeM(argBucket->getSize(), loadOP, argLoc, FP, tmpDst);
-				CodeGenerator::emitCodeM(argType->getSize(), "store", argType->getLoc(), FP, tmpDst);
+				CodeGenerator::emitCodeM(argType->getSize(), "store", argType->getLoc(), SP, tmpDst);
 			}
 		} else if (argReg == -2) {
 			// imme can be passed to a ref argment
@@ -813,21 +820,21 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 			if (immeNode != NULL) {
 				int imme = immeNode->get();
 				CodeGenerator::emitCodeI("+", tmpDst, 0, imme);
-				CodeGenerator::emitCodeM(argType->getSize(), "store", argType->getLoc(), FP, tmpDst);
+				CodeGenerator::emitCodeM(argType->getSize(), "store", argType->getLoc(), SP, tmpDst);
 			} else {
 				cout << "float is not supported!!!!!!" << endl;
 			} 
-		} else if (argReg > 0) { // depreted
-			if (argType->getIsRef()) {
+		} else if (argReg > 0) { 
+			if (argType->getIsRef()) {  // depreted
 				cout << "immediate expression result can not be copy by reference" << endl;
 				// CodeGenerator::emitCodeM(4, "store", argType->getLoc(), FP, -argReg);
 			} else {
-				CodeGenerator::emitCodeM(argType->getSize(), "store", argType->getLoc(), FP, argReg);
+				CodeGenerator::emitCodeM(argType->getSize(), "store", argType->getLoc(), SP, argReg);
 			}
 		}
 		regManager->freeReg(tmpDst);
 	}
-	regManager->freeReg(tmp);
+	CodeGenerator::emitCodeI("+", FP, SP, 0);
 	CodeGenerator::emitCodeJ("jal", 0,0,0,"&&&"+name+"&&&");
 	if (!isProc) {
 		tmp = regManager->getTmpReg();

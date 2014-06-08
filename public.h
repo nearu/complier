@@ -489,10 +489,11 @@ public:
 class ArrayElemTreeNode : public IDTreeNode {
 private:
 	const string name;
-	ExprTreeNode *index;
+	//ExprTreeNode *index;
+	TreeNode *index;
 public:
 	ArrayElemTreeNode( const string _name,  TreeNode *_index)
-					: name(_name), index((ExprTreeNode*)_index) 
+					: name(_name), index(_index) 
 					{}
 	void printSelf() {
 		ast << "ArrayElemTreeNode:" << name;

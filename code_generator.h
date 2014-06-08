@@ -261,7 +261,7 @@ public:
 
 	// lw sw instruments
 	// reg is the src or dst reg
-	// load_reg , store_reg means that offset is stored in the register numbered "offset"
+	// load_reg , store_reg means that offset现在保存了一个寄存器号，这个寄存器中有偏移量
 	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
 		if (traceEmit) cout << "emit M" << " size = " << size << " offset = " << offset <<  endl;
 		string c;

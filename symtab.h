@@ -26,7 +26,7 @@ class SymBucket {
 	// default -1, define the reg store this symbol
 	int 			regNum;
 	// the reg stores this symbol's stack offset
-	int 			offsetReg;
+	// int 			offsetReg;
 	// the order being inserted into symtab
 	int 			order;
 	// does this bucket presents a type
@@ -61,7 +61,7 @@ public:
 	SymBucket 		*ref;
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
-		location(-1), next(this), regNum(-1),last(this),ref(NULL), offsetReg(-1),isType(0),
+		location(-1), next(this), regNum(-1),last(this),ref(NULL),isType(0),
 		isRef(0), isVar(0)
 		{}
 	SymBucket(const SymBucket* that) : type(that->type){
@@ -69,7 +69,7 @@ public:
 		location 	= that->location;
 		size 		= that->size;
 		regNum 		= that->regNum;
-		offsetReg 	= that->offsetReg;
+		// offsetReg 	= that->offsetReg;
 		name 		= that->name;
 		// nextSymtab 	= that->nextSymtab;
 		// curSymtab 	= that->curSymtab;
@@ -79,6 +79,7 @@ public:
 		nextSymtab 	= NULL;
 		last 		= this;
 		next 		= this;
+//		offsetReg 	= -1;
 	}
 /////////////////////////////////////////////////////
 // set functions								   //
@@ -109,9 +110,9 @@ public:
 		regNum = rn;
 	}
 
-	void setOffsetReg(int reg) {
-		offsetReg = reg;
-	}
+	// void setOffsetReg(int reg) {
+	// 	offsetReg = reg;
+	// }
 
 	void setName(string n) {
 		name = n;
@@ -168,9 +169,9 @@ public:
 		return size;
 	}
 
-	int getOffsetReg(){
-		return offsetReg;
-	} 
+	// int getOffsetReg(){
+	// 	return offsetReg;
+	// } 
 
 	int getIsType() {
 		return isType;

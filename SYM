@@ -1,2 +1,10 @@
-4 a:	integer	 at 0
-5 b:	integer	 at 2
+3 int:	integer
+11 max:	proc .. 8 num1:	integer	 at 0 .. 8 num2:	integer	 at 2 .. 8 n:	integer	 at 4
+============begin max's symtab==================
+8 n:	integer	 at 4
+8 num1:	integer	 at 0
+8 num2:	integer	 at 2
+============end max's symtab==================
+3 n1:	integer	 at 0
+3 n2:	integer	 at 2
+7 n3:	array	 at 4 .. 7 index:	subrange .. 7 subrange:	1 .. 7 subrange:	20 .. 3 array:	integer
