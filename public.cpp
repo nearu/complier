@@ -221,7 +221,8 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 		symtab->insert(b);
 	}
 }
-
+//////// 对于传引用的方法，可以改成直接放具体的地址，而不是偏移
+////////
 void FunctionTreeNode::updateSymtab(Symtab *symtab) {
 	env = symtab;
 	// new a bucket for function
@@ -783,7 +784,7 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	CodeGenerator::emitCodeI("+", tmp, FP, 4);
 	CodeGenerator::emitCodeM(4, "store", 4,  SP, tmp);
 	CodeGenerator::emitCodeI("+", FP, SP, 0);
-	regManager->freeReg(tmp);
+	CodeGenerator::emitCodeI("-", tmp, tmp, 4);
 	int tmpDst;
 	for (int i = 0; i < args.size(); i++) {
 		tmpDst = regManager->getTmpReg();
@@ -800,6 +801,7 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 				} else {
 					CodeGenerator::emitCodeI("+", tmpDst, 0, argLoc); // what if it is a reg stores addr !!!!
 				}
+				CodeGenerator::emitCodeR("+", tmpDst, tmp, tmpDst);   // addr = old fp + offset
 				CodeGenerator::emitCodeM(4, "store", argType->getLoc(), FP, tmpDst);
 			} else {
 				CodeGenerator::emitCodeM(argBucket->getSize(), loadOP, argLoc, FP, tmpDst);
@@ -815,15 +817,17 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 			} else {
 				cout << "float is not supported!!!!!!" << endl;
 			} 
-		} else if (argReg > 0) {
+		} else if (argReg > 0) { // depreted
 			if (argType->getIsRef()) {
-				CodeGenerator::emitCodeM(4, "store", argType->getLoc(), FP, -argReg);
+				cout << "immediate expression result can not be copy by reference" << endl;
+				// CodeGenerator::emitCodeM(4, "store", argType->getLoc(), FP, -argReg);
 			} else {
 				CodeGenerator::emitCodeM(argType->getSize(), "store", argType->getLoc(), FP, argReg);
 			}
 		}
 		regManager->freeReg(tmpDst);
 	}
+	regManager->freeReg(tmp);
 	CodeGenerator::emitCodeJ("jal", 0,0,0,"&&&"+name+"&&&");
 	if (!isProc) {
 		tmp = regManager->getTmpReg();

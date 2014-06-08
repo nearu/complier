@@ -1,17 +1,11 @@
-program HelloWorld;
-type 
-	int = integer;
-var 
-	n1 : int;
-	n2 : int;
-	n3 : int;
-procedure max(num1, num2 :integer; var n :integer);
+
+program forLoop;
 var
-	result:int;
+   a: integer;
+   b: integer;
 begin
-	n := 1;
-end;
-begin	
-	n1 := -1;
-	n2 := -n1+n2;
+   for a := 10  to 20 do
+   begin
+      b := b + 1;
+   end;
 end.

@@ -1,88 +1,51 @@
-1 program head
-2 const part 2
-3 simple_type_decl 1
-3 type_decl 1
-3 type_definition
-3 type_decl_list 2
-4 type part 1
+2 program head
+3 const part 2
+3 type part 2
+4 name list 2
+4 simple_type_decl 1
+4 type_decl 1
+4 var_decl
+4 var_decl_list 2
 5 name list 2
-5 simple_type_decl 2
+5 simple_type_decl 1
 5 type_decl 1
 5 var_decl
-5 var_decl_list 2
-6 name list 2
-6 simple_type_decl 2
-6 type_decl 1
-6 var_decl
-6 var_decl_list 1
-7 name list 2
-7 simple_type_decl 2
-7 type_decl 1
-7 var_decl
-7 var_decl_list 1
-8 var part 1
-8 name list 2
-8 name list 1
-8 val_para_list
-8 simple_type_decl 1
-8 para_type_list 2
-8 para_decl_list 2
-8 name list 2
-8 var_para_list
-8 simple_type_decl 1
-8 para_type_list 1
-8 para_decl_list 1
-8 paramters 1
-9 const part 2
-9 type part 2
-10 name list 2
-10 simple_type_decl 2
-10 type_decl 1
-10 var_decl
-10 var_decl_list 2
-11 var part 1
-11 routine part 5
-11 routine head
-11 stmt list 2
-12 const value 1
-12 factor 5
-12 term 5
-12 expr 4
-12 expression 7
-12 assign stmt 1
-12 non_label_stmt 1
-12 stmt 2
-12 stmt list 1
-13 compound stmt
-13 routine_body
-13 routine
-13 procedure decl
-13 routine part 4
-14 routine head
-14 stmt list 2
-15 const value 1
-15 factor 5
-15 factor 8
-15 term 5
-15 expr 4
-15 expression 7
-15 assign stmt 1
-15 non_label_stmt 1
-15 stmt 2
-15 stmt list 1
-16 factor 1
-16 factor 8
-16 term 5
-16 expr 4
-16 factor 1
-16 term 5
-16 expr 1
-16 expression 7
-16 assign stmt 1
-16 non_label_stmt 1
-16 stmt 2
-16 stmt list 1
-17 compound stmt
-17 routine_body
-17 routine
-17 pargram
+5 var_decl_list 1
+6 var part 1
+6 routine part 5
+6 routine head
+6 stmt list 2
+7 const value 1
+7 factor 5
+7 term 5
+7 expr 4
+7 expression 7
+7 const value 1
+7 factor 5
+7 term 5
+7 expr 4
+7 expression 7
+8 stmt list 2
+9 factor 1
+9 term 5
+9 expr 4
+9 const value 1
+9 factor 5
+9 term 5
+9 expr 1
+9 expression 7
+9 assign stmt 1
+9 non_label_stmt 1
+9 stmt 2
+9 stmt list 1
+10 compound stmt
+10 non_label_stmt 3
+10 stmt 2
+10 for stmt
+10 non_label_stmt 7
+10 stmt 2
+10 stmt list 1
+11 compound stmt
+11 routine_body
+11 routine
+11 pargram

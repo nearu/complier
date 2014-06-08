@@ -38,6 +38,26 @@ begin
 	max(n1,n2);
 end.
 
+
+program HelloWorld;
+type 
+	int = integer;
+var 
+	n1 : int;
+	n2 : int;
+	n3 : int;
+procedure max(num1, num2 :integer; var n :integer);
+var
+	result:int;
+begin
+	n := 1;
+end;
+begin	
+	n1 := -1;
+	n2 := -n1+n2;
+	max(n1,n2,n3);
+end.
+
 ////////////////////////////////////////////////////
 test binary expr
 ////////////////////////////////////////////////////
@@ -58,13 +78,31 @@ test if stmt
 ////////////////////////////////////////////////////
 test while stmt
 ////////////////////////////////////////////////////
-
+program whileLoop;
+var
+   a: integer;
+begin
+   a := 10;
+   while  a < 20  do
+   begin
+      
+      a := a + 1;
+   end;
+end.
 
 
 ////////////////////////////////////////////////////
 test for stmt
 ////////////////////////////////////////////////////
-
+program forLoop;
+var
+   a: integer;
+begin
+   for a := 10  to 20 do
+   begin
+      writeln('value of a: ', a);
+   end;
+end.
 
 
 ////////////////////////////////////////////////////

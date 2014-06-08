@@ -301,24 +301,18 @@ public:
 			regManager->freeReg(offset);
 			code << c1 << endl << c << endl;
 		} else if (localOP == "load_ref" || localOP == "store_ref") {
-			int tmp0 = regManager->getTmpReg();
-			int tmp1 = regManager->getTmpReg();
-			CodeGenerator::emitCodeM(4, "load", offset, regAddr, tmp0);
-			CodeGenerator::emitCodeM(4, "load", 0, regAddr, tmp1);
-			CodeGenerator::emitCodeR("+", tmp1, tmp0, tmp1);
+			int tmp = regManager->getTmpReg();
+			CodeGenerator::emitCodeM(4, "load", offset, regAddr, tmp);
 			ch[0] = '\0';
 			sprintf(ch, "0");
-			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[tmp1] + ")";
-			regManager->freeReg(tmp0);
-			regManager->freeReg(tmp1);
+			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[tmp] + ")";
+			regManager->freeReg(tmp);
 			code << c << endl;
 		}
 		regManager->freeReg(tmpAC);
 	}
 
-	static void emitRet() {
-		code << "ret" << endl;
-	}
+
 
 };	
 
