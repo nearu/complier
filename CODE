@@ -1,14 +1,9 @@
-addi $sp,$sp,-5396
-lw $t3, 0($fp)
-sw $t3, 0($fp)
-lw $t3, 4($fp)
-sw $t3, 4($fp)
-lw $t3, 8($fp)
-sw $t3, 8($fp)
-lw $t3, 12($fp)
-sw $t3, 12($fp)
-lw $t3, 16($fp)
-sw $t3, 16($fp)
-addi $sp,$sp,5396
+.data
+string0: .asciiz "xxxx'"
+.text
+addi $sp,$sp,-257
+addi $t0,$zero,-1
+ $t0, 1($fp)
+addi $sp,$sp,257
 j exit
 exit:

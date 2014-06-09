@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include "code_generator.h"
 using namespace std;
 #ifndef YYPARSER
 #include "parser.hpp"
@@ -23,6 +24,7 @@ extern char* yytext;
 extern FILE *yyin, *yyout;
 extern int traceScan;
 extern string curLine;
+extern LabelManager *labelManager;
 ProgramTreeNode *root;
 int traceParse = TRUE;
 ofstream parserOut("parserOut");
@@ -91,7 +93,9 @@ EQUAL  const_value  SEMI {
 const_value : INTEGER     {tp("const value 1");$$ = new NumberTreeNode<int>(atoi(currentToken), "integer");}
               |  REAL     {tp("const value 2");$$ = new NumberTreeNode<double>(atof(currentToken), "real");}
               |  CHAR     {tp("const value 3");$$ = new NumberTreeNode<char>(currentToken[0], "char");}
-              |  STRING   {tp("const value 4");$$ = new NumberTreeNode<string>(currentToken, "string");}  
+              |  STRING   {tp("const value 4");$$ = new NumberTreeNode<string>(currentToken, "string");
+                          constStringMap[currentToken] = labelManager->getStringLabel();
+                          }  
               |  SYS_CON  {tp("const value 5");$$ = new NumberTreeNode<string>(currentToken, "sys_con");}  
               ;
 type_part : TYPE type_decl_list {
@@ -242,7 +246,7 @@ parameters : LP  para_decl_list  RP  {
   tp("paramters 1");
   $$ = $2; 
 }
-| {tp("paramters 2");$$ = NULL;}
+| LP RP {tp("paramters 2");$$ = new ListTreeNode("para_type_list");}
 ; 
 para_decl_list : para_decl_list  SEMI  para_type_list {
   tp("para_decl_list 1");

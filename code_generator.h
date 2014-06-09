@@ -75,14 +75,15 @@ public:
 };
 
 class LabelManager {
-
-public:
 	static int loop_number;
 	static int func_number;
 	static int case_number;
 	static int goto_number;
 	static int if_number;
 	static int do_number;
+	static int string_label_number;
+public:
+	
 	int getLoopLabel(){return loop_number;}
 	void addLoopLabel(){loop_number++;} 
 	int getRepeatLabel(){return do_number;}
@@ -99,6 +100,12 @@ public:
 		sprintf(labelNum, "%d", func_number++);
 		label = label + labelNum;	
 	}
+	string getStringLabel() {
+		char ch[32] = {0,};
+		sprintf(ch, "string%d", string_label_number++);
+		return ch;
+	}
+
 
 };
 
@@ -330,7 +337,15 @@ public:
 		}
 		regManager->freeReg(tmp);
 	}
+	static void emitCodeConstStr(string constStr, string label) {
+		code << label << ": .asciiz " << "\"" << constStr.substr(1,constStr.length()-1) << "\"" << endl;
+	}
 
+	static void emitCodeLA(string label, int regDst) {
+		code << "la " << regTable[regDst] << " " << label << endl;
+	}
 };	
+
+	
 
 #endif

@@ -287,9 +287,8 @@ public:
 		if (pBucket != NULL) {
 			return pBucket->getCurSymtab()->find(name);
 		}
-		cout << "symbol " << name << " is not defined !!!" << endl;
-		cout << "execution stoped!!!" << endl;
-		exit(-1);
+//		cout << "symbol " << name << " is not defined !!!" << endl;
+	
 		return NULL;
 	}
 

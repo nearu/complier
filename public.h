@@ -11,6 +11,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <map>
+#include <cstdio>
 #define YYSTYPE TreeNode *
 using namespace std;
 typedef int TokenType;
@@ -24,9 +26,10 @@ extern string currentToken;
 extern ofstream ast;
 extern ofstream code;
 extern ofstream sym;
+extern map<string,string> constStringMap;
 class Symtab;
 class SymBucket;
-
+static int constStringNumber;
 
 ////////////////////////////////////////////////////////
 // AST data structure								  //
@@ -396,6 +399,7 @@ private:
 	const string type;
 public:
 	NumberTreeNode(T v, const string _type):value(v),type(_type) {}
+
 	T get() {
 		return value;
 	}

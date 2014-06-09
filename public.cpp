@@ -1,6 +1,7 @@
 #include <typeinfo>
 #include <queue>
 #include <algorithm>
+#include <map>
 #include "code_generator.h"
 #include "public.h"
 #include "symtab.h"
@@ -12,6 +13,7 @@ ofstream code("CODE");
 ofstream sym("SYM");
 ofstream error("ERROR");
 LabelManager *labelManager;
+map<string,string> constStringMap;
 RegManager *regManager;
 int traceGenCode = TRUE;
 int traceEmit = TRUE;
@@ -120,7 +122,7 @@ int getSize(const string& type) {
 	else if (type == "char")
 		size = 1;
 	else if (type == "string") 
-		size = 256;
+		size = 4;
 	return size;
 }
 
@@ -296,6 +298,13 @@ void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 
 SymBucket * ProgramTreeNode::genCode(Symtab *symtab, int *reg) {
 	traceGen("pg");
+	code << ".data" << endl;
+	for(map<string,string>::iterator iter = constStringMap.begin();iter != constStringMap.end(); iter++) {
+		string constStr = iter->first;
+		string label    = iter->second;
+		CodeGenerator::emitCodeConstStr(constStr, label);
+	}
+	code << ".text" << endl;
 	routine->genCode(env);
 	CodeGenerator::addLabel("exit");
 	return NULL;
@@ -914,6 +923,13 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 				CodeGenerator::emitCodeI("+", tmpDst, 0, imme);
 				CodeGenerator::emitCodeM(argType->getSize(), "store", argType->getLoc(), SP, tmpDst);
 			} else {
+				immeNode = dynamic_cast<NumberTreeNode<string>*>(args[i]);
+				if (immeNode != NULL) {
+					// const string
+					int tmpDst = regManager->getTmpReg();
+					CodeGenerator::emitCodeLA(constStringMap[immeNode->get()], tmpDst);
+					CodeGenerator::emitCodeM(argType->getSize(), "store", argType->getLoc(), SP, tmpDst);
+				}
 				cout << "float is not supported!!!!!!" << endl;
 			} 
 		} else if (argReg > 0) { 

@@ -17,11 +17,14 @@ Symtab *mainSymtab;
 extern ofstream sym;
 extern RegManager *regManager;
 extern LabelManager *labelManager;
+extern map<string,string> constStringMap;
+
 int LabelManager::loop_number = 0;
 int LabelManager::func_number = 0;
 int LabelManager::case_number = 0;
 int LabelManager::if_number = 0;
 int LabelManager::do_number = 0;
+int LabelManager::string_label_number = 0;
 
 int main(int argc, char *argv[]) {
 	// char option[MAX_OPTION];
