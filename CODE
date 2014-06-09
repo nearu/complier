@@ -1,14 +1,13 @@
 addi $sp,$sp,-5396
-lw $t3, 0($fp)
-sw $t3, 0($fp)
-lw $t3, 4($fp)
-sw $t3, 4($fp)
-lw $t3, 8($fp)
-sw $t3, 8($fp)
-lw $t3, 12($fp)
-sw $t3, 12($fp)
-lw $t3, 16($fp)
-sw $t3, 16($fp)
+copy:
+add $t3,$zero,$zero
+lw $t4, 0($fp)
+sw $t4, 0($fp)
+addi $zero,$zero,4
+addi $s4,$s4,4
+addi $t3,$t3,1
+slti $t4,$t3,5
+bne $t4,$zero,copy
 addi $sp,$sp,5396
 j exit
 exit:
