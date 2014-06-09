@@ -409,7 +409,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		if (op == "=") {
 			if (bucketR->getSize() > 4)  {
 				if (bucketL->getSize() == bucketR->getSize()) {
-					CodeGenerator::emitCodeB(loadOPR,storeOPL, bucketR->getSize(), locL, locR,FP,4);
+					CodeGenerator::emitCodeB(loadOPR,storeOPL, bucketR->getSize(), locL, locR,FP,FP,4);
 				} else {
 					cout << lineNO << ": error two record has different size" << endl;
 					exit(-1);

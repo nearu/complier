@@ -311,7 +311,7 @@ public:
 		regManager->freeReg(tmpAC);
 	}
 
-	static void emitCodeB(const string loadOP,const string storeOP, int size, int dstOffset, int srcOffset, int addrReg ,int copysize) {
+	static void emitCodeB(const string loadOP,const string storeOP, int size, int dstOffset, int srcOffset, int dstaddrReg , int srcaddrReg ,int copysize) {
 		int loopTime = size / copysize;
 		
 		string s;
@@ -319,37 +319,24 @@ public:
 		CodeGenerator::addLabel(s);
 		int loop = regManager->getTmpReg();
 		int tmp = regManager->getTmpReg();
-		int addr = regManager->getTmpReg();
+		int daddr = regManager->getTmpReg();
+		int saddr = regManager->getTmpReg();
 		CodeGenerator::emitCodeR("+",loop,0,0);
-		CodeGenerator::emitCodeR("+",addr,addrReg,0);
-		CodeGenerator::emitCodeM(copysize, loadOP,srcOffset, addr,  tmp);
-		CodeGenerator::emitCodeM(copysize, storeOP,srcOffset, addr,  tmp);
+		CodeGenerator::emitCodeR("+",saddr,srcaddrReg,0);
+		CodeGenerator::emitCodeR("+",daddr,dstaddrReg,0);
+		CodeGenerator::emitCodeM(copysize, loadOP,srcOffset, saddr,  tmp);
+		CodeGenerator::emitCodeM(copysize, storeOP,dstOffset, daddr,  tmp);
 		regManager->freeReg(tmp);
 
-		if(loadOP == "load"){
-			CodeGenerator::emitCodeI("+", addr, addr, copysize);
-		}
-		else if(loadOP == "load_reg"){
-			CodeGenerator::emitCodeI("+", srcOffset, srcOffset, copysize);
-		}
-		else{
-			CodeGenerator::emitCodeI("+", srcOffset, srcOffset, copysize);
-		}
-		if(storeOP == "store"){
-			CodeGenerator::emitCodeI("+", addr, addr, copysize);
-		}
-		else if(storeOP == "store_reg"){
-			CodeGenerator::emitCodeI("+", dstOffset, dstOffset, copysize);
-		}
-		else{
-			CodeGenerator::emitCodeI("+", dstOffset, dstOffset, copysize);
-		}
+		CodeGenerator::emitCodeI("+", saddr, saddr, copysize);
+		CodeGenerator::emitCodeI("+", daddr, daddr, copysize);
 
 		CodeGenerator::emitCodeI("+",loop,loop,1);
 		int tmp2 = regManager->getTmpReg();
 		CodeGenerator::emitCodeI("<",tmp2,loop,loopTime);
 		CodeGenerator::emitCodeJ("bne",tmp2,0,0,s);
-		regManager->freeReg(addr);
+		regManager->freeReg(saddr);
+		regManager->freeReg(daddr);
 		regManager->freeReg(tmp2);
 		regManager->freeReg(loop);
 	}
