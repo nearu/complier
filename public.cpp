@@ -798,16 +798,16 @@ SymBucket * RepeatStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	if(regC == -1){
 		int tmp = regManager->getTmpReg();
 		CodeGenerator::emitCodeM(bucketC->getSize(),loadOPC, locC, FP, tmp);
-		CodeGenerator::emitCodeJ("bne",tmp,0,0,s); 
+		CodeGenerator::emitCodeJ("beq",tmp,0,0,s); 
 		regManager->freeReg(tmp);
 	}
 	else if(regC > 0){
-		CodeGenerator::emitCodeJ("bne",regC,0,0,s); 
+		CodeGenerator::emitCodeJ("beq",regC,0,0,s); 
 	}
 	else{
 		int tmp = regManager->getTmpReg();
 		CodeGenerator::emitCodeI("+", tmp, 0, bucketC->getIntImme());
-		CodeGenerator::emitCodeJ("bne",tmp,0,0,s); 
+		CodeGenerator::emitCodeJ("beq",tmp,0,0,s); 
 		regManager->freeReg(tmp);
 	}
 	regManager->freeReg(regC);

@@ -93,30 +93,41 @@ end.
 ////////////////////////////////////////////////////
 test while stmt
 ////////////////////////////////////////////////////
-program whileLoop;
-var
-   a: integer;
-begin
-   a := 10;
-   while  a < 20  do
-   begin
-      
-      a := a + 1;
-   end;
+program HelloWorld;
+type 
+	int = integer;
+var 
+	s : int;
+	result:int;
+begin	
+	s := 0;
+	result := 0;
+	while s < 100 do
+	begin 
+		result := result + s;
+		s := s + 1;
+	end;
+	writeln(result);
 end.
 
 
 ////////////////////////////////////////////////////
 test for stmt
 ////////////////////////////////////////////////////
-program forLoop;
-var
-   a: integer;
-begin
-   for a := 10  to 20 do
-   begin
-      writeln('value of a: ', a);
-   end;
+program HelloWorld;
+type 
+	int = integer;
+var 
+	s : int;
+	result:int;
+begin	
+	s := 0;
+	result := 0;
+	for s:=0 to 100 do
+	begin
+		result := result + s;
+	end;
+	writeln(result);
 end.
 
 
@@ -124,7 +135,21 @@ end.
 test repeat stmt
 ////////////////////////////////////////////////////
 
-
+program HelloWorld;
+type 
+	int = integer;
+var 
+	s : int;
+	result:int;
+begin	
+	s := 0;
+	result := 0;
+	repeat
+		result := result + s;
+		s := s + 1;
+	until s >= 100;
+	writeln(result);
+end.
 ////////////////////////////////////////////////////
 test copyblock
 ////////////////////////////////////////////////////
