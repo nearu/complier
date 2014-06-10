@@ -1,67 +1,75 @@
 .data
-string1: .asciiz " "
-real1: .float  1.0
-real3: .float  10.0
-real4: .float  2.0
+real0: .float  10.0
 .text
 add $fp,$sp,$zero
-addi $sp,$sp,-17
+addi $sp,$sp,-8
+addi $sp,$sp,-16
+sw $ra, 16($sp)
+sw $v1, 12($sp)
+sw $fp, 8($sp)
+addi $t0,$fp,4
+sw $t0, 4($sp)
 addi $t0,$zero,1
-sw $t0, 0($fp)
-addi $t1,$zero,4
-sw $t1, -4($fp)
-la $t2 real1
-l.s $f6, 0($t2)
-s.s $f6, -8($fp)
-la $t2 real1
-l.s $f6, 0($t2)
-s.s $f6, -12($fp)
-lw $t3, -4($fp)
-addi $t2,$t3,-1
-addi $t5,$zero,2
-mul $t3,$t2,$t5
-addi $t5,$zero,2
-div $t2,$t3,$t5
-lw $t4, 0($fp)
-addi $t3,$t4,1
-add $t4,$t2,$t3
-sw $t4, 0($fp)
-la $t2 real4
-l.s $f6, 0($t2)
-l.s $f8, -8($fp)
-mul.s $f9,$f8,$f6
-la $t2 real3
-l.s $f6, 0($t2)
-la $t2 real4
-l.s $f8, 0($t2)
-l.s $f10, -12($fp)
-div.s $f13,$f10,$f8
-l.s $f8, -8($fp)
-sub.s $f10,$f8,$f13
-add.s $f8,$f6,$f10
-add.s $f6,$f9,$f8
-s.s $f6, -12($fp)
-lw $a0, 0($fp)
-addi $v0, $zero, 1
-syscall
-la $t2 string1
-add $a0,$t2,$zero
-addi $v0, $zero, 4
-syscall
-l.s $f12, -12($fp)
+sw $t0, 0($sp)
+addi $t0,$zero,2
+sw $t0, -4($sp)
+addi $fp,$sp,0
+jal max
+lw $ra, 16($sp)
+lw $v0, 12($sp)
+lw $fp, 8($sp)
+addi $sp,$sp,16
+l.s $f12, 0($fp)
 addi $v0, $zero, 2
-syscall
-lw $t2, -4($fp)
-sub $t2,$zero,$t2
-addi $t3,$t2,1
-sw $t3, -4($fp)
-la $t2 string1
-add $a0,$t2,$zero
-addi $v0, $zero, 4
 syscall
 lw $a0, -4($fp)
 addi $v0, $zero, 1
 syscall
-addi $sp,$sp,17
+addi $sp,$sp,8
 j exit
+max:
+addi $sp,$sp,-8
+addi $sp,$sp,-16
+sw $ra, 16($sp)
+sw $v1, 12($sp)
+sw $fp, 8($sp)
+addi $t0,$fp,4
+sw $t0, 4($sp)
+addi $t0,$zero,2
+sw $t0, 0($sp)
+addi $t0,$zero,1
+sw $t0, -4($sp)
+addi $fp,$sp,0
+jal min
+add $t0,$v1,$zero
+lw $ra, 16($sp)
+lw $v0, 12($sp)
+lw $fp, 8($sp)
+addi $sp,$sp,16
+lw $t1, 4($fp)
+addi $t1,$t1,-4
+sw $t0, -4($t1)
+addi $sp,$sp,8
+jr $ra
+min:
+addi $sp,$sp,-12
+la $t0 real0
+l.s $f6, 0($t0)
+lw $t0, 4($fp)
+lw $t0, 0($t0)
+addi $t0,$t0,-4
+s.s $f6, 0($t0)
+lw $t2, 0($fp)
+lw $t3, -4($fp)
+slt $t4,$t2,$t3
+beq $t4,$zero,endif0
+lw $t2, 0($fp)
+add $v1,$t2,$zero
+j endelse0
+endif0:
+lw $t2, -4($fp)
+add $v1,$t2,$zero
+endelse0:
+addi $sp,$sp,12
+jr $ra
 exit:

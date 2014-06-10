@@ -2,22 +2,25 @@ program HelloWorld;
 type 
 	int = integer;
 var 
-	i : int;
-	j : int;
-	r : real;
-	t : real;
-	c : char;
+	outReal : real;
+	result : int;
+function max(num1, num2 :integer) :integer;
+
+function min(num1, num2:integer):integer;
+var 
+	r : int;
+	begin
+		outReal := 10.0;
+		if (num1 < num2) then min := num1
+		else min := num2;
+	end;
+begin
+	result := min(2,1);
+	
+end;
 begin	
-	i := 1;
-	j := 4;
-	r := 1.0;
-	t := 1.0;
-	i := i + 1 + 2 * (j - 1) / 2;
-	t := r - t/2.0 + 10.0 + r * 2.0;
-	writeln(i);
+	max(1,2);
+	writeln(outReal);
 	writeln(' ');
-	writeln(t);
-	j := -j + 1;
-	writeln(' ');
-	writeln(j);
+	writeln(result);
 end.

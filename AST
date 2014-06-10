@@ -1,10 +1,15 @@
  ProgramTreeNode 
  RoutineTreeNode 
  RoutineHead  CompoundStmtTreeNode 
- a list of non const part:0  a list of type_decl_list:1  a list of var_decl_list:5  a list of non routine part:0  a list of stmt:12 
- CustomTypeTreeNode:int  VariableTreeNode:i  VariableTreeNode:j  VariableTreeNode:r  VariableTreeNode:t  VariableTreeNode:c  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode 
- NumberTreeNode  VariableTreeNode:i  NumberTreeNode  VariableTreeNode:j  NumberTreeNode  VariableTreeNode:r  NumberTreeNode  VariableTreeNode:t  BinaryExprTreeNode  VariableTreeNode:i  BinaryExprTreeNode  VariableTreeNode:t  BinaryExprTreeNode  VariableTreeNode:j 
- BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  NumberTreeNode  UnaryExprTreeNode 
- NumberTreeNode  BinaryExprTreeNode  NumberTreeNode  VariableTreeNode:i  NumberTreeNode  VariableTreeNode:r  NumberTreeNode  BinaryExprTreeNode  VariableTreeNode:j 
- BinaryExprTreeNode  NumberTreeNode  BinaryExprTreeNode  VariableTreeNode:r 
- NumberTreeNode  VariableTreeNode:j  NumberTreeNode  VariableTreeNode:t 
+ a list of non const part:0  a list of type_decl_list:1  a list of var_decl_list:2  a list of function_decl_list:1  a list of stmt:4 
+ CustomTypeTreeNode:int  VariableTreeNode:outReal  VariableTreeNode:result  FunctionTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode 
+ a list of para_type_list:1  RoutineTreeNode 
+ VariableTreeNode:num1num2  RoutineHead  CompoundStmtTreeNode 
+ a list of non const part:0  a list of non type part:0  a list of non var part:0  a list of function_decl_list:1  a list of stmt:1 
+ FunctionTreeNode  BinaryExprTreeNode 
+ a list of para_type_list:1  RoutineTreeNode  BinaryExprTreeNode  VariableTreeNode:result 
+ VariableTreeNode:num1num2  RoutineHead  CompoundStmtTreeNode 
+ a list of non const part:0  a list of non type part:0  a list of var_decl_list:1  a list of non routine part:0  a list of stmt:2 
+ VariableTreeNode:r  BinaryExprTreeNode  IfStmtTreeNode 
+ NumberTreeNode  VariableTreeNode:outReal  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode 
+ VariableTreeNode:num2  VariableTreeNode:num1  VariableTreeNode:num1  VariableTreeNode:min  VariableTreeNode:num2  VariableTreeNode:min 

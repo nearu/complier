@@ -153,8 +153,9 @@ void childrenUpdateSymtab(vector<TreeNode*>& children, Symtab *symtab) {
 
 string childrenTypeCheck(vector<TreeNode*>& children, Symtab *symtab) {
 	for(int i = 0; i < children.size(); i++) {
-		if((children[i]->typeCheck(symtab))=="failure")
+		if((children[i]->typeCheck(symtab))=="failure") {
 			return "failure";
+		}
 	}
 	return "success";
 }
@@ -441,6 +442,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	SymBucket *bucketR, *bucketL;
 	bucketR = rhs->genCode(env, &regR);
 	bucketL = lhs->genCode(env, &regL);
+
 	int isFloat = isFloatExpr(bucketR, regR) && isFloatExpr(bucketL, regL);
 	SymBucket *returnBucket;
 	if (bucketL != NULL)
@@ -625,78 +627,52 @@ SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	breakn = breakn + ch;
 	labelManager->addLoopLabel();
 	bucketL = assignExpr->genCode(symtab, &regL);
-	selectOP(bucketL,regL,loadOPL,storeOPL,locL, symtab->getLevel());
-	cout << "for reg L = " << regL << endl; 
+	regManager->freeReg(regL);
+	// get the id
+	SymBucket* idBucket = ((BinaryExprTreeNode*)assignExpr)->getLhs()->genCode(symtab);
+	// begin loop
 	CodeGenerator::addLabel(loop);
+	int regID = regManager->getTmpReg();
+	// load id
+	CodeGenerator::emitCodeM(idBucket->getSize(),"load", idBucket->getLoc(), FP, regID);
 	bucketR = dirExpr->genCode(symtab,&regR);
 	selectOP(bucketR,regR,loadOPR,storeOPR,locR, symtab->getLevel());
+	int comp = regManager->getTmpReg();
 	if(regR == -1){
-		if(regL == -1){
-			int tmp = regManager->getTmpReg();
-			int tmp2 = regManager->getTmpReg();
-			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);
-			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp2);
-			CodeGenerator::emitCodeJ("beq",tmp,tmp2,0,breakn);
-			regManager->freeReg(tmp);
-			regManager->freeReg(tmp2);
-		}
-		else {
-			int tmp = regManager->getTmpReg();
-			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp);
-			CodeGenerator::emitCodeJ("beq",regL,tmp,0,breakn);
-			regManager->freeReg(tmp);
-		}
+		int tmp = regManager->getTmpReg();
+		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp);
+		CodeGenerator::emitCodeR("<=",comp,regID,tmp);
+		CodeGenerator::emitCodeJ("beq",comp,0,0,breakn);
+		regManager->freeReg(tmp);
 	}
 	else if(regR == -2){
 		int imm = bucketR->getIntImme();
-		if(regL == -1 ){
-			int tmp = regManager->getTmpReg();
-			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);	
-			CodeGenerator::emitCodeJ("beq",tmp,32,imm,breakn);
-			regManager->freeReg(tmp);
-		}
-		else {
-			CodeGenerator::emitCodeJ("beq",regL,32,imm,breakn);
-		}
+		CodeGenerator::emitCodeI("<=",comp,regID,imm);
+		CodeGenerator::emitCodeJ("beq",comp,0,0,breakn);
 	}
 	else {
-		if(regL == -1 ){
-			int tmp = regManager->getTmpReg();
-			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);	
-			CodeGenerator::emitCodeJ("beq",tmp,regR,0,breakn);
-			regManager->freeReg(tmp);
-		}
-		else {
-			CodeGenerator::emitCodeJ("beq",regL,regR,0,breakn);
-		}
+		CodeGenerator::emitCodeR("<=",comp,regID,regR);
+		CodeGenerator::emitCodeJ("beq",comp,0,0,breakn);
 	}
 	body->genCode(symtab, &regB);
-	if(regL == -1){
-		int tmp = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);
-		if(direction == "to") {
-			CodeGenerator::emitCodeI("+",tmp,tmp,1);
-		}
-		else {
-			CodeGenerator::emitCodeI("-",tmp,tmp,1);
-		}
-		CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmp);
-		regManager->freeReg(tmp);
+	
+	int tmp = regManager->getTmpReg();
+	
+	CodeGenerator::emitCodeM(idBucket->getSize(),"load", idBucket->getLoc(), FP, tmp);
+	if(direction == "to") {
+		CodeGenerator::emitCodeI("+",tmp,tmp,1);
 	}
 	else {
-		if(direction == "to") {
-			CodeGenerator::emitCodeI("+",regL,regL,1);
-		}
-		else {
-			CodeGenerator::emitCodeI("-",regL,regL,1);
-		}
+		CodeGenerator::emitCodeI("-",tmp,tmp,1);
 	}
-
+	
+	CodeGenerator::emitCodeM(idBucket->getSize(),"store", idBucket->getLoc(), FP, tmp);
+	regManager->freeReg(tmp);
 	CodeGenerator::emitCodeJ("j",0,0,0,loop);
 	CodeGenerator::addLabel(breakn);
-	regManager->freeReg(regL);
 	regManager->freeReg(regR);
 	regManager->freeReg(regB);
+	regManager->freeReg(regID);
 	if (bucketL != NULL) delete bucketL;
 	if (bucketR != NULL) delete bucketR;
 	return NULL;
@@ -1015,7 +991,7 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	// save the environment, such as save ra, v0, fp, and set access link
 	CodeGenerator::emitCodeI("-", SP,SP,16);
 	CodeGenerator::emitCodeM(4, "store", -16, SP, 31);
-	CodeGenerator::emitCodeM(4, "store", -12,  SP, 2);
+	CodeGenerator::emitCodeM(4, "store", -12,  SP, V1);
 	CodeGenerator::emitCodeM(4, "store", -8,  SP, FP);
 	int tmp = regManager->getTmpReg();
 	CodeGenerator::emitCodeI("+", tmp, FP, 4);		 // 压入的ac的地址比当前fp高
@@ -1254,8 +1230,10 @@ string WhileStmtTreeNode::typeCheck(Symtab *symtab){
 }
 
 string SwitchStmtTreeNode::typeCheck(Symtab *symtab){
+
 	if(((expr->typeCheck(symtab))!="failure")&&((caseExprList->typeCheck(symtab))!="failure"))
 		return "success";
+
 	return "failure";
 }
 
@@ -1297,7 +1275,7 @@ string BinaryExprTreeNode::typeCheck(Symtab *symtab) {
 
 
 string CaseExprTreeNode::typeCheck(Symtab *symtab){
-	if((stmt->typeCheck(symtab))=="success"){
+	if((stmt->typeCheck(symtab)) != "failure"){
 		return "success";
 	}
 	return "failure";
@@ -1310,9 +1288,32 @@ string CallExprTreeNode::typeCheck(Symtab *symtab){
 	}
 
 	SymBucket *func = symtab->find(name);
+	int i = 0;
+	//cout << "in call type check " << name << endl;
+	if (func != NULL) {
+		SymBucket * member = func->next;
+		do {
+			string argType = args[i]->typeCheck(symtab);
+			if (member->getIsRef() && argType.find("const") != string::npos) {
+				cout << lineNO << " : const value can not be passed to var type argument" << endl;
+				return "failure";
+			}
+			string memberType = member->getType();
+			if (argType.find(memberType) == string::npos)  {
+				cout << lineNO << " : argument " << i << " type dismatch " << endl;
+				return "failure";
+			}
+			i++;
+			member = member->last->next;
+		} while (member != func->last);
+		if (i < args.size()) {
+			cout << lineNO << " : argument number is not match " << endl;
+			return  "failure";
+		}
+	}
 	if (func!=NULL)
 		return func->last->getType();
-	else return "none";
+	else return "success";
 }
 
 string RecordElemTreeNode::typeCheck(Symtab *symtab){

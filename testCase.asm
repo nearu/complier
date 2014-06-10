@@ -52,9 +52,9 @@ end;
 begin	
 	max(1,2);
 	writeln(outReal);
+	writeln(' ');
 	writeln(result);
 end.
-
 /////////////////////
 test while
 /////////////////////
@@ -184,9 +184,9 @@ function ff(h : real) : char;
 begin
 end;
 begin
-	
-	i := ff(i);
+	i := ff(i,i);
 	cc;
 	k[i] := k;
 	i := j;
 end.
+
