@@ -151,6 +151,15 @@ void childrenUpdateSymtab(vector<TreeNode*>& children, Symtab *symtab) {
 		children[i]->updateSymtab(symtab);
 }
 
+string childrenTypeCheck(vector<TreeNode*>& children, Symtab *symtab) {
+	for(int i = 0; i < children.size(); i++) {
+		if((children[i]->typeCheck(symtab))=="failure")
+			return "failure";
+	}
+	return "success";
+}
+
+
 
 
 ////////////////////////////////////////////////////////////
@@ -297,6 +306,8 @@ void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 	b->setIsType(1);
 	symtab->insert(b);
 }
+
+
 	
 
 ////////////////////////////////////////////////////////////
@@ -1159,4 +1170,116 @@ SymBucket *CustomTypeTreeNode::genSymItem(const string typeName, Symtab *symtab)
 // type check functions for each node					  //
 ////////////////////////////////////////////////////////////
 
+string ListTreeNode::typeCheck(Symtab *symtab){
+	return childrenTypeCheck(list, symtab);
+}
 
+string VariableTreeNode::typeCheck(Symtab *symtab){
+	return (symtab->find(name))->getType();
+}
+
+string ArrayElemTreeNode::typeCheck(Symtab *symtab){
+	return (symtab->find(name))->last->getType();
+}
+
+string CompoundStmtTreeNode::typeCheck(Symtab *symtab){
+	if((stmtList->typeCheck(symtab))!="failure")
+		return "success";
+	return "failure";
+}
+
+string IfStmtTreeNode::typeCheck(Symtab *symtab){
+	if(((condition->typeCheck(symtab))!="failure")&&((body->typeCheck(symtab))!="failure")&&(elsePart != NULL ? ((elsePart->typeCheck(symtab))!="failure") : 1)){
+		return "success";
+	}
+	 return "failure";
+}
+
+string RepeatStmtTreeNode::typeCheck(Symtab *symtab){
+	if(((condition->typeCheck(symtab))!="failure")&&((body->typeCheck(symtab))!="failure")){
+		return "success";
+	}
+	return "failure";
+}
+
+string WhileStmtTreeNode::typeCheck(Symtab *symtab){
+	if(((condition->typeCheck(symtab))!="failure")&&((body->typeCheck(symtab))!="failure")){
+		return "success";
+	}
+	return "failure";
+}
+
+string SwitchStmtTreeNode::typeCheck(Symtab *symtab){
+	if(((expr->typeCheck(symtab))!="failure")&&((caseExprList->typeCheck(symtab))!="failure"))
+		return "success";
+	return "failure";
+}
+
+string ForStmtTreeNode::typeCheck(Symtab *symtab){
+	if(((assignExpr->typeCheck(symtab))!="failure")&&((dirExpr->typeCheck(symtab))!="failure")&&((body->typeCheck(symtab))!="failure")){
+		return "success";
+	}
+	return "failure";
+}
+
+string UnaryExprTreeNode::typeCheck(Symtab *symtab){
+	string type = operand->typeCheck(symtab);
+	if(type!="integer"){
+		cout << lineNO << ": " << "The right value must be an integer." << endl;
+		return "failure";
+	}
+	return type;
+}
+
+string BinaryExprTreeNode::typeCheck(Symtab *symtab) {
+	string ltype = lhs->typeCheck(symtab);
+	string rtype = rhs->typeCheck(symtab);
+	if(ltype == "integer" && rtype == "integer")
+		return "integer";
+	else if(ltype == "real" && rtype == "real")
+		return "real";
+	else if(ltype == "char"){
+		if(rtype == "char" || rtype == "string")
+			return "char";
+	}
+	else if(ltype == "string"){
+		if(rtype == "string" || rtype == "char")
+			return "string";
+	}
+	cout << lineNO << ": " << "Can not transform the type " << rtype << " to the type " << ltype << "." << endl;
+	return "failure";
+}
+
+
+
+string CaseExprTreeNode::typeCheck(Symtab *symtab){
+	if((stmt->typeCheck(symtab))=="success"){
+		return "success";
+	}
+	return "failure";
+}
+
+string CallExprTreeNode::typeCheck(Symtab *symtab){
+	if(symtab->find(name)==NULL){
+		cout << lineNO << ": " << "Can not find the function " << name << "." << endl;
+		return "failure";
+	}
+	SymBucket *func = symtab->find(name);
+	return func->last->getType();
+}
+
+string RecordElemTreeNode::typeCheck(Symtab *symtab){
+	SymBucket *bucket = symtab->find(recordName);
+	if(bucket==NULL){
+		cout << getLineNO() << ": " << "Can not find the record " << recordName << "." << endl; 
+	}
+	SymBucket *member = bucket->next;
+	do {
+		if (member->getName() == elemName) {
+			return member->getType();
+		}
+		member = member->last->next;
+	} while (member != bucket);
+	cout << getLineNO() << ": " << "Can not find the element " << elemName << " in the record " << recordName << "." << endl; 
+	return "failure";
+}

@@ -80,7 +80,7 @@ public:
 	}
 
 	virtual string typeCheck(Symtab *symtab) {
-
+		return "treenode";
 	}
 	void setEnv(Symtab *e) {
 		env = e;
@@ -170,6 +170,7 @@ public:
 
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 	void updateSymtab(Symtab*);
+	string typeCheck(Symtab *symtab);
 
 };
 
@@ -225,6 +226,9 @@ public:
 	}					
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL);
 	void updateSymtab(Symtab*);
+	string typeCheck(Symtab *symtab) {
+		return body->typeCheck(symtab);
+	}
 
 };
 
@@ -259,6 +263,7 @@ public:
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 	void updateSymtab(Symtab*);
+	string typeCheck(Symtab *symtab) {return routine->typeCheck(symtab);}
 };
 
 //======
@@ -443,7 +448,7 @@ public:
 			return value;
 		}
 	}
-
+	string typeCheck(Symtab *symtab){return type;}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
@@ -472,7 +477,11 @@ public:
 	void printSelf() {
 		ast << "ConstTreeNode";
 	}
+	const string getType() {
+		return value->getType();
+	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	string typeCheck(Symtab *symtab){return getType();}
 	void updateSymtab(Symtab* symtab);
 };
 
@@ -526,6 +535,7 @@ public:
 	}
 	virtual void print() {cout<<"I am a VariableTreeNode!"<<endl;}
 	void updateSymtab(Symtab*);
+	string typeCheck(Symtab *symtab);
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
@@ -541,8 +551,8 @@ public:
 	void printSelf() {
 		ast << "ArrayElemTreeNode:" << name;
 	}
+	string typeCheck(Symtab *symtab);
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
-
 };
 
 class RecordElemTreeNode : public IDTreeNode {
@@ -557,6 +567,7 @@ public:
 		ast << "RecordElemTreeNode:"<<recordName<<"."<<elemName;
 	}		
 	SymBucket *genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 
 };
 
@@ -578,6 +589,7 @@ public:
 		ast << "UnaryExprTreeNode";
 	}	
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	string typeCheck(Symtab *symtab);
 };
 
 /*
@@ -598,11 +610,9 @@ public:
 		ast << "BinaryExprTreeNode";
 	}
 	TreeNode * getlhs() { return lhs; }
-
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
-	// SymBucket *genCodeFloat(Symtab *symtab, SymBucket *bucketR, SymBucket *bucketL,
-	// 										int regR, int regL, int *reg);
+	string typeCheck(Symtab *symtab);
 };
 
 /*
@@ -623,6 +633,7 @@ public:
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 	void genSysFunc(Symtab *symtab, string name);
+	string typeCheck(Symtab *symtab);
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
@@ -636,6 +647,7 @@ public:
 		ast << "CaseExprTreeNode";
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 };
 
 
@@ -718,6 +730,7 @@ public:
 	}	
 
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	string typeCheck(Symtab *symtab);
 
 };
 
@@ -744,6 +757,7 @@ public:
 		ast << "IfStmtTreeNode";
 	}							
 	SymBucket * genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 };
 
 class RepeatStmtTreeNode : public StmtTreeNode {
@@ -760,6 +774,7 @@ public:
 	void printSelf() {
 		ast << "RepeatStmtTreeNode";
 	}
+	string typeCheck(Symtab *symtab);
 	SymBucket * genCode(Symtab *symtab, int *reg);
 };
 
@@ -777,6 +792,7 @@ public:
 	void printSelf() {
 		ast << "WhileStmtTreeNode";
 	}
+	string typeCheck(Symtab *symtab);
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
 };
@@ -799,6 +815,7 @@ public:
 		ast << "SwitchStmtTreeNode";
 	}
 	SymBucket * genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 };
 
 class ForStmtTreeNode : public StmtTreeNode {
@@ -820,6 +837,7 @@ public:
 		ast << "ForStmtTreeNode";
 	}		
 	SymBucket * genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 };
 
 
@@ -832,6 +850,7 @@ public:
 		ast << "GotoStmtTreeNode";
 	}
 	// SymBucket * genCode(Symtab *symtab, int *reg);
+	// string typeCheck(Symtab *symtab);
 };
 /*
 * if treceScan = TRUE, every token along with lineno will be 
@@ -841,3 +860,4 @@ extern int traceScan;
 
 void printAST(TreeNode *root);
 #endif
+

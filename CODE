@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .data
 .text
 add $fp,$sp,$zero
@@ -36,3 +37,5 @@ endif0:
 addi $sp,$sp,12
 jr $ra
 exit:
+=======
+>>>>>>> 5eaa6d7a246ac71c49cf02a1003eff96c462359f
