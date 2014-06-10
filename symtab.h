@@ -37,6 +37,8 @@ class SymBucket {
 	int 			isVar;
 	//
 	int 			intImme;
+
+	int 			isConst;
 	// type name
 	const string 	type;
 	// id name
@@ -115,6 +117,9 @@ public:
 	void setIntImme(int n) {
 		intImme = n;
 	}
+	void setIsConst(int n){
+		isConst = n;
+	}
 
 	// void setType(string t) {
 	// 	type = t;
@@ -188,6 +193,10 @@ public:
 
 	int getIntImme() {
 		return intImme;
+	}
+
+	int getIsConst(){
+		return isConst;
 	}
 	void printBucket(ofstream &out) {
 		_print(out);
