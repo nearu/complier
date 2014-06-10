@@ -1,9 +1,3 @@
 3 int:	integer
-11 min:	proc .. 8 num1:	integer	 at 0 .. 8 num2:	integer	 at 4 .. 8 r:	integer	 at 8
-============begin min's symtab==================
-8 num1:	integer	 at 0
-8 num2:	integer	 at 4
-8 r:	integer	 at 8
-============end min's symtab==================
 3 result:	integer	 at 4
 3 s:	integer	 at 0

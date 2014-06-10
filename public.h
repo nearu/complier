@@ -822,7 +822,7 @@ class ForStmtTreeNode : public StmtTreeNode {
 private:
 	ExprTreeNode *assignExpr;
 	const string direction; //to or downto
-	ExprTreeNode *dirExpr; // may be a variable
+	TreeNode *dirExpr; // may be a variable
 	StmtTreeNode *body;
 public:
 	ForStmtTreeNode( TreeNode * _aExpr, const string _dire, 
