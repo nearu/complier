@@ -123,8 +123,9 @@ public:
 	}
 
 	void freeReg(int i) {
-		cout << "free " << i << endl;
+		
 		if (i < 0 || i > 63) return;
+		cout << "free " << regTable[i] << endl;
 		char c = regTable[i][1];
 		reg[i] = 0;
 	}

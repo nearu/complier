@@ -7,31 +7,44 @@
 	3 integer
 	3 ;
 	4 var
-	5 a
+	5 s
 	5 :
-	5 array
-	5 [
-	5 1
-	5 ..
-	5 20
-	5 ]
-	5 of
-	5 char
+	5 int
 	5 ;
-	6 c
+	6 result
 	6 :
-	6 char
+	6 int
 	6 ;
 	7 begin
-	8 c
+	8 s
 	8 :=
-	8 'a'
+	8 0
 	8 ;
-	9 writeln
-	9 (
-	9 c
-	9 )
+	9 result
+	9 :=
+	9 0
 	9 ;
-	10 end
-	10 .
-	11 
+	10 for
+	10 s
+	10 :=
+	10 0
+	10 to
+	10 100
+	10 do
+	11 begin
+	12 result
+	12 :=
+	12 result
+	12 +
+	12 s
+	12 ;
+	13 end
+	13 ;
+	14 writeln
+	14 (
+	14 result
+	14 )
+	14 ;
+	15 end
+	15 .
+	15 

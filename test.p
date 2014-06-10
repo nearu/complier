@@ -2,9 +2,14 @@ program HelloWorld;
 type 
 	int = integer;
 var 
-	a : array[1..20] of char;
-	c : char;
+	s : int;
+	result:int;
 begin	
-	c := 'a';
-	writeln(c);
+	s := 0;
+	result := 0;
+	for s:=0 to 100 do
+	begin
+		result := result + s;
+	end;
+	writeln(result);
 end.

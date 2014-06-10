@@ -352,7 +352,9 @@ public:
 	int getCurReg() {
 		return curRegNum;
 	}
-
+	string getName() {
+		return symtabName;
+	}
 	void getSymBucketList(vector<SymBucket*>& v) {
 		for (SYMMAP::iterator iter = symMap.begin(); iter != symMap.end(); iter++) {
 			SYMQUEUE q = iter->second;
