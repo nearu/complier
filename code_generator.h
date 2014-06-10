@@ -48,13 +48,14 @@ const string regTable[] = {
 
 class RegManager {
 	 static const int BEGIN_TMP = 8;
-	 static const int END_TMP   = 15;
+	 static const int END_TMP   = 23;
 	 int reg[32];
 public:
 	 int getTmpReg() {
 		for(int i = BEGIN_TMP; i <= END_TMP; i++) {
 			if (reg[i] == 0) {
 				reg[i] = 1;
+				cout << "use reg " << i << endl;
 				return i;
 			}
 		}
@@ -63,26 +64,36 @@ public:
 	}
 
 	void useReg(int i) {
+		if (i < 0 || i > 31) return;
 	 	reg[i] = 1;
 	}
 
 	void freeReg(int i) {
 		cout << "free " << i << endl;
-		if (regTable[i][1] != 't') return;
+		if (i < 0 || i > 31) return;
+		char c = regTable[i][1];
+		if (c != 't' || c != 's') return;
 		reg[i] = 0;
+	}
+
+	void freeAll() {
+		for(int i = BEGIN_TMP; i < END_TMP; i++) {
+			reg[i] = 0;
+		}
 	}
 
 };
 
 class LabelManager {
-
-public:
 	static int loop_number;
 	static int func_number;
 	static int case_number;
 	static int goto_number;
 	static int if_number;
 	static int do_number;
+	static int string_label_number;
+public:
+	
 	int getLoopLabel(){return loop_number;}
 	void addLoopLabel(){loop_number++;} 
 	int getRepeatLabel(){return do_number;}
@@ -99,6 +110,12 @@ public:
 		sprintf(labelNum, "%d", func_number++);
 		label = label + labelNum;	
 	}
+	string getStringLabel() {
+		char ch[32] = {0,};
+		sprintf(ch, "string%d", string_label_number++);
+		return ch;
+	}
+
 
 };
 
@@ -258,20 +275,11 @@ public:
 	}
 
 
-	// lw sw instruments
-	// reg is the src or dst reg
-	// load_reg , store_reg means that offset现在保存了一个寄存器号，这个寄存器中有偏移量
-	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
-		if (traceEmit) cout << "emit M" << " size = " << size << " offset = " << offset <<  endl;
-		string c;
-		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
-		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
-		char ch[16] = {0,};
-		string instr;
-		string localOP = op;
+
+	static void findFP(string op, string& localOP, int& tmpAC) {
 		const int FP = 30;
-		int tmpAC = regManager->getTmpReg();
 		if (op.find("-") != string::npos) {
+			tmpAC = regManager->getTmpReg();
 			int pos = op.find('-');
 			int level = atoi(op.substr(pos+1, op.length()).c_str());
 			CodeGenerator::emitCodeM(4, "load", -4, FP, tmpAC);
@@ -279,9 +287,24 @@ public:
 				CodeGenerator::emitCodeM(4, "load", 0, tmpAC, tmpAC);
 			}
 			CodeGenerator::emitCodeM(4, "load", -4, tmpAC, tmpAC);
-			regAddr = tmpAC;
 			localOP = op.substr(0,pos);
 		}
+	}
+	// lw sw instruments
+	// reg is the src or dst reg
+	// load_reg , store_reg means that offset现在保存了一个寄存器号，这个寄存器中有偏移量
+	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
+		if (traceEmit) cout << "emit M " << "op = " << op << " size = " << size << " offset = " << offset <<  endl;
+		string c;
+		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
+		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
+		char ch[16] = {0,};
+		string instr;
+		string localOP = op;
+		int tmpAC = regAddr;
+		// find correct FP
+		findFP(op, localOP, tmpAC);
+		regAddr = tmpAC;
 
 		if (localOP == "load" || localOP == "load_reg" || localOP == "load_ref") {
 			instr = loadInstr[size];
@@ -311,36 +334,73 @@ public:
 		regManager->freeReg(tmpAC);
 	}
 
-	static void emitCodeB(const string loadOP,const string storeOP, int size, int dstOffset, int srcOffset, int dstaddrReg , int srcaddrReg ,int copysize) {
+	static void emitCodeB(const string loadOP,const string storeOP, int size, int dstOffset, int srcOffset, int addrReg ,int copysize) {
 		int loopTime = size / copysize;
 		
-		string s;
-		s = "copy";
+		string s = "copy";
+		labelManager->addLoopLabel();
+		int loopNum = labelManager->getLoopLabel();
+		char ch[8] = {0,};
+		sprintf(ch, "%d", loopNum);
+		s += ch;
 		CodeGenerator::addLabel(s);
 		int loop = regManager->getTmpReg();
-		int tmp = regManager->getTmpReg();
-		int daddr = regManager->getTmpReg();
-		int saddr = regManager->getTmpReg();
+		int tmp  = regManager->getTmpReg();
+		int addrRegSrc;
+		int addrRegDst;
+		string localLoadOP = loadOP, localStoreOP = storeOP;
+		//int tmpAddr = regManager->getTmpReg();
+		int tmpACSrc = addrReg;
+		int tmpACDst = addrReg;
+		findFP(loadOP, localLoadOP, tmpACSrc);
+		addrRegSrc =  tmpACSrc;
+		findFP(storeOP, localStoreOP, tmpACDst);
+		addrRegDst = tmpACDst;
+		if (addrRegSrc == addrReg) {
+			addrRegSrc = regManager->getTmpReg();
+			CodeGenerator::emitCodeR("+", addrRegSrc, addrReg, 0);
+		}
+		if (addrRegDst == addrReg) {
+			addrRegDst = regManager->getTmpReg();
+			CodeGenerator::emitCodeR("+", addrRegDst, addrReg, 0);
+		}
 		CodeGenerator::emitCodeR("+",loop,0,0);
-		CodeGenerator::emitCodeR("+",saddr,srcaddrReg,0);
-		CodeGenerator::emitCodeR("+",daddr,dstaddrReg,0);
-		CodeGenerator::emitCodeM(copysize, loadOP,srcOffset, saddr,  tmp);
-		CodeGenerator::emitCodeM(copysize, storeOP,dstOffset, daddr,  tmp);
-		regManager->freeReg(tmp);
-
-		CodeGenerator::emitCodeI("+", saddr, saddr, copysize);
-		CodeGenerator::emitCodeI("+", daddr, daddr, copysize);
-
+		CodeGenerator::emitCodeM(copysize, localLoadOP,srcOffset, addrRegSrc, tmp);
+		CodeGenerator::emitCodeM(copysize, localStoreOP,dstOffset, addrRegDst, tmp);
+		
+		if (loadOP.find("reg") != string::npos) {
+			CodeGenerator::emitCodeI("+", srcOffset, srcOffset, copysize);
+		} else {
+			CodeGenerator::emitCodeI("+", addrRegSrc, addrRegSrc, 4);
+		}
+		if (storeOP.find("reg") != string::npos) {
+			CodeGenerator::emitCodeI("+", dstOffset, dstOffset, copysize);
+		} else {
+			CodeGenerator::emitCodeI("+", addrRegDst, addrRegDst, 4);
+		}
 		CodeGenerator::emitCodeI("+",loop,loop,1);
 		int tmp2 = regManager->getTmpReg();
 		CodeGenerator::emitCodeI("<",tmp2,loop,loopTime);
 		CodeGenerator::emitCodeJ("bne",tmp2,0,0,s);
-		regManager->freeReg(saddr);
-		regManager->freeReg(daddr);
+		regManager->freeReg(addrRegSrc);
+		regManager->freeReg(addrRegDst);
+		regManager->freeReg(tmp);
 		regManager->freeReg(tmp2);
 		regManager->freeReg(loop);
 	}
 
+	static void emitCodeConstStr(string constStr, string label) {
+		code << label << ": .asciiz " << "\"" << constStr.substr(1,constStr.length()-2) << "\"" << endl;
+	}
+
+	static void emitCodeLA(string label, int regDst) {
+		code << "la " << regTable[regDst] << " " << label << endl;
+	}
+	static void emitSysCall(string type) {
+		
+	}
 };	
+
+	
 
 #endif

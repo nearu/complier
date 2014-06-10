@@ -1,6 +1,0 @@
-addi $sp,$sp,-258
-lh $t1, 256($fp)
-…@ $t1, 0($fp)
-addi $sp,$sp,258
-j exit
-exit:

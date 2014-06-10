@@ -10,7 +10,11 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cctype>
 #include <fstream>
+#include <cstdlib>
+#include <map>
+#include <cstdio>
 #define YYSTYPE TreeNode *
 using namespace std;
 typedef int TokenType;
@@ -24,9 +28,10 @@ extern string currentToken;
 extern ofstream ast;
 extern ofstream code;
 extern ofstream sym;
+extern map<string,string> constStringMap;
 class Symtab;
 class SymBucket;
-
+static int constStringNumber;
 
 ////////////////////////////////////////////////////////
 // AST data structure								  //
@@ -73,8 +78,8 @@ public:
 		sym << "default updateSymtab" << endl;
 	}
 
-	virtual void typeCheck(Symtab *symtab) {
-
+	virtual string typeCheck(Symtab *symtab) {
+		return "treenode";
 	}
 	void setEnv(Symtab *e) {
 		env = e;
@@ -164,6 +169,7 @@ public:
 
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 	void updateSymtab(Symtab*);
+	string typeCheck(Symtab *symtab);
 
 };
 
@@ -195,6 +201,9 @@ public:
 		ast << "RoutineHead";
 	}
 	void updateSymtab(Symtab *);
+	ListTreeNode *getConstPart() {
+		return constPart;
+	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 /*
@@ -216,6 +225,9 @@ public:
 	}					
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL);
 	void updateSymtab(Symtab*);
+	string typeCheck(Symtab *symtab) {
+		return body->typeCheck(symtab);
+	}
 
 };
 
@@ -250,6 +262,7 @@ public:
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 	void updateSymtab(Symtab*);
+	string typeCheck(Symtab *symtab) {return routine->typeCheck(symtab);}
 };
 
 //======
@@ -389,31 +402,53 @@ public:
 /**
 * node for differnet kinds of  values
 */
-template <class T>
 class NumberTreeNode : public IDTreeNode {
 private:
-	T value;
+	string value;
 	const string type;
 public:
-	NumberTreeNode(T v, const string _type):value(v),type(_type) {}
-	T get() {
+	NumberTreeNode(const string v, const string _type):value(v),type(_type) {}
+
+	const string get() {
 		return value;
 	}
+
 	const string getType() {
 		return type;
 	}
-	void set(T v) {
+
+	void set(const string v) {
 		value = v;
 	}
+
 	void printSelf() {
 		ast << "NumberTreeNode";
 	}
 
-	SymBucket *genCode(Symtab *symtab, int *reg = NULL) {
-		cout<<"ng"<<endl;
-		*reg = -2;
-		return NULL;
+	int getInt() {
+		if (type  == "integer") {
+			return atoi(value.c_str());
+		}
 	}
+
+	char getChar() {
+		if (type == "char") {
+			return value[0];
+		}
+	}
+	double getReal() {
+		if (type == "real") {
+			return atof(value.c_str());
+		}
+	}
+
+	string getString() {
+		if (type == "string") {
+			return value;
+		}
+	}
+	string typeCheck(Symtab *symtab){return type;}
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
 /*
@@ -422,18 +457,30 @@ public:
 class ConstTreeNode : public IDTreeNode {
 private:
 	const string name;
-	IDTreeNode *value; // NumberTreeNode
+	IDTreeNode *value;  // NumberTreeNode
+	int isFirst;		// since the first time gencode is called it will 
+						// actually gen some code
 public:
 	ConstTreeNode( const string _name,  TreeNode *_value)
-				:name(_name),value((IDTreeNode*)_value)
+				:name(_name),value((IDTreeNode*)_value), isFirst(1)
 				{}
 	const string& getName() {
 		return name;
 	}
+	int getIsFirst() {
+		return isFirst;
+	}
+	void setIsFirst(int f) {
+		isFirst = f;
+	}
 	void printSelf() {
 		ast << "ConstTreeNode";
 	}
+	const string getType() {
+		return value->getType();
+	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	string typeCheck(Symtab *symtab){return getType();}
 	void updateSymtab(Symtab* symtab);
 };
 
@@ -487,6 +534,7 @@ public:
 	}
 	virtual void print() {cout<<"I am a VariableTreeNode!"<<endl;}
 	void updateSymtab(Symtab*);
+	string typeCheck(Symtab *symtab);
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
@@ -502,8 +550,8 @@ public:
 	void printSelf() {
 		ast << "ArrayElemTreeNode:" << name;
 	}
+	string typeCheck(Symtab *symtab);
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
-
 };
 
 class RecordElemTreeNode : public IDTreeNode {
@@ -518,6 +566,7 @@ public:
 		ast << "RecordElemTreeNode:"<<recordName<<"."<<elemName;
 	}		
 	SymBucket *genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 
 };
 
@@ -539,6 +588,7 @@ public:
 		ast << "UnaryExprTreeNode";
 	}	
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	string typeCheck(Symtab *symtab);
 };
 
 /*
@@ -560,6 +610,7 @@ public:
 	}
 	TreeNode * getlhs() { return lhs; }
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	string typeCheck(Symtab *symtab);
 };
 
 /*
@@ -579,6 +630,8 @@ public:
 		ast << "BinaryExprTreeNode";
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	void genSysFunc(Symtab *symtab);
+	string typeCheck(Symtab *symtab);
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
@@ -592,6 +645,7 @@ public:
 		ast << "CaseExprTreeNode";
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 };
 
 
@@ -674,6 +728,7 @@ public:
 	}	
 
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	string typeCheck(Symtab *symtab);
 
 };
 
@@ -702,6 +757,7 @@ public:
 		ast << "IfStmtTreeNode";
 	}							
 	SymBucket * genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 };
 
 class RepeatStmtTreeNode : public StmtTreeNode {
@@ -718,6 +774,7 @@ public:
 	void printSelf() {
 		ast << "RepeatStmtTreeNode";
 	}
+	string typeCheck(Symtab *symtab);
 	SymBucket * genCode(Symtab *symtab, int *reg);
 };
 
@@ -735,6 +792,7 @@ public:
 	void printSelf() {
 		ast << "WhileStmtTreeNode";
 	}
+	string typeCheck(Symtab *symtab);
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
 };
@@ -757,6 +815,7 @@ public:
 		ast << "SwitchStmtTreeNode";
 	}
 	SymBucket * genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 };
 
 class ForStmtTreeNode : public StmtTreeNode {
@@ -778,6 +837,7 @@ public:
 		ast << "ForStmtTreeNode";
 	}		
 	SymBucket * genCode(Symtab *symtab, int *reg);
+	string typeCheck(Symtab *symtab);
 };
 
 
@@ -790,6 +850,7 @@ public:
 		ast << "GotoStmtTreeNode";
 	}
 	// SymBucket * genCode(Symtab *symtab, int *reg);
+	// string typeCheck(Symtab *symtab);
 };
 /*
 * if treceScan = TRUE, every token along with lineno will be 
@@ -799,3 +860,4 @@ extern int traceScan;
 
 void printAST(TreeNode *root);
 #endif
+

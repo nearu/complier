@@ -35,6 +35,8 @@ class SymBucket {
 	int 		    isRef;
 	// var
 	int 			isVar;
+	//
+	int 			intImme;
 	// type name
 	const string 	type;
 	// id name
@@ -62,7 +64,7 @@ public:
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
 		location(-1), next(this), regNum(-1),last(this),ref(NULL),isType(0),
-		isRef(0), isVar(0)
+		isRef(0), isVar(0), intImme(0)
 		{}
 	SymBucket(const SymBucket* that) : type(that->type){
 		lineNO 		= that->lineNO;
@@ -110,6 +112,9 @@ public:
 		regNum = rn;
 	}
 
+	void setIntImme(int n) {
+		intImme = n;
+	}
 	// void setOffsetReg(int reg) {
 	// 	offsetReg = reg;
 	// }
@@ -177,6 +182,9 @@ public:
 		return isType;
 	}
 
+	int getIntImme() {
+		return intImme;
+	}
 	void printBucket(ofstream &out) {
 		_print(out);
 		SymBucket *tmp = next;
@@ -287,9 +295,8 @@ public:
 		if (pBucket != NULL) {
 			return pBucket->getCurSymtab()->find(name);
 		}
-		cout << "symbol " << name << " is not defined !!!" << endl;
-		cout << "execution stoped!!!" << endl;
-		exit(-1);
+//		cout << "symbol " << name << " is not defined !!!" << endl;
+	
 		return NULL;
 	}
 

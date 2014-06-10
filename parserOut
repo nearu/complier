@@ -11,19 +11,33 @@
 4 type_decl 1
 4 var_decl
 4 var_decl_list 1
-5 var part 1
-5 routine part 5
-5 routine head
-5 stmt list 2
-6 factor 1
-6 term 5
-6 expr 4
-6 expression 7
-6 assign stmt 1
-6 non_label_stmt 1
-6 stmt 2
-6 stmt list 1
-7 compound stmt
-7 routine_body
-7 routine
-7 pargram
+5 name list 2
+5 const value 1
+5 const value 1
+5 simple_type_decl 4
+5 simple_type_decl 1
+5 type_decl 1
+5 array_type_decl
+5 type_decl 2
+5 var_decl
+5 var_decl_list 1
+6 var part 1
+6 routine part 5
+6 routine head
+6 stmt list 2
+7 factor 1
+7 term 5
+7 expr 4
+7 expression 7
+7 factor 9
+7 term 5
+7 expr 4
+7 expression 7
+7 assign stmt 1
+7 non_label_stmt 1
+7 stmt 2
+7 stmt list 1
+8 compound stmt
+8 routine_body
+8 routine
+8 pargram

@@ -29,7 +29,8 @@ whitespace [ \t]+
 name ({letter}|_)+({letter}|_|{digit})+
 
 %%
-
+"readln" {return SYS_FUNCT;}
+"writeln" {return SYS_FUNCT;}
 "and" { return AND;}
 "array" { return ARRAY;}
 ":=" { return ASSIGN;}
