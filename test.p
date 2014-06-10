@@ -7,9 +7,9 @@ var
 begin	
 	s := 0;
 	result := 0;
-	repeat
+	for s:=0 to 100 do
+	begin
 		result := result + s;
-		s := s + 1;
-	until s >= 100;
+	end;
 	writeln(result);
 end.

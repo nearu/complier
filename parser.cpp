@@ -574,10 +574,10 @@ static const yytype_uint16 yyrline[] =
      295,   300,   302,   302,   304,   306,   307,   308,   309,   310,
      312,   313,   314,   315,   317,   322,   327,   333,   334,   335,
      336,   337,   340,   345,   350,   351,   353,   358,   363,   363,
-     371,   372,   374,   379,   380,   382,   383,   383,   386,   391,
-     392,   393,   394,   395,   396,   397,   399,   400,   401,   402,
-     404,   405,   406,   407,   408,   410,   411,   414,   415,   415,
-     417,   418,   419,   420,   421,   422,   425,   430
+     370,   371,   373,   378,   379,   381,   382,   382,   385,   390,
+     391,   392,   393,   394,   395,   396,   398,   399,   400,   401,
+     403,   404,   405,   406,   407,   409,   410,   413,   414,   414,
+     416,   417,   418,   419,   420,   421,   424,   429
 };
 #endif
 
@@ -2397,26 +2397,25 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
     tp("for stmt");
     VariableTreeNode * v = new VariableTreeNode(name);
     BinaryExprTreeNode *be = new BinaryExprTreeNode("=",v,(yyvsp[(5) - (9)]));
-    BinaryExprTreeNode *br = new BinaryExprTreeNode("==",v,(yyvsp[(7) - (9)]));
-    (yyval) = new ForStmtTreeNode(be,(yyvsp[(6) - (9)])->getName(),br,(yyvsp[(9) - (9)]));
+    (yyval) = new ForStmtTreeNode(be,(yyvsp[(6) - (9)])->getName(),(yyvsp[(7) - (9)]),(yyvsp[(9) - (9)]));
 }
     break;
 
   case 90:
 /* Line 1792 of yacc.c  */
-#line 371 "parser.y"
+#line 370 "parser.y"
     {(yyval) = new TreeNode("to");}
     break;
 
   case 91:
 /* Line 1792 of yacc.c  */
-#line 372 "parser.y"
+#line 371 "parser.y"
     {(yyval) = new TreeNode("downto");}
     break;
 
   case 92:
 /* Line 1792 of yacc.c  */
-#line 374 "parser.y"
+#line 373 "parser.y"
     {
     tp("case stmt");
     (yyval) = new SwitchStmtTreeNode((yyvsp[(2) - (5)]),(yyvsp[(4) - (5)]));
@@ -2425,37 +2424,37 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
 
   case 93:
 /* Line 1792 of yacc.c  */
-#line 379 "parser.y"
+#line 378 "parser.y"
     {tp("case expr list 1");(yyval) = (yyvsp[(1) - (2)]); (yyval)->insert((yyvsp[(2) - (2)]));}
     break;
 
   case 94:
 /* Line 1792 of yacc.c  */
-#line 380 "parser.y"
+#line 379 "parser.y"
     {tp("case expr list 2");(yyval) = new ListTreeNode("case"); (yyval)->insert((yyvsp[(1) - (1)]));}
     break;
 
   case 95:
 /* Line 1792 of yacc.c  */
-#line 382 "parser.y"
+#line 381 "parser.y"
     {tp("case expr 1");(yyval) = new CaseExprTreeNode((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)]));}
     break;
 
   case 96:
 /* Line 1792 of yacc.c  */
-#line 383 "parser.y"
+#line 382 "parser.y"
     {id = new VariableTreeNode(currentToken);}
     break;
 
   case 97:
 /* Line 1792 of yacc.c  */
-#line 384 "parser.y"
+#line 383 "parser.y"
     {tp("case expr 2");(yyval) = new CaseExprTreeNode(id,(yyvsp[(4) - (5)]));}
     break;
 
   case 98:
 /* Line 1792 of yacc.c  */
-#line 386 "parser.y"
+#line 385 "parser.y"
     {
     tp("got stmt");
     (yyval) = new GotoStmtTreeNode(currentToken);
@@ -2464,109 +2463,109 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
 
   case 99:
 /* Line 1792 of yacc.c  */
-#line 391 "parser.y"
+#line 390 "parser.y"
     {tp("expression 1");(yyval) = new BinaryExprTreeNode(">=",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 100:
 /* Line 1792 of yacc.c  */
-#line 392 "parser.y"
+#line 391 "parser.y"
     {tp("expressoin 2");(yyval) = new BinaryExprTreeNode(">",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 101:
 /* Line 1792 of yacc.c  */
-#line 393 "parser.y"
+#line 392 "parser.y"
     {tp("expression 3");(yyval) = new BinaryExprTreeNode("<=",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 102:
 /* Line 1792 of yacc.c  */
-#line 394 "parser.y"
+#line 393 "parser.y"
     {tp("expression 4");(yyval) = new BinaryExprTreeNode("<",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 103:
 /* Line 1792 of yacc.c  */
-#line 395 "parser.y"
+#line 394 "parser.y"
     {tp("expression 5");(yyval) = new BinaryExprTreeNode("==",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 104:
 /* Line 1792 of yacc.c  */
-#line 396 "parser.y"
+#line 395 "parser.y"
     {tp("expression 6");(yyval) = new BinaryExprTreeNode("!=",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 105:
 /* Line 1792 of yacc.c  */
-#line 397 "parser.y"
+#line 396 "parser.y"
     {tp("expression 7");(yyval) = (yyvsp[(1) - (1)]);}
     break;
 
   case 106:
 /* Line 1792 of yacc.c  */
-#line 399 "parser.y"
+#line 398 "parser.y"
     {tp("expr 1");(yyval) = new BinaryExprTreeNode("+",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 107:
 /* Line 1792 of yacc.c  */
-#line 400 "parser.y"
+#line 399 "parser.y"
     {tp("expr 2");(yyval) = new BinaryExprTreeNode("-",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 108:
 /* Line 1792 of yacc.c  */
-#line 401 "parser.y"
+#line 400 "parser.y"
     {tp("expr 3");(yyval) = new BinaryExprTreeNode("||",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 109:
 /* Line 1792 of yacc.c  */
-#line 402 "parser.y"
+#line 401 "parser.y"
     {tp("expr 4");(yyval) = (yyvsp[(1) - (1)]);}
     break;
 
   case 110:
 /* Line 1792 of yacc.c  */
-#line 404 "parser.y"
+#line 403 "parser.y"
     {tp("term 1");(yyval) = new BinaryExprTreeNode("*",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 111:
 /* Line 1792 of yacc.c  */
-#line 405 "parser.y"
+#line 404 "parser.y"
     {tp("term 2");(yyval) = new BinaryExprTreeNode("/",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 112:
 /* Line 1792 of yacc.c  */
-#line 406 "parser.y"
+#line 405 "parser.y"
     {tp("term 3");(yyval) = new BinaryExprTreeNode("%",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 113:
 /* Line 1792 of yacc.c  */
-#line 407 "parser.y"
+#line 406 "parser.y"
     {tp("term 4");(yyval) = new BinaryExprTreeNode("&&",(yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]));}
     break;
 
   case 114:
 /* Line 1792 of yacc.c  */
-#line 408 "parser.y"
+#line 407 "parser.y"
     {tp("term 5");(yyval) = (yyvsp[(1) - (1)]);}
     break;
 
   case 115:
 /* Line 1792 of yacc.c  */
-#line 410 "parser.y"
+#line 409 "parser.y"
     {tp("factor 1");(yyval) = new VariableTreeNode((yyvsp[(1) - (1)])->getName());}
     break;
 
   case 116:
 /* Line 1792 of yacc.c  */
-#line 411 "parser.y"
+#line 410 "parser.y"
     {
           tp("factor 2");(yyval) = new CallExprTreeNode((yyvsp[(1) - (4)])->getName(),((ListTreeNode*)(yyvsp[(3) - (4)]))->getList());
           }
@@ -2574,61 +2573,61 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
 
   case 117:
 /* Line 1792 of yacc.c  */
-#line 414 "parser.y"
+#line 413 "parser.y"
     {tp("factor 3");(yyval) = new CallExprTreeNode((yyvsp[(1) - (1)])->getName());}
     break;
 
   case 118:
 /* Line 1792 of yacc.c  */
-#line 415 "parser.y"
+#line 414 "parser.y"
     {s = (yyvsp[(1) - (1)])->getName();}
     break;
 
   case 119:
 /* Line 1792 of yacc.c  */
-#line 416 "parser.y"
+#line 415 "parser.y"
     {tp("factor 4");(yyval) = new CallExprTreeNode(s,((ListTreeNode*)(yyvsp[(4) - (5)]))->getList());}
     break;
 
   case 120:
 /* Line 1792 of yacc.c  */
-#line 417 "parser.y"
+#line 416 "parser.y"
     {tp("factor 5");(yyval) = (yyvsp[(1) - (1)]);}
     break;
 
   case 121:
 /* Line 1792 of yacc.c  */
-#line 418 "parser.y"
+#line 417 "parser.y"
     {tp("factor 6");(yyval) = (yyvsp[(2) - (3)]);}
     break;
 
   case 122:
 /* Line 1792 of yacc.c  */
-#line 419 "parser.y"
+#line 418 "parser.y"
     {tp("factor 7");(yyval) = new UnaryExprTreeNode("~",(yyvsp[(2) - (2)]));}
     break;
 
   case 123:
 /* Line 1792 of yacc.c  */
-#line 420 "parser.y"
+#line 419 "parser.y"
     {tp("factor 8");(yyval) = new UnaryExprTreeNode("-",(yyvsp[(2) - (2)]));}
     break;
 
   case 124:
 /* Line 1792 of yacc.c  */
-#line 421 "parser.y"
+#line 420 "parser.y"
     {tp("factor 9");(yyval) = new ArrayElemTreeNode((yyvsp[(1) - (4)])->getName(),(yyvsp[(3) - (4)]));}
     break;
 
   case 125:
 /* Line 1792 of yacc.c  */
-#line 423 "parser.y"
+#line 422 "parser.y"
     {tp("factor 10");(yyval) = new RecordElemTreeNode((yyvsp[(1) - (3)])->getName(),(yyvsp[(3) - (3)])->getName());}
     break;
 
   case 126:
 /* Line 1792 of yacc.c  */
-#line 425 "parser.y"
+#line 424 "parser.y"
     {
     tp("args_list 1");
     (yyval) = (yyvsp[(1) - (3)]);
@@ -2638,13 +2637,13 @@ root = new ProgramTreeNode(((ProgramHeadTreeNode*)(yyvsp[(1) - (3)]))->getName()
 
   case 127:
 /* Line 1792 of yacc.c  */
-#line 430 "parser.y"
+#line 429 "parser.y"
     {tp("args_list 2"); (yyval) = new ListTreeNode("args_list");  (yyval)->insert((yyvsp[(1) - (1)]));}
     break;
 
 
 /* Line 1792 of yacc.c  */
-#line 2648 "parser.cpp"
+#line 2647 "parser.cpp"
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2876,7 +2875,7 @@ yyreturn:
 
 
 /* Line 2055 of yacc.c  */
-#line 434 "parser.y"
+#line 433 "parser.y"
 
 static int yylex() {
   return getToken();

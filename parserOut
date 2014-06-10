@@ -37,23 +37,21 @@
 9 non_label_stmt 1
 9 stmt 2
 9 stmt list 1
-10 stmt list 2
-11 factor 1
-11 term 5
-11 expr 4
-11 factor 1
-11 term 5
-11 expr 1
-11 expression 7
-11 assign stmt 1
-11 non_label_stmt 1
-11 stmt 2
-11 stmt list 1
+10 const value 1
+10 factor 5
+10 term 5
+10 expr 4
+10 expression 7
+10 const value 1
+10 factor 5
+10 term 5
+10 expr 4
+10 expression 7
+11 stmt list 2
 12 factor 1
 12 term 5
 12 expr 4
-12 const value 1
-12 factor 5
+12 factor 1
 12 term 5
 12 expr 1
 12 expression 7
@@ -61,17 +59,11 @@
 12 non_label_stmt 1
 12 stmt 2
 12 stmt list 1
-13 factor 1
-13 term 5
-13 expr 4
-13 expression 7
-13 const value 1
-13 factor 5
-13 term 5
-13 expr 4
-13 expression 1
-13 repeat stmt
-13 non_label_stmt 5
+13 compound stmt
+13 non_label_stmt 3
+13 stmt 2
+13 for stmt
+13 non_label_stmt 7
 13 stmt 2
 13 stmt list 1
 14 factor 1

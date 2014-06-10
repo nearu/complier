@@ -625,30 +625,62 @@ SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	breakn = breakn + ch;
 	labelManager->addLoopLabel();
 	bucketL = assignExpr->genCode(symtab, &regL);
+	selectOP(bucketL,regL,loadOPL,storeOPL,locL, symtab->getLevel());
 	cout << "for reg L = " << regL << endl; 
 	CodeGenerator::addLabel(loop);
 	bucketR = dirExpr->genCode(symtab,&regR);
 	selectOP(bucketR,regR,loadOPR,storeOPR,locR, symtab->getLevel());
 	if(regR == -1){
-		int tmp = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp);
-		CodeGenerator::emitCodeJ("bne",tmp,0,0,breakn);
-		regManager->freeReg(tmp);
+		if(regL == -1){
+			int tmp = regManager->getTmpReg();
+			int tmp2 = regManager->getTmpReg();
+			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);
+			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp2);
+			CodeGenerator::emitCodeJ("beq",tmp,tmp2,0,breakn);
+			regManager->freeReg(tmp);
+			regManager->freeReg(tmp2);
+		}
+		else {
+			int tmp = regManager->getTmpReg();
+			CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp);
+			CodeGenerator::emitCodeJ("beq",regL,tmp,0,breakn);
+			regManager->freeReg(tmp);
+		}
+	}
+	else if(regR == -2){
+		int imm = bucketR->getIntImme();
+		if(regL == -1 ){
+			int tmp = regManager->getTmpReg();
+			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);	
+			CodeGenerator::emitCodeJ("beq",tmp,32,imm,breakn);
+			regManager->freeReg(tmp);
+		}
+		else {
+			CodeGenerator::emitCodeJ("beq",regL,32,imm,breakn);
+		}
 	}
 	else {
-		CodeGenerator::emitCodeJ("bne",regR,0,0,breakn);
+		if(regL == -1 ){
+			int tmp = regManager->getTmpReg();
+			CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);	
+			CodeGenerator::emitCodeJ("beq",tmp,regR,0,breakn);
+			regManager->freeReg(tmp);
+		}
+		else {
+			CodeGenerator::emitCodeJ("beq",regL,regR,0,breakn);
+		}
 	}
 	body->genCode(symtab, &regB);
 	if(regL == -1){
 		int tmp = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(bucketR->getSize(),loadOPR, locR, FP, tmp);
+		CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);
 		if(direction == "to") {
 			CodeGenerator::emitCodeI("+",tmp,tmp,1);
 		}
 		else {
 			CodeGenerator::emitCodeI("-",tmp,tmp,1);
 		}
-		CodeGenerator::emitCodeM(bucketR->getSize(),storeOPR, locR, FP, tmp);
+		CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmp);
 		regManager->freeReg(tmp);
 	}
 	else {
