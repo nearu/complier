@@ -287,6 +287,59 @@ void CustomTypeTreeNode::updateSymtab(Symtab *symtab) {
 	b->setIsType(1);
 	symtab->insert(b);
 }
+
+void BinaryExprTreeNode::updateSymtab(Symtab *symtab) {
+	SymBucket *l = symtab->find(lhs->getName());
+	SymBucket *r = symtab->find(rhs->getName());
+	string ltype = l->getType();
+	string rtype = r->getType();
+	if(ltype == "integer"){
+		if(rtype == "integer" || rtype == "real" || rtype == "char"){
+			return;
+		}
+		else{
+			cout<<"We can't transform the type "<< rtype << " to the type " << ltype << "." << endl;
+			exit(1);
+		}
+	}
+	else if(ltype == "char"){
+		if(rtype == "integer" || rtype == "char"){
+			return;
+		}
+		else{
+			cout<<"We can't transform the type "<< rtype << " to the type " << ltype << "." << endl;
+			exit(1);
+		}
+	}
+	else if(ltype == "real"){
+		if(rtype == "integer" || rtype == "real" || rtype == "char"){
+			return;
+		}
+		else{
+			cout<<"We can't transform the type "<< rtype << " to the type " << ltype << "." << endl;
+			exit(1);
+		}
+	}
+	else if(ltype = "string"){
+		if(rtype == "string"){
+			return;
+		}
+		else{
+			cout<<"We can't transform the type "<< rtype << " to the type " << ltype << "." << endl;
+			exit(1);
+		}
+	}
+	else if(ltype = "array"){
+
+	}
+	else if(ltype = "record"){
+
+	}
+	else if(ltype = "subrange"){
+		
+	}
+
+}
 	
 
 ////////////////////////////////////////////////////////////

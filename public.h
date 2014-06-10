@@ -559,7 +559,6 @@ public:
 		ast << "BinaryExprTreeNode";
 	}
 	TreeNode * getlhs() { return lhs; }
-
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 

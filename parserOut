@@ -1,56 +1,29 @@
 1 program head
 2 const part 2
+2 type part 2
+3 name list 2
+3 simple_type_decl 1
+3 type_decl 1
+3 var_decl
+3 var_decl_list 2
 4 name list 2
-4 const value 1
-4 const value 1
-4 simple_type_decl 4
 4 simple_type_decl 1
 4 type_decl 1
-4 array_type_decl
-4 type_decl 2
-4 field_decl
-4 field_decl_list 2
-5 record_type_decl
-5 type_decl 3
-5 type_definition
-5 type_decl_list 2
-6 type part 1
-7 name list 2
-7 simple_type_decl 2
-7 type_decl 1
-7 var_decl
-7 var_decl_list 2
-8 name list 2
-8 simple_type_decl 1
-8 simple_type_decl 2
-8 type_decl 1
-8 array_type_decl
-8 type_decl 2
-8 var_decl
-8 var_decl_list 1
-9 name list 2
-9 simple_type_decl 1
-9 type_decl 1
-9 var_decl
-9 var_decl_list 1
-10 var part 1
-10 routine part 5
-10 routine head
-10 stmt list 2
-11 const value 1
-11 factor 5
-11 term 5
-11 expr 4
-11 expression 7
-11 factor 1
-11 term 5
-11 expr 4
-11 expression 7
-11 assign stmt 2
-11 non_label_stmt 1
-11 stmt 2
-11 stmt list 1
-12 compound stmt
-12 routine_body
-12 routine
-12 pargram
+4 var_decl
+4 var_decl_list 1
+5 var part 1
+5 routine part 5
+5 routine head
+5 stmt list 2
+6 factor 1
+6 term 5
+6 expr 4
+6 expression 7
+6 assign stmt 1
+6 non_label_stmt 1
+6 stmt 2
+6 stmt list 1
+7 compound stmt
+7 routine_body
+7 routine
+7 pargram

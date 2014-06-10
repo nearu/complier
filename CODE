@@ -1,15 +1,6 @@
-addi $sp,$sp,-5396
-copy:
-add $t3,$zero,$zero
-add $t6,$fp,$zero
-add $t5,$fp,$zero
-lw $t4, 0($t6)
-sw $t4, 20($t5)
-addi $t6,$t6,4
-addi $t5,$t5,4
-addi $t3,$t3,1
-slti $t4,$t3,5
-bne $t4,$zero,copy
-addi $sp,$sp,5396
+addi $sp,$sp,-258
+lh $t1, 256($fp)
+…@ $t1, 0($fp)
+addi $sp,$sp,258
 j exit
 exit:

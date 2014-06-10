@@ -1,12 +1,7 @@
 program HelloWorld;
-type 
-	book = record 
-		id : array [1..20] of char;
-	end;
 var 
-	b : book;
-	ar : array[char] of book;
-	s : string;
+	s:string;
+	i:integer;
 begin	
-	ar[0] := b;
+	s:=i;
 end.
