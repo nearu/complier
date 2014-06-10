@@ -710,6 +710,8 @@ SymBucket * IfStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	selectOP(bucketC,regC,loadOPC,storeOPC,locC, symtab->getLevel());
 	string s;
 	s = "endif" + intTostring(labelManager->getIfLabel());
+	string t;
+	t = "endelse" + intTostring(labelManager->getIfLabel());
 	if(regC == -1) {
 		int tmp = regManager->getTmpReg();
 		CodeGenerator::emitCodeM(bucketC ->getSize(),loadOPC, locC, FP, tmp);
@@ -728,8 +730,10 @@ SymBucket * IfStmtTreeNode::genCode(Symtab *symtab, int *reg){
 	CodeGenerator::addLabel(s);
 	labelManager->addIfLabel();
 	if(elsePart!=NULL){
+		CodeGenerator::emitCodeJ("j",0,0,0,t); 
 		elsePart->genCode(symtab,&regE);
 	}
+	CodeGenerator::addLabel(t);
 	regManager->freeReg(regC);
 	return NULL;
 }
