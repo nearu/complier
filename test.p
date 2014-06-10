@@ -1,9 +1,13 @@
 program HelloWorld;
-
+const 
+	ccc = 1;
+	sub = 'a';
+type 
+	int = integer;
+	a = array [1..20] of char;
 var 
-b:char;
-s:string;
-	
+	i : int;
+	aa : a;
 begin	
-	s := 'xxxx';
+	i := 1 + i + 1;
 end.

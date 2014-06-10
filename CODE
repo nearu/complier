@@ -1,9 +1,15 @@
 .data
-string0: .asciiz "xxxx'"
+string0: .asciiz "a"
 .text
-addi $sp,$sp,-257
-addi $t0,$zero,-1
- $t0, 1($fp)
-addi $sp,$sp,257
+addi $sp,$sp,-27
+addi $t0,$zero,1
+sh $t0, 0($fp)
+la $t0 string0
+sw $t0, 2($fp)
+lh $t1, 6($fp)
+addi $t0,$t1,1
+addi $t2,$t0,1
+sh $t2, 6($fp)
+addi $sp,$sp,27
 j exit
 exit:

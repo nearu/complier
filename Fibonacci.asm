@@ -2,7 +2,11 @@
       .data
 fibs: .word   0 : 12        # "array" of 12 words to contain fib values
 size: .word  12             # size of "array" 
+f   : .float 1.1  
       .text
+      la   $t1, f
+      l.s  $f1, f
+
       la   $t0, fibs        # load address of array
       la   $t5, size        # load address of size variable
       lw   $t5, 0($t5)      # load array size

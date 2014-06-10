@@ -10,7 +10,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cctype>
 #include <fstream>
+#include <cstdlib>
 #include <map>
 #include <cstdio>
 #define YYSTYPE TreeNode *
@@ -76,7 +78,7 @@ public:
 		sym << "default updateSymtab" << endl;
 	}
 
-	virtual void typeCheck(Symtab *symtab) {
+	virtual string typeCheck(Symtab *symtab) {
 
 	}
 	void setEnv(Symtab *e) {
@@ -198,6 +200,9 @@ public:
 		ast << "RoutineHead";
 	}
 	void updateSymtab(Symtab *);
+	ListTreeNode *getConstPart() {
+		return constPart;
+	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 /*
@@ -392,32 +397,53 @@ public:
 /**
 * node for differnet kinds of  values
 */
-template <class T>
 class NumberTreeNode : public IDTreeNode {
 private:
-	T value;
+	string value;
 	const string type;
 public:
-	NumberTreeNode(T v, const string _type):value(v),type(_type) {}
+	NumberTreeNode(const string v, const string _type):value(v),type(_type) {}
 
-	T get() {
+	const string get() {
 		return value;
 	}
+
 	const string getType() {
 		return type;
 	}
-	void set(T v) {
+
+	void set(const string v) {
 		value = v;
 	}
+
 	void printSelf() {
 		ast << "NumberTreeNode";
 	}
 
-	SymBucket *genCode(Symtab *symtab, int *reg = NULL) {
-		cout<<"ng"<<endl;
-		*reg = -2;
-		return NULL;
+	int getInt() {
+		if (type  == "integer") {
+			return atoi(value.c_str());
+		}
 	}
+
+	char getChar() {
+		if (type == "char") {
+			return value[0];
+		}
+	}
+	double getReal() {
+		if (type == "real") {
+			return atof(value.c_str());
+		}
+	}
+
+	string getString() {
+		if (type == "string") {
+			return value;
+		}
+	}
+
+	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 };
 
 /*
@@ -426,13 +452,21 @@ public:
 class ConstTreeNode : public IDTreeNode {
 private:
 	const string name;
-	IDTreeNode *value; // NumberTreeNode
+	IDTreeNode *value;  // NumberTreeNode
+	int isFirst;		// since the first time gencode is called it will 
+						// actually gen some code
 public:
 	ConstTreeNode( const string _name,  TreeNode *_value)
-				:name(_name),value((IDTreeNode*)_value)
+				:name(_name),value((IDTreeNode*)_value), isFirst(1)
 				{}
 	const string& getName() {
 		return name;
+	}
+	int getIsFirst() {
+		return isFirst;
+	}
+	void setIsFirst(int f) {
+		isFirst = f;
 	}
 	void printSelf() {
 		ast << "ConstTreeNode";
@@ -584,6 +618,7 @@ public:
 		ast << "BinaryExprTreeNode";
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+	void genSysFunc(Symtab *symtab);
 };
 
 class CaseExprTreeNode : public ExprTreeNode {

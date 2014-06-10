@@ -142,3 +142,25 @@ begin
 	b.id := n1;
 	ar[0] := b;
 end.
+
+
+////test copy record
+
+program HelloWorld;
+const 
+	ccc = 1;
+	sub = 'a';
+type 
+	int = integer;
+	book = record 
+		id : integer;
+		id : integer;
+		id : integer;
+		name : char;
+	end;
+var 
+	b : book;
+	ar : array[char] of book;
+begin	
+	ar[0] := b;
+end.

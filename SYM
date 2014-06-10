@@ -1,2 +1,6 @@
-4 b:	char	 at 0
-5 s:	string	 at 1
+7 a:	array .. 7 index:	subrange .. 7 subrange:	1 .. 7 subrange:	20 .. 7 array:	char
+7 aa:	array	 at 8 .. 7 index:	subrange .. 7 subrange:	1 .. 7 subrange:	20 .. 7 array:	char
+3 ccc:	integer	 at 0
+6 i:	integer	 at 6
+6 int:	integer
+4 sub:	string	 at 2

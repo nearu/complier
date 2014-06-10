@@ -75,7 +75,9 @@ int main(int argc, char *argv[]) {
   // CodeGenerator::emitCodeI("%",11,9,10);
   // CodeGenerator::emitCodeI("<=",11,9,10);
   // CodeGenerator::emitCodeI("==",11,9,10);
-
+  delete regManager;
+  delete labelManager;
+  delete root;
   return 0;
 	
 	

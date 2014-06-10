@@ -90,13 +90,13 @@ EQUAL  const_value  SEMI {
   $$->insert(new ConstTreeNode($1->getName(), $3));
 }
 ;
-const_value : INTEGER     {tp("const value 1");$$ = new NumberTreeNode<int>(atoi(currentToken), "integer");}
-              |  REAL     {tp("const value 2");$$ = new NumberTreeNode<double>(atof(currentToken), "real");}
-              |  CHAR     {tp("const value 3");$$ = new NumberTreeNode<char>(currentToken[0], "char");}
-              |  STRING   {tp("const value 4");$$ = new NumberTreeNode<string>(currentToken, "string");
+const_value : INTEGER     {tp("const value 1");$$ = new NumberTreeNode(currentToken, "integer");}
+              |  REAL     {tp("const value 2");$$ = new NumberTreeNode(currentToken, "real");}
+              |  CHAR     {tp("const value 3");$$ = new NumberTreeNode(currentToken, "char");}
+              |  STRING   {tp("const value 4");$$ = new NumberTreeNode(currentToken, "string");
                           constStringMap[currentToken] = labelManager->getStringLabel();
                           }  
-              |  SYS_CON  {tp("const value 5");$$ = new NumberTreeNode<string>(currentToken, "sys_con");}  
+              |  SYS_CON  {tp("const value 5");$$ = new NumberTreeNode(currentToken, "sys_con");}  
               ;
 type_part : TYPE type_decl_list {
   tp("type part 1");
@@ -170,16 +170,18 @@ simple_type_decl : SYS_TYPE {
                 }
                 |  MINUS  const_value  DOTDOT  const_value {
                   tp("simple_type_decl 5");                
-                  NumberTreeNode<int>* n = (NumberTreeNode<int>*)$2;
-                  n->set(-(int)(n->get()));
+                  NumberTreeNode* n = (NumberTreeNode*)$2;
+                  string minus = "-";
+                  n->set(minus+((NumberTreeNode*)$2)->get());
                   $$ = new SubRangeTypeTreeNode($2,$4);
                 }
                 |  MINUS  const_value  DOTDOT  MINUS  const_value {
                   tp("simple_type_decl 6");                
-                  NumberTreeNode<int>* n1 = (NumberTreeNode<int>*)$2;
-                  NumberTreeNode<int>* n2 = (NumberTreeNode<int>*)$5;
-                  n1->set(-(int)(n1->get()));
-                  n2->set(-(int)(n2->get()));
+                  NumberTreeNode* n1 = (NumberTreeNode*)$2;
+                  NumberTreeNode* n2 = (NumberTreeNode*)$5;
+                  string minus = "-";
+                  n1->set(minus + n1->get());
+                  n2->set(minus + n2->get());
                   $$ = new SubRangeTypeTreeNode($2,$5); 
                 }
                 |  ID  DOTDOT  ID {
@@ -414,11 +416,7 @@ factor : ID                         {tp("factor 1");$$ = new VariableTreeNode($1
        |  LP  expression  RP        {tp("factor 6");$$ = $2;}
        |  NOT  factor               {tp("factor 7");$$ = new UnaryExprTreeNode("~",$2);}
        |  MINUS  factor             {tp("factor 8");$$ = new UnaryExprTreeNode("-",$2);}
-       |  ID                        
-       LB  expression  RB 
-
-
-                 {tp("factor 9");$$ = new ArrayElemTreeNode($1->getName(),$3);}
+       |  ID LB  expression  RB     {tp("factor 9");$$ = new ArrayElemTreeNode($1->getName(),$3);}
        |  ID                        
        DOT  ID                      {tp("factor 10");$$ = new RecordElemTreeNode($1->getName(),$3->getName());}
 ;
