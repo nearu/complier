@@ -1,0 +1,6 @@
+9 c:	char	 at 16
+3 i:	integer	 at 0
+3 int:	integer
+3 j:	integer	 at 4
+7 r:	real	 at 8
+8 t:	real	 at 12

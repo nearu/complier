@@ -4,104 +4,168 @@
 3 type_decl 1
 3 type_definition
 3 type_decl_list 2
+4 type part 1
 5 name list 2
-5 simple_type_decl 1
+5 simple_type_decl 2
 5 type_decl 1
-5 field_decl
-5 field_decl_list 2
+5 var_decl
+5 var_decl_list 2
 6 name list 2
-6 simple_type_decl 1
+6 simple_type_decl 2
 6 type_decl 1
-6 field_decl
-6 field_decl_list 1
+6 var_decl
+6 var_decl_list 1
 7 name list 2
 7 simple_type_decl 1
 7 type_decl 1
-7 field_decl
-7 field_decl_list 1
+7 var_decl
+7 var_decl_list 1
 8 name list 2
 8 simple_type_decl 1
 8 type_decl 1
-8 field_decl
-8 field_decl_list 1
-9 record_type_decl
-9 type_decl 3
-9 type_definition
-9 type_decl_list 1
-10 type part 1
-11 name list 2
-11 name list 1
-11 simple_type_decl 2
-11 type_decl 1
-11 var_decl
-11 var_decl_list 2
-12 name list 2
-12 simple_type_decl 1
-12 type_decl 1
-12 var_decl
-12 var_decl_list 1
-13 name list 2
-13 const value 1
-13 const value 1
-13 simple_type_decl 4
-13 simple_type_decl 2
-13 type_decl 1
-13 array_type_decl
-13 type_decl 2
-13 var_decl
-13 var_decl_list 1
-14 name list 2
-14 simple_type_decl 1
-14 type_decl 1
-14 var_decl
-14 var_decl_list 1
-15 var part 1
-15 routine part 5
-15 routine head
-15 stmt list 2
-16 const value 1
-16 factor 5
+8 var_decl
+8 var_decl_list 1
+9 name list 2
+9 simple_type_decl 1
+9 type_decl 1
+9 var_decl
+9 var_decl_list 1
+10 var part 1
+10 routine part 5
+10 routine head
+10 stmt list 2
+11 const value 1
+11 factor 5
+11 term 5
+11 expr 4
+11 expression 7
+11 assign stmt 1
+11 non_label_stmt 1
+11 stmt 2
+11 stmt list 1
+12 const value 1
+12 factor 5
+12 term 5
+12 expr 4
+12 expression 7
+12 assign stmt 1
+12 non_label_stmt 1
+12 stmt 2
+12 stmt list 1
+13 const value 2
+13 factor 5
+13 term 5
+13 expr 4
+13 expression 7
+13 assign stmt 1
+13 non_label_stmt 1
+13 stmt 2
+13 stmt list 1
+14 const value 2
+14 factor 5
+14 term 5
+14 expr 4
+14 expression 7
+14 assign stmt 1
+14 non_label_stmt 1
+14 stmt 2
+14 stmt list 1
+15 factor 1
+15 term 5
+15 expr 4
+15 const value 1
+15 factor 5
+15 term 5
+15 expr 1
+15 const value 1
+15 factor 5
+15 term 5
+15 factor 1
+15 term 5
+15 expr 4
+15 const value 1
+15 factor 5
+15 term 5
+15 expr 2
+15 expression 7
+15 factor 6
+15 term 1
+15 const value 1
+15 factor 5
+15 term 2
+15 expr 1
+15 expression 7
+15 assign stmt 1
+15 non_label_stmt 1
+15 stmt 2
+15 stmt list 1
+16 factor 1
 16 term 5
 16 expr 4
+16 factor 1
+16 term 5
+16 const value 2
+16 factor 5
+16 term 2
+16 expr 2
+16 const value 2
+16 factor 5
+16 term 5
+16 expr 1
+16 factor 1
+16 term 5
+16 const value 2
+16 factor 5
+16 term 1
+16 expr 1
 16 expression 7
-16 assign stmt 3
+16 assign stmt 1
 16 non_label_stmt 1
 16 stmt 2
 16 stmt list 1
-17 const value 1
-17 factor 5
-17 term 5
-17 expr 4
-17 expression 7
 17 factor 1
 17 term 5
 17 expr 4
 17 expression 7
-17 assign stmt 2
-17 non_label_stmt 1
+17 args_list 2
+17 proc_stmt 2
+17 non_label_stmt 2
 17 stmt 2
 17 stmt list 1
-18 const value 2
+18 const value 4
 18 factor 5
 18 term 5
 18 expr 4
 18 expression 7
-18 assign stmt 1
-18 non_label_stmt 1
+18 args_list 2
+18 proc_stmt 2
+18 non_label_stmt 2
 18 stmt 2
 18 stmt list 1
-20 const value 2
+19 factor 1
+19 term 5
+19 expr 4
+19 expression 7
+19 args_list 2
+19 proc_stmt 2
+19 non_label_stmt 2
+19 stmt 2
+19 stmt list 1
+20 factor 1
+20 factor 8
+20 term 5
+20 expr 4
+20 const value 1
 20 factor 5
 20 term 5
-20 factor 1
-20 term 1
-20 expr 4
+20 expr 1
 20 expression 7
 20 assign stmt 1
 20 non_label_stmt 1
 20 stmt 2
 20 stmt list 1
-21 factor 10
+21 const value 4
+21 factor 5
 21 term 5
 21 expr 4
 21 expression 7
@@ -110,8 +174,7 @@
 21 non_label_stmt 2
 21 stmt 2
 21 stmt list 1
-22 const value 4
-22 factor 5
+22 factor 1
 22 term 5
 22 expr 4
 22 expression 7
@@ -120,16 +183,7 @@
 22 non_label_stmt 2
 22 stmt 2
 22 stmt list 1
-23 factor 1
-23 term 5
-23 expr 4
-23 expression 7
-23 args_list 2
-23 proc_stmt 2
-23 non_label_stmt 2
-23 stmt 2
-23 stmt list 1
-24 compound stmt
-24 routine_body
-24 routine
-24 pargram
+23 compound stmt
+23 routine_body
+23 routine
+23 pargram

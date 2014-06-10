@@ -1,7 +1,10 @@
  ProgramTreeNode 
  RoutineTreeNode 
  RoutineHead  CompoundStmtTreeNode 
- a list of non const part:0  a list of type_decl_list:2  a list of var_decl_list:4  a list of non routine part:0  a list of stmt:7 
- CustomTypeTreeNode:int  CustomTypeTreeNode:book  VariableTreeNode:b1b2  VariableTreeNode:re  VariableTreeNode:ar  VariableTreeNode:i  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode 
- NumberTreeNode  RecordElemTreeNode:b1.id1  VariableTreeNode:b1  ArrayElemTreeNode:ar  NumberTreeNode  VariableTreeNode:re  BinaryExprTreeNode  VariableTreeNode:re 
- VariableTreeNode:re  NumberTreeNode 
+ a list of non const part:0  a list of type_decl_list:1  a list of var_decl_list:5  a list of non routine part:0  a list of stmt:12 
+ CustomTypeTreeNode:int  VariableTreeNode:i  VariableTreeNode:j  VariableTreeNode:r  VariableTreeNode:t  VariableTreeNode:c  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode 
+ NumberTreeNode  VariableTreeNode:i  NumberTreeNode  VariableTreeNode:j  NumberTreeNode  VariableTreeNode:r  NumberTreeNode  VariableTreeNode:t  BinaryExprTreeNode  VariableTreeNode:i  BinaryExprTreeNode  VariableTreeNode:t  BinaryExprTreeNode  VariableTreeNode:j 
+ BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  NumberTreeNode  UnaryExprTreeNode 
+ NumberTreeNode  BinaryExprTreeNode  NumberTreeNode  VariableTreeNode:i  NumberTreeNode  VariableTreeNode:r  NumberTreeNode  BinaryExprTreeNode  VariableTreeNode:j 
+ BinaryExprTreeNode  NumberTreeNode  BinaryExprTreeNode  VariableTreeNode:r 
+ NumberTreeNode  VariableTreeNode:j  NumberTreeNode  VariableTreeNode:t 
