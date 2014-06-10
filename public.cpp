@@ -456,6 +456,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	SymBucket *bucketR, *bucketL;
 	bucketR = rhs->genCode(env, &regR);
 	bucketL = lhs->genCode(env, &regL);
+
 	int isFloat = isFloatExpr(bucketR, regR) && isFloatExpr(bucketL, regL);
 	// if (isFloatExpr(bucketR, regR) && isFloatExpr(bucketL, regL)) {
 	// 	return genCodeFloat(symtab, bucketR, bucketL, regR, regL, reg);
@@ -683,26 +684,32 @@ SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
 		}
 	}
 	body->genCode(symtab, &regB);
-	if(regL == -1){
-		int tmp = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);
-		if(direction == "to") {
-			CodeGenerator::emitCodeI("+",tmp,tmp,1);
-		}
-		else {
-			CodeGenerator::emitCodeI("-",tmp,tmp,1);
-		}
-		CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmp);
-		regManager->freeReg(tmp);
+
+
+
+	// if(direction == "to"){
+	// 	BinaryExprTreeNode *b = new BinaryExprTreeNode("+",assignExpr->getlhs(),new NumberTreeNode("1","integer"));
+	// 	b->genCode(symtab,&regL);
+	// }
+	// else{
+	// 	BinaryExprTreeNode *b = new BinaryExprTreeNode("-",assignExpr->getlhs(),new NumberTreeNode("1","integer"));
+	// 	b->genCode(symtab,&regL);
+	// }
+	
+	
+	int tmp = regManager->getTmpReg();
+cout << bucketL << endl;
+	CodeGenerator::emitCodeM(bucketL->getSize(),loadOPL, locL, FP, tmp);
+	cout << "xxxxxxxxxxxxxxxx" << endl;
+	if(direction == "to") {
+		CodeGenerator::emitCodeI("+",tmp,tmp,1);
 	}
 	else {
-		if(direction == "to") {
-			CodeGenerator::emitCodeI("+",regL,regL,1);
-		}
-		else {
-			CodeGenerator::emitCodeI("-",regL,regL,1);
-		}
+		CodeGenerator::emitCodeI("-",tmp,tmp,1);
 	}
+
+	CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, tmp);
+	regManager->freeReg(tmp);
 
 	CodeGenerator::emitCodeJ("j",0,0,0,loop);
 	CodeGenerator::addLabel(breakn);

@@ -15,12 +15,3 @@ lw $t3, -4($fp)
 lw $t4, 0($fp)
 add $t5,$t3,$t4
 sw $t5, -4($fp)
-addi $t2,$t2,1
-j loop0
-break0:
-lw $a0, -4($fp)
-addi $v0, $zero, 1
-syscall
-addi $sp,$sp,8
-j exit
-exit:
