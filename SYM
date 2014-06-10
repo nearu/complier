@@ -1,0 +1,7 @@
+13 ar:	array	 at 20 .. 13 index:	subrange .. 13 subrange:	1 .. 13 subrange:	10 .. 9 array:	record	 at 0 .. 8 name:	integer .. 7 id3:	integer .. 6 id2:	integer .. 5 id1:	integer
+9 b1:	record	 at 0 .. 8 name:	integer	 at 0 .. 7 id3:	integer	 at 4 .. 6 id2:	integer	 at 8 .. 5 id1:	integer	 at 12
+9 b2:	record	 at 0 .. 8 name:	integer	 at 16 .. 7 id3:	integer	 at 20 .. 6 id2:	integer	 at 24 .. 5 id1:	integer	 at 28
+9 book:	record	 at 0 .. 8 name:	integer .. 7 id3:	integer .. 6 id2:	integer .. 5 id1:	integer
+14 i:	integer	 at 164
+3 int:	integer
+12 re:	real	 at 16

@@ -1280,6 +1280,9 @@ string BinaryExprTreeNode::typeCheck(Symtab *symtab) {
 		cout << lineNO << ": " << "The left value must be a variable!" << endl;
 		return "failure";
 	}
+	else if(ltype == rtype || rtype == "const-"+ltype ){
+		return ltype;
+	}
 	cout << lineNO << ": " << "Can not transform the type " << rtype << " to the type " << ltype << "." << endl;
 	return "failure";
 }
