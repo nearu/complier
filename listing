@@ -7,46 +7,38 @@
 	3 integer
 	3 ;
 	4 var
-	5 result
+	5 s
 	5 :
 	5 int
 	5 ;
-	7 procedure
-	7 min
-	7 (
-	7 num1
-	7 ,
-	7 num2
-	7 :
-	7 integer
-	7 ;
-	7 var
-	7 r
-	7 :
-	7 integer
-	7 )
-	7 ;
-	8 begin
-	9 if
-	9 (
-	9 num1
-	9 <
-	9 num2
-	9 )
-	9 then
-	9 r
+	6 result
+	6 :
+	6 int
+	6 ;
+	7 begin
+	8 s
+	8 :=
+	8 0
+	8 ;
+	9 result
 	9 :=
-	9 num1
+	9 0
 	9 ;
-	10 end
-	10 ;
-	12 begin
-	13 min
-	13 (
-	13 1
-	13 ,
-	13 2
-	13 )
+	10 for
+	10 s
+	10 :=
+	10 0
+	10 to
+	10 100
+	10 do
+	11 begin
+	12 result
+	12 :=
+	12 result
+	12 +
+	12 s
+	12 ;
+	13 end
 	13 ;
 	14 writeln
 	14 (
