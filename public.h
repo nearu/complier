@@ -609,7 +609,7 @@ public:
 	void printSelf() {
 		ast << "BinaryExprTreeNode";
 	}
-	TreeNode * getlhs() { return lhs; }
+	TreeNode * getLhs() { return lhs; }
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
 
 	string typeCheck(Symtab *symtab);

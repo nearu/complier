@@ -123,8 +123,9 @@ public:
 	}
 
 	void freeReg(int i) {
-		cout << "free " << i << endl;
+		
 		if (i < 0 || i > 63) return;
+		cout << "free " << regTable[i] << endl;
 		char c = regTable[i][1];
 		reg[i] = 0;
 	}
@@ -380,11 +381,12 @@ public:
 			tmpAC = regManager->getTmpReg();
 			int pos = op.find('-');
 			int level = atoi(op.substr(pos+1, op.length()).c_str());
-			CodeGenerator::emitCodeM(4, "load", 4, FP, tmpAC);
+			CodeGenerator::emitCodeM(4, "load", -4, FP, tmpAC);			//应为fp在ac上面，所有ac所在的地址高于当前fp的地址
 			for (int i = 1; i < level; i++) {
 				CodeGenerator::emitCodeM(4, "load", 0, tmpAC, tmpAC);
 			}
-			CodeGenerator::emitCodeM(4, "load", -4, tmpAC, tmpAC);
+			// CodeGenerator::emitCodeM(4, "load", 4, tmpAC, tmpAC);
+			CodeGenerator::emitCodeI("+", tmpAC, tmpAC, -4);
 			localOP = op.substr(0,pos);
 		}
 	}
@@ -510,6 +512,8 @@ public:
 			code << "addi $v0, $zero, 1" << endl;
 		} else if (type == "printReal") {
 			code << "addi $v0, $zero, 2" << endl;
+		} else if (type == "printChar") {
+			code << "addi $v0, $zero, 11" << endl;
 		}
 		code << "syscall" << endl;
 	}

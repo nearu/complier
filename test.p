@@ -4,11 +4,10 @@ type
 var 
 	s : int;
 	result:int;
-
 begin	
 	s := 0;
 	result := 0;
-	for s:=1 to 100 do
+	for s:=0 to 100 do
 	begin
 		result := result + s;
 	end;

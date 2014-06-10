@@ -64,7 +64,7 @@ name ({letter}|_)+({letter}|_|{digit})+
 "(" { return LP;}
 "<" { return LT;}
 "-" { return MINUS;}
-"mod" { return MOD;}
+"%" { return MOD;}
 "*" { return MUL;}
 "~" { return NOT;}
 "of" { return OF;}

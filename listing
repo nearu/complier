@@ -15,36 +15,36 @@
 	6 :
 	6 int
 	6 ;
-	8 begin
-	9 s
+	7 begin
+	8 s
+	8 :=
+	8 0
+	8 ;
+	9 result
 	9 :=
 	9 0
 	9 ;
-	10 result
+	10 for
+	10 s
 	10 :=
 	10 0
-	10 ;
-	11 for
-	11 s
-	11 :=
-	11 1
-	11 to
-	11 100
-	11 do
-	12 begin
-	13 result
-	13 :=
-	13 result
-	13 +
-	13 s
+	10 to
+	10 100
+	10 do
+	11 begin
+	12 result
+	12 :=
+	12 result
+	12 +
+	12 s
+	12 ;
+	13 end
 	13 ;
-	14 end
+	14 writeln
+	14 (
+	14 result
+	14 )
 	14 ;
-	15 writeln
-	15 (
-	15 result
-	15 )
-	15 ;
-	16 end
-	16 .
-	16 
+	15 end
+	15 .
+	15 
