@@ -1,26 +1,24 @@
 program HelloWorld;
 type 
 	int = integer;
-var 
-	outReal : real;
-	result : int;
-function max(num1, num2 :integer) :integer;
-
-function min(num1, num2:integer):integer;
-var 
-	r : int;
-	begin
-		outReal := 10.0;
-		if (num1 < num2) then min := num1
-		else min := num2;
+	book = record 
+		id1 : integer;
+		id2 : integer;
+		id3 : integer;
+		name : integer;
 	end;
-begin
-	result := min(2,1);
-	
-end;
+var 
+	b1,b2 : book;
+	re : real;
+	ar : array[1..10] of book;
+	i : integer;
 begin	
-	max(1,2);
-	writeln(outReal);
+	b1.id1 := 1;
+	ar[1]  := b1;
+	re := 1.1;
+
+	re := 2.2 * re;
+	writeln(b1.id1);
 	writeln(' ');
-	writeln(result);
+	writeln(re);
 end.

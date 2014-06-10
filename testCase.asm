@@ -176,6 +176,8 @@ end.
 test type check
 /////////////////////
 program HelloWorld;
+const 
+	con = 10;
 var 
 	i : integer;
 	j : char;
@@ -184,6 +186,7 @@ function ff(h : real) : char;
 begin
 end;
 begin
+	con := 100;
 	i := ff(i,i);
 	cc;
 	k[i] := k;

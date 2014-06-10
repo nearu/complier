@@ -157,7 +157,7 @@ string childrenTypeCheck(vector<TreeNode*>& children, Symtab *symtab) {
 			return "failure";
 		}
 	}
-	return "success";
+	return children[0]->typeCheck(symtab);
 }
 
 
@@ -196,6 +196,7 @@ void ConstTreeNode::updateSymtab(Symtab *symtab) {
 	env = symtab;
 	const string type = value->getType();
 	SymBucket *b = new SymBucket(name, lineNO, type, symtab);
+	b->setIsConst(1);
 	int size = getSize(type);
 	b->setSize(size);
 	b->setLoc(symtab->genLoc(size));
@@ -1195,11 +1196,18 @@ string ListTreeNode::typeCheck(Symtab *symtab){
 }
 
 string VariableTreeNode::typeCheck(Symtab *symtab){
-	return (symtab->find(name))->getType();
+	SymBucket *var = symtab->find(name);
+	if(var->getIsConst()){
+		return "const-" + var->getType();
+	}
+	else{
+		return var->getType();
+	}
+	
 }
 
 string ArrayElemTreeNode::typeCheck(Symtab *symtab){
-	return (symtab->find(name))->last->getType();
+	return (symtab->find(name))->next->last->next->getType();
 }
 
 string CompoundStmtTreeNode::typeCheck(Symtab *symtab){
@@ -1246,7 +1254,7 @@ string ForStmtTreeNode::typeCheck(Symtab *symtab){
 
 string UnaryExprTreeNode::typeCheck(Symtab *symtab){
 	string type = operand->typeCheck(symtab);
-	if(type!="integer"){
+	if(type!="integer" && type!="const-integer"){
 		cout << lineNO << ": " << "The right value must be an integer." << endl;
 		return "failure";
 	}
@@ -1256,17 +1264,21 @@ string UnaryExprTreeNode::typeCheck(Symtab *symtab){
 string BinaryExprTreeNode::typeCheck(Symtab *symtab) {
 	string ltype = lhs->typeCheck(symtab);
 	string rtype = rhs->typeCheck(symtab);
-	if(ltype == "integer" && rtype == "integer")
+	if(ltype == "integer" && (rtype == "integer" || rtype == "const-integer"))
 		return "integer";
-	else if(ltype == "real" && rtype == "real")
+	else if(ltype == "real" && (rtype == "real" || rtype == "const-real"))
 		return "real";
 	else if(ltype == "char"){
-		if(rtype == "char" || rtype == "string")
+		if(rtype == "char" || rtype == "string" || rtype == "const-string" || rtype == "const-char")
 			return "char";
 	}
 	else if(ltype == "string"){
-		if(rtype == "string" || rtype == "char")
+		if(rtype == "char" || rtype == "string" || rtype == "const-string" || rtype == "const-char")
 			return "string";
+	}
+	else if(ltype == "const-char" || ltype == "const-integer" || ltype == "const-string" ||ltype == "const-real" ){
+		cout << lineNO << ": " << "The left value must be a variable!" << endl;
+		return "failure";
 	}
 	cout << lineNO << ": " << "Can not transform the type " << rtype << " to the type " << ltype << "." << endl;
 	return "failure";
@@ -1275,7 +1287,7 @@ string BinaryExprTreeNode::typeCheck(Symtab *symtab) {
 
 
 string CaseExprTreeNode::typeCheck(Symtab *symtab){
-	if((stmt->typeCheck(symtab)) != "failure"){
+	if((stmt->typeCheck(symtab))!="failure"){
 		return "success";
 	}
 	return "failure";
@@ -1289,23 +1301,27 @@ string CallExprTreeNode::typeCheck(Symtab *symtab){
 
 	SymBucket *func = symtab->find(name);
 	int i = 0;
-	//cout << "in call type check " << name << endl;
+	cout << "in call type check " << name << endl;
 	if (func != NULL) {
 		SymBucket * member = func->next;
+		cout << "xxxxxx" << i<< endl;
 		do {
 			string argType = args[i]->typeCheck(symtab);
 			if (member->getIsRef() && argType.find("const") != string::npos) {
 				cout << lineNO << " : const value can not be passed to var type argument" << endl;
 				return "failure";
 			}
+			cout << "xxxxxx" << i<< endl;
 			string memberType = member->getType();
 			if (argType.find(memberType) == string::npos)  {
 				cout << lineNO << " : argument " << i << " type dismatch " << endl;
 				return "failure";
 			}
+			cout << "xxxxxx" << i<< endl;
 			i++;
 			member = member->last->next;
-		} while (member != func->last);
+			cout << "xxxxxx" << i<< endl;
+		} while (member != func->last && member != func);
 		if (i < args.size()) {
 			cout << lineNO << " : argument number is not match " << endl;
 			return  "failure";

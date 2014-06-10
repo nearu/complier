@@ -481,7 +481,7 @@ public:
 		return value->getType();
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
-	string typeCheck(Symtab *symtab){return getType();}
+	string typeCheck(Symtab *symtab){return "const " + getType();}
 	void updateSymtab(Symtab* symtab);
 };
 
