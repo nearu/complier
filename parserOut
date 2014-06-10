@@ -36,6 +36,20 @@
 9 assign stmt 1
 9 non_label_stmt 1
 9 stmt 2
+<<<<<<< HEAD
+=======
+9 factor 1
+9 term 5
+9 expr 4
+9 expression 7
+9 assign stmt 1
+9 non_label_stmt 1
+9 stmt 2
+9 else clause 1
+9 if stmt
+9 non_label_stmt 4
+9 stmt 2
+>>>>>>> 590ade5e6fa91b37ae3fa0f35725b6a503dc25a5
 9 stmt list 1
 10 const value 1
 10 factor 5

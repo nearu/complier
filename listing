@@ -22,7 +22,15 @@
 	8 ;
 	9 result
 	9 :=
+<<<<<<< HEAD
 	9 0
+=======
+	9 num1
+	9 else
+	9 r
+	9 :=
+	9 num2
+>>>>>>> 590ade5e6fa91b37ae3fa0f35725b6a503dc25a5
 	9 ;
 	10 for
 	10 s
