@@ -149,12 +149,15 @@ class LabelManager {
 	static int do_number;
 	static int string_label_number;
 	static int real_label_number;
+	static int equal_number;
 public:
 	
 	int getLoopLabel(){return loop_number;}
 	void addLoopLabel(){loop_number++;} 
 	int getRepeatLabel(){return do_number;}
 	void addRepeatLabel(){do_number++;} 
+	int getEqualLabel(){return equal_number;}
+	void addEqualLabel(){equal_number++;} 
 	int getIfLabel(){return if_number;}
 	void addIfLabel(){if_number++;} 
 	int getgotoLabel(){return goto_number;}
@@ -184,8 +187,18 @@ public:
 
 
 class CodeGenerator {
+private:
+	static int equal;
 
 public:
+	static string intTostring(int x){
+		char t[256];
+	    string s;
+	 
+	    sprintf(t, "%d", x);
+	    s = t;
+	    return s;
+	}
 	// R-type instruments
 	// if the op is "~" then src_1 = 0 and src_2 is the right hand variable
 	static void emitCodeR(const string op, int dst, int src_1, int src_2, int isFloat = 0) {
@@ -232,15 +245,21 @@ public:
 		} else if (op == "<") {
             c = "slt " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2] ;
 		} else if (op == "==") {
-			c = "addi " + regTable[dst] + "," + regTable[0] + ",0" + "\n";
-            c = c + "beq " + regTable[src_1] + "," + regTable[src_2] + ",4" +"\n";
-            c = c + "addi " + regTable[dst] + "," + regTable[0] + ",-1" + "\n";
+			string s = "equal" + intTostring(equal);
+			c = "add " + regTable[dst] + "," + regTable[0] + "," + regTable[0] + "\n";
+            c = c + "beq " + regTable[src_1] + "," + regTable[src_2] + "," + s +"\n";
+            c = c + "addi " + regTable[dst] + "," + regTable[dst] + "," + "-1" + "\n";
+            c = c + s + ":\n";
             c = c + "addi " + regTable[dst] + "," + regTable[dst] + ",1";
+            equal++;
 		} else if (op == "!=") {
-			c = "addi " + regTable[dst] + "," + regTable[0] + ",0" + "\n";
-            c = c + "bne " + regTable[src_1] + "," + regTable[src_2] + ",4" +"\n";
-            c = c + "addi " + regTable[dst] + "," + regTable[0] + ",-1" + "\n";
+			string s = "equal" + intTostring(equal);
+			c = "add " + regTable[dst] + "," + regTable[0] + "," + regTable[0] + "\n";
+            c = c + "bne " + regTable[src_1] + "," + regTable[src_2] + "," + s +"\n";
+            c = c + "addi " + regTable[dst] + "," + regTable[dst] + "," + "-1" + "\n";
+            c = c + s + ":\n";
             c = c + "addi " + regTable[dst] + "," + regTable[dst] + ",1";
+            equal++;
 		} else if (op == "~") {
 			c = c + "xori " + regTable[dst] + ", " + regTable[src_2] + ", -1" ;
 		}
@@ -300,19 +319,25 @@ public:
             regManager->freeReg(tmp); 
 		} else if (op == "==") {
 			int tmp = regManager->getTmpReg();
-			c = "addi " + regTable[dst] + "," + regTable[0] + ",0" + "\n";
+			string s = "equal" + intTostring(equal);
+			c = "add " + regTable[dst] + "," + regTable[0] + "," + regTable[0] + "\n";
 			c = c + "addi " + regTable[tmp] + "," + regTable[0] + "," + ch + "\n";
-            c = c + "beq " + regTable[src] + "," + regTable[tmp] + ",4" +"\n";
-            c = c + "addi " + regTable[dst] + "," + regTable[0] + ",-1" + "\n";
+            c = c + "beq " + regTable[src] + "," + regTable[tmp] + "," + s +"\n";
+           c = c + "addi " + regTable[dst] + "," + regTable[dst] + "," + "-1" + "\n";
+            c = c + s + ":\n";
             c = c + "addi " + regTable[dst] + "," + regTable[dst] + ",1";
+            equal++;
             regManager->freeReg(tmp); 
 		} else if (op == "!=") {
 			int tmp = regManager->getTmpReg();
-			c = "addi " + regTable[dst] + "," + regTable[0] + ",0" + "\n";
+			string s = "equal" + intTostring(equal);
+			c = "add " + regTable[dst] + "," + regTable[0] + "," + regTable[0] + "\n";
 			c = c + "addi " + regTable[tmp] + "," + regTable[0] + "," + ch + "\n";
-            c = c + "bne " + regTable[src] + "," + regTable[tmp] + ",4" +"\n";
-            c = c + "addi " + regTable[dst] + "," + regTable[0] + ",-1" + "\n";
+            c = c + "bne " + regTable[src] + "," + regTable[tmp] + "," + s +"\n";
+           c = c + "addi " + regTable[dst] + "," + regTable[dst] + "," + "-1" + "\n";
+            c = c + s + ":\n";
             c = c + "addi " + regTable[dst] + "," + regTable[dst] + ",1";
+            equal++;
             regManager->freeReg(tmp); 
 		}
 		code << c << endl;

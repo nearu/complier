@@ -27,6 +27,8 @@ int LabelManager::if_number = 0;
 int LabelManager::do_number = 0;
 int LabelManager::string_label_number = 0;
 int LabelManager::real_label_number = 0;
+int LabelManager::equal_number = 0;
+int CodeGenerator::equal = 0;
 
 int main(int argc, char *argv[]) {
 	// char option[MAX_OPTION];

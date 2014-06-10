@@ -6,23 +6,18 @@ addi $t0,$zero,0
 sw $t0, 0($fp)
 addi $t1,$zero,0
 sw $t1, -4($fp)
-addi $t2,$zero,0
+do0:
+lw $t2, -4($fp)
+lw $t3, 0($fp)
+add $t4,$t2,$t3
+sw $t4, -4($fp)
+lw $t3, 0($fp)
+addi $t2,$t3,1
 sw $t2, 0($fp)
-loop0:
-lw $t4, 0($fp)
-addi $t3,$zero,0
-addi $t5,$zero,100
-beq $t4,$t5,4
-addi $t3,$zero,-1
-addi $t3,$t3,1
-bne $t3,$zero,break0
-lw $t4, -4($fp)
-lw $t5, 0($fp)
-add $t6,$t4,$t5
-sw $t6, -4($fp)
-addi $t2,$t2,1
-j loop0
-break0:
+lw $t3, 0($fp)
+slti $t4,$t3,100
+xori $t2,$t4,1
+beq $t2,$zero,do0
 lw $a0, -4($fp)
 addi $v0, $zero, 1
 syscall
