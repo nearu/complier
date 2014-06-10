@@ -470,10 +470,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		int tmpSrc_2 = regManager->getTmpReg(isFloat);
 		int tmpDst = regManager->getTmpReg(isFloat);
 		if (op == "=") {
-			if (bucketL->getType() == "char" && bucketR->getType() == "string") {
-				CodeGenerator::emitCodeM(getSize("char"),loadOPR, 0,regR, tmpSrc_1);
-				CodeGenerator::emitCodeM(getSize("char"),storeOPL, locL,FP, tmpSrc_1);
-			} else if (bucketR->getSize() > 4)  {
+			if (bucketR->getSize() > 4)  {
 				if (bucketL->getSize() == bucketR->getSize()) {
 					CodeGenerator::emitCodeB(loadOPR,storeOPL, bucketR->getSize(), locL, locR,FP,4);
 				} else {
@@ -524,7 +521,13 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		regManager->freeReg(tmpReg);
 	} else if (regL == -1 && regR > 0) {
 		if (op == "=") {
-			CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, regR, isFloat);
+			if (bucketL->getType() == "char" && bucketR->getType() == "string") {
+				int tmpReg = regManager->getTmpReg();
+				CodeGenerator::emitCodeM(getSize("char"),loadOPR, 0,regR, tmpReg);
+				CodeGenerator::emitCodeM(getSize("char"),storeOPL, locL,FP, tmpReg);
+			} else {
+				CodeGenerator::emitCodeM(bucketL->getSize(),storeOPL, locL, FP, regR, isFloat);
+			}
 			if (reg != NULL) *reg = regR;
 			returnBucket = new SymBucket(bucketL);
 		} else {
@@ -953,7 +956,11 @@ void CallExprTreeNode::genSysFunc(Symtab *symtab, string name) {
 			CodeGenerator::emitCodeM(getSize("real"), loadOP, loc, FP, F12, 1);
 		}
 		CodeGenerator::emitSysCall("printReal");
-
+	} else if (type == "char") {
+		if (argReg == -1) {
+			CodeGenerator::emitCodeM(getSize("char"), loadOP, loc, FP, A0);
+		}
+		CodeGenerator::emitSysCall("printChar");
 	}
 	regManager->freeReg(argReg);
 }
@@ -982,7 +989,7 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	CodeGenerator::emitCodeM(4, "store", -12,  SP, 2);
 	CodeGenerator::emitCodeM(4, "store", -8,  SP, FP);
 	int tmp = regManager->getTmpReg();
-	CodeGenerator::emitCodeI("+", tmp, FP, -4);		
+	CodeGenerator::emitCodeI("+", tmp, FP, 4);		 // 压入的ac的地址比当前fp高
 	CodeGenerator::emitCodeM(4, "store", -4,  SP, tmp);
 	regManager->freeReg(tmp);
 	//CodeGenerator::emitCodeI("+", FP, SP, 0);

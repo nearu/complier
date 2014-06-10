@@ -1,26 +1,14 @@
 .data
+string0: .asciiz "a"
 .text
 add $fp,$sp,$zero
-addi $sp,$sp,-8
-addi $t0,$zero,0
-sw $t0, 0($fp)
-addi $t1,$zero,0
-sw $t1, -4($fp)
-do0:
-lw $t2, -4($fp)
-lw $t3, 0($fp)
-add $t4,$t2,$t3
-sw $t4, -4($fp)
-lw $t3, 0($fp)
-addi $t2,$t3,1
-sw $t2, 0($fp)
-lw $t3, 0($fp)
-slti $t4,$t3,100
-xori $t2,$t4,1
-beq $t2,$zero,do0
-lw $a0, -4($fp)
-addi $v0, $zero, 1
+addi $sp,$sp,-20
+la $t0 string0
+lb $t1, 0($t0)
+sb $t1, -19($fp)
+lb $a0, -19($fp)
+addi $v0, $zero, 11
 syscall
-addi $sp,$sp,8
+addi $sp,$sp,20
 j exit
 exit:
