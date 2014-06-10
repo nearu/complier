@@ -115,6 +115,10 @@ public:
 	void setIntImme(int n) {
 		intImme = n;
 	}
+
+	// void setType(string t) {
+	// 	type = t;
+	// }
 	// void setOffsetReg(int reg) {
 	// 	offsetReg = reg;
 	// }

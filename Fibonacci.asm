@@ -6,7 +6,7 @@ f   : .float 1.1
       .text
       la   $t1, f
       l.s  $f1, f
-
+      s.s   $f1, 0($t1)
       la   $t0, fibs        # load address of array
       la   $t5, size        # load address of size variable
       lw   $t5, 0($t5)      # load array size

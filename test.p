@@ -1,8 +1,15 @@
 program HelloWorld;
+type 
+	int = integer;
 var 
-	s:string;
-	i:integer;
-	k:array [1..10] of integer;
+	result:int;
+
+procedure min(num1, num2:integer;var r:integer);
+begin
+	if (num1 < num2) then r := num1 else r:= num2;
+end;
+
 begin	
-	s:=k[i];
+	min(1,2);
+	writeln(result);
 end.

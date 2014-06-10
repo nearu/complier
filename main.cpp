@@ -18,6 +18,7 @@ extern ofstream sym;
 extern RegManager *regManager;
 extern LabelManager *labelManager;
 extern map<string,string> constStringMap;
+extern map<string,string> constRealMap;
 
 int LabelManager::loop_number = 0;
 int LabelManager::func_number = 0;
@@ -25,6 +26,7 @@ int LabelManager::case_number = 0;
 int LabelManager::if_number = 0;
 int LabelManager::do_number = 0;
 int LabelManager::string_label_number = 0;
+int LabelManager::real_label_number = 0;
 
 int main(int argc, char *argv[]) {
 	// char option[MAX_OPTION];
@@ -58,18 +60,18 @@ int main(int argc, char *argv[]) {
   yyparse();
   cout << "======================yyparse end=========================" << endl;
   printAST(root);
+  cout << "======================print AST end=========================" << endl;
   mainSymtab = new Symtab("mainSymtab");
   regManager = new RegManager();
   labelManager = new LabelManager();
 
-
   root->updateSymtab(mainSymtab);
   cout << "======================updateSymtab end=========================" << endl;
-  string result = root->typeCheck(mainSymtab);
-  cout << "=========================typeCheck end=========================" << endl;
-  if(result == "failure"){
-  	exit(1);
-  }
+  // string result = root->typeCheck(mainSymtab);
+  // cout << "=========================typeCheck end=========================" << endl;
+  // if(result == "failure"){
+  // 	exit(1);
+  // }
   mainSymtab->printSymtab(sym);
   cout << "===========================begin gencode=======================" << endl;
   root->genCode(mainSymtab);

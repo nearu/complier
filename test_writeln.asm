@@ -32,12 +32,7 @@ beq $t2,$zero,endif0
 lw $t1, 0($fp)
 lw $t4, 8($fp)
 sw $t1, 0($t4)
-j endelse0
 endif0:
-lw $t1, -4($fp)
-lw $t4, 8($fp)
-sw $t1, 0($t4)
-endelse0:
 addi $sp,$sp,12
 jr $ra
 exit:

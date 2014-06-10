@@ -43,24 +43,78 @@ const string regTable[] = {
 	"$gp",
 	"$sp",
 	"$fp",
-	"$ra"
+	"$ra",
+
+	"$f0",
+	"$f1",
+	"$f2",
+	"$f3",
+	"$f4",
+	"$f5",
+	"$f6",
+	"$f7",
+	"$f8",
+	"$f9",
+	"$f10",
+	"$f11",
+	"$f12",
+	"$f13",
+	"$f14",
+	"$f15",
+	"$f16",
+	"$f17",
+	"$f18",
+	"$f19",
+	"$f20",
+	"$f21",
+	"$f22",
+	"$f23",
+	"$f24",
+	"$f25",
+	"$f26",
+	"$f27",
+	"$f28",
+	"$f29",
+	"$f30",
+	"$f31",
+};
+
+const string floatRegTable[] = {
+
 };
 
 class RegManager {
 	 static const int BEGIN_TMP = 8;
 	 static const int END_TMP   = 23;
+	 static const int BEGIN_FLOAT = 32;
+	 static const int END_FLOAT = 63;
 	 int reg[32];
 public:
-	 int getTmpReg() {
+	 int getTmpReg(int isFloat = 0) {
+	 	if (isFloat) {
+	 		return getFloatReg();
+	 	}
 		for(int i = BEGIN_TMP; i <= END_TMP; i++) {
 			if (reg[i] == 0) {
 				reg[i] = 1;
-				cout << "use reg " << i << endl;
+				cout << "use reg " << regTable[i] << endl;
 				return i;
 			}
 		}
 		cout << "reg is run out" << endl;
 		return -1;
+	}
+
+	int getFloatReg() {
+		for(int i = BEGIN_FLOAT; i <= END_FLOAT; i++) {
+			if (reg[i] == 0) {
+				reg[i] = 1;
+				cout << "use reg " << regTable[i] << endl;
+				return i;
+			}
+		}
+		cout << "reg is run out" << endl;
+		return -1;	
 	}
 
 	void useReg(int i) {
@@ -70,11 +124,12 @@ public:
 
 	void freeReg(int i) {
 		cout << "free " << i << endl;
-		if (i < 0 || i > 31) return;
+		if (i < 0 || i > 63) return;
 		char c = regTable[i][1];
-		if (c != 't' || c != 's') return;
 		reg[i] = 0;
 	}
+
+
 
 	void freeAll() {
 		for(int i = BEGIN_TMP; i < END_TMP; i++) {
@@ -92,6 +147,7 @@ class LabelManager {
 	static int if_number;
 	static int do_number;
 	static int string_label_number;
+	static int real_label_number;
 public:
 	
 	int getLoopLabel(){return loop_number;}
@@ -115,6 +171,11 @@ public:
 		sprintf(ch, "string%d", string_label_number++);
 		return ch;
 	}
+	string getRealLabel() {
+		char ch[32] = {0,};
+		sprintf(ch, "real%d", real_label_number++);
+		return ch;
+	}
 
 
 };
@@ -126,17 +187,29 @@ class CodeGenerator {
 public:
 	// R-type instruments
 	// if the op is "~" then src_1 = 0 and src_2 is the right hand variable
-	static void emitCodeR(const string op, int dst, int src_1, int src_2) {
+	static void emitCodeR(const string op, int dst, int src_1, int src_2, int isFloat = 0) {
 		if (traceEmit) cout << "emit R : " << op << " " << dst << " " << src_1 << " " << src_2 <<endl;
 		string c;
 		if (op == "+" || op == "=") {
-			c = "add " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+			if (!isFloat) 
+				c = "add " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+			else 
+				c = "add.s " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
 		} else if (op == "-") {
-			c = "sub " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+			if (!isFloat) 
+				c = "sub " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+			else 
+				c = "sub.s " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
 		} else if (op == "*") {
-			c = "mul " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+			if (!isFloat) 
+				c = "mul " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+			else 
+				c = "mul.s " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
 		} else if (op == "/") {
-			c = "div " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+			if (!isFloat)
+				c = "div " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
+			else 
+				c = "div.s " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
 		} else if (op == "%") {
 			c = "rem " + regTable[dst] + "," + regTable[src_1] + "," + regTable[src_2];
 		} else if (op == "&&") {
@@ -282,7 +355,7 @@ public:
 			tmpAC = regManager->getTmpReg();
 			int pos = op.find('-');
 			int level = atoi(op.substr(pos+1, op.length()).c_str());
-			CodeGenerator::emitCodeM(4, "load", -4, FP, tmpAC);
+			CodeGenerator::emitCodeM(4, "load", 4, FP, tmpAC);
 			for (int i = 1; i < level; i++) {
 				CodeGenerator::emitCodeM(4, "load", 0, tmpAC, tmpAC);
 			}
@@ -293,23 +366,31 @@ public:
 	// lw sw instruments
 	// reg is the src or dst reg
 	// load_reg , store_reg means that offset现在保存了一个寄存器号，这个寄存器中有偏移量
-	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg) {
+	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg, int isFloat = 0) {
 		if (traceEmit) cout << "emit M " << "op = " << op << " size = " << size << " offset = " << offset <<  endl;
+		offset = -offset;
 		string c;
 		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
 		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
+		string ls = "l.s";
+		string ss = "s.s";
 		char ch[16] = {0,};
 		string instr;
 		string localOP = op;
-		int tmpAC = regAddr;
+		//int tmpAC = regAddr;
 		// find correct FP
-		findFP(op, localOP, tmpAC);
-		regAddr = tmpAC;
+		findFP(op, localOP, regAddr);
+		//regAddr = tmpAC;
 
 		if (localOP == "load" || localOP == "load_reg" || localOP == "load_ref") {
-			instr = loadInstr[size];
+			if (!isFloat)
+				instr = loadInstr[size];
+			else instr = ls;
 		} else {
-			instr = storeInstr[size];
+			if (!isFloat)
+				instr = storeInstr[size];
+			else 
+				instr = ss;
 		}
 		if (localOP == "load" || localOP == "store") {
 			sprintf(ch,"%d",offset);
@@ -331,7 +412,7 @@ public:
 			regManager->freeReg(tmp);
 			code << c << endl;
 		}
-		regManager->freeReg(tmpAC);
+		//if (regAddr != tmpAC) regManager->freeReg(tmpAC);
 	}
 
 	static void emitCodeB(const string loadOP,const string storeOP, int size, int dstOffset, int srcOffset, int addrReg ,int copysize) {
@@ -343,19 +424,15 @@ public:
 		char ch[8] = {0,};
 		sprintf(ch, "%d", loopNum);
 		s += ch;
-		CodeGenerator::addLabel(s);
+		
 		int loop = regManager->getTmpReg();
 		int tmp  = regManager->getTmpReg();
-		int addrRegSrc;
-		int addrRegDst;
 		string localLoadOP = loadOP, localStoreOP = storeOP;
 		//int tmpAddr = regManager->getTmpReg();
-		int tmpACSrc = addrReg;
-		int tmpACDst = addrReg;
-		findFP(loadOP, localLoadOP, tmpACSrc);
-		addrRegSrc =  tmpACSrc;
-		findFP(storeOP, localStoreOP, tmpACDst);
-		addrRegDst = tmpACDst;
+		int addrRegSrc = addrReg;
+		int addrRegDst = addrReg;
+		findFP(loadOP, localLoadOP, addrRegSrc);
+		findFP(storeOP, localStoreOP, addrRegDst);
 		if (addrRegSrc == addrReg) {
 			addrRegSrc = regManager->getTmpReg();
 			CodeGenerator::emitCodeR("+", addrRegSrc, addrReg, 0);
@@ -365,18 +442,19 @@ public:
 			CodeGenerator::emitCodeR("+", addrRegDst, addrReg, 0);
 		}
 		CodeGenerator::emitCodeR("+",loop,0,0);
+		CodeGenerator::addLabel(s);
 		CodeGenerator::emitCodeM(copysize, localLoadOP,srcOffset, addrRegSrc, tmp);
 		CodeGenerator::emitCodeM(copysize, localStoreOP,dstOffset, addrRegDst, tmp);
 		
 		if (loadOP.find("reg") != string::npos) {
-			CodeGenerator::emitCodeI("+", srcOffset, srcOffset, copysize);
+			CodeGenerator::emitCodeI("+", srcOffset, srcOffset, -copysize);
 		} else {
-			CodeGenerator::emitCodeI("+", addrRegSrc, addrRegSrc, 4);
+			CodeGenerator::emitCodeI("+", addrRegSrc, addrRegSrc, -copysize);
 		}
 		if (storeOP.find("reg") != string::npos) {
-			CodeGenerator::emitCodeI("+", dstOffset, dstOffset, copysize);
+			CodeGenerator::emitCodeI("+", dstOffset, dstOffset, -copysize);
 		} else {
-			CodeGenerator::emitCodeI("+", addrRegDst, addrRegDst, 4);
+			CodeGenerator::emitCodeI("+", addrRegDst, addrRegDst, -copysize);
 		}
 		CodeGenerator::emitCodeI("+",loop,loop,1);
 		int tmp2 = regManager->getTmpReg();
@@ -393,12 +471,25 @@ public:
 		code << label << ": .asciiz " << "\"" << constStr.substr(1,constStr.length()-2) << "\"" << endl;
 	}
 
+	static void emitCodeConstReal(string constReal, string label) {
+		code << label << ": .float " << " " << constReal << endl;
+	}
+
 	static void emitCodeLA(string label, int regDst) {
 		code << "la " << regTable[regDst] << " " << label << endl;
 	}
 	static void emitSysCall(string type) {
-		
+		if (type == "printString") {
+			code << "addi $v0, $zero, 4" << endl;
+		} else if (type == "printInteger") {
+			code << "addi $v0, $zero, 1" << endl;
+		} else if (type == "printReal") {
+			code << "addi $v0, $zero, 2" << endl;
+		}
+		code << "syscall" << endl;
 	}
+
+
 };	
 
 	

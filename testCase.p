@@ -73,6 +73,21 @@ test unary expr
 test if stmt
 ////////////////////////////////////////////////////
 
+program HelloWorld;
+type 
+	int = integer;
+var 
+	result:int;
+
+procedure min(num1, num2:integer;var r:integer);
+begin
+	if (num1 < num2) then r := num1 else r:= num2;
+end;
+
+begin	
+	min(1,2);
+	writeln(result);
+end.
 
 
 ////////////////////////////////////////////////////
@@ -186,6 +201,7 @@ begin
 	ar[0] := b;
 end.
 
+
 ////////////////////////////////////////////////////
 test type check
 ////////////////////////////////////////////////////
@@ -199,3 +215,53 @@ var
 begin	
 	s:=k[i];
 end.
+
+
+
+
+
+program HelloWorld;
+type 
+	int = integer;
+	book = record 
+		id1 : integer;
+		id2 : integer;
+		id3 : integer;
+		name : integer;
+	end;
+var 
+	b1,b2 : book;
+	re : real;
+	ar : array[1..10] of book;
+	i : integer;
+begin	
+	b1.id1 := 1;
+	ar[1] := b1;
+	re := 1.1;
+
+	re := 2.2 * re;
+	writeln(b1.id1);
+	writeln(re);
+end.
+
+program HelloWorld;
+type 
+	int = integer;
+function max(num1, num2 :integer) :integer;
+var
+	result:int;
+function min(num1, num2:integer):integer;
+var 
+	r : int;
+	begin
+		if (num1 < num2) then min := num1
+		else min := num2;
+	end;
+begin
+	result := min(2,1);
+	writeln(result);
+end;
+begin	
+	max(1,2);
+end.
+

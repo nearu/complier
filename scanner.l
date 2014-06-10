@@ -29,8 +29,7 @@ whitespace [ \t]+
 name ({letter}|_)+({letter}|_|{digit})+
 
 %%
-"readln" {return SYS_FUNCT;}
-"writeln" {return SYS_FUNCT;}
+
 "and" { return AND;}
 "array" { return ARRAY;}
 ":=" { return ASSIGN;}
@@ -97,6 +96,7 @@ curLine = space;}
 "real"		{return SYS_TYPE;}
 "string"	{return SYS_TYPE;}
 "char"   	{return SYS_TYPE;}
+
 {id} {
 	TreeNode *t = new TreeNode(yytext);
 	yylval = t;
