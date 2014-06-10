@@ -1260,12 +1260,15 @@ string CaseExprTreeNode::typeCheck(Symtab *symtab){
 }
 
 string CallExprTreeNode::typeCheck(Symtab *symtab){
-	if(symtab->find(name)==NULL){
+	if(symtab->find(name)==NULL && name != "writeln" && name != "readln"){
 		cout << lineNO << ": " << "Can not find the function " << name << "." << endl;
 		return "failure";
 	}
+
 	SymBucket *func = symtab->find(name);
-	return func->last->getType();
+	if (func!=NULL)
+		return func->last->getType();
+	else return "none";
 }
 
 string RecordElemTreeNode::typeCheck(Symtab *symtab){

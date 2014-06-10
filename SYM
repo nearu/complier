@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 3 int:	integer
 10 min:	proc .. 7 num1:	integer	 at 0 .. 7 num2:	integer	 at 4 .. 7 r:	integer	 at 8
 ============begin min's symtab==================
@@ -7,5 +6,3 @@
 7 r:	integer	 at 8
 ============end min's symtab==================
 3 result:	integer	 at 0
-=======
->>>>>>> 5eaa6d7a246ac71c49cf02a1003eff96c462359f

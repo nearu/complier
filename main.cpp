@@ -67,11 +67,11 @@ int main(int argc, char *argv[]) {
 
   root->updateSymtab(mainSymtab);
   cout << "======================updateSymtab end=========================" << endl;
-  string result = root->typeCheck(mainSymtab);
-  cout << "=========================typeCheck end=========================" << endl;
-  if(result == "failure"){
-  	exit(1);
-  }
+  // string result = root->typeCheck(mainSymtab);
+  // cout << "=========================typeCheck end=========================" << endl;
+  // if(result == "failure"){
+  // 	exit(1);
+  // }
   mainSymtab->printSymtab(sym);
   cout << "===========================begin gencode=======================" << endl;
   root->genCode(mainSymtab);
