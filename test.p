@@ -1,15 +1,10 @@
 program HelloWorld;
-type 
-	int = integer;
-var 
-	s : int;
-	result:int;
+const
+	c = 123;
+var
+	v:integer;
 begin	
-	s := 0;
-	result := 0;
-	for s:=0 to 100 do
-	begin
-		result := result + s;
-	end;
-	writeln(result);
+	v:=456;
+	c:=v;
+	writeln(c);
 end.

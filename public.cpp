@@ -1254,7 +1254,7 @@ string ForStmtTreeNode::typeCheck(Symtab *symtab){
 
 string UnaryExprTreeNode::typeCheck(Symtab *symtab){
 	string type = operand->typeCheck(symtab);
-	if(type!="integer"){
+	if(type!="integer" && type!="const integer"){
 		cout << lineNO << ": " << "The right value must be an integer." << endl;
 		return "failure";
 	}
@@ -1264,16 +1264,16 @@ string UnaryExprTreeNode::typeCheck(Symtab *symtab){
 string BinaryExprTreeNode::typeCheck(Symtab *symtab) {
 	string ltype = lhs->typeCheck(symtab);
 	string rtype = rhs->typeCheck(symtab);
-	if(ltype == "integer" && rtype == "integer")
+	if(ltype == "integer" && (rtype == "integer" || rtype == "const integer"))
 		return "integer";
-	else if(ltype == "real" && rtype == "real")
+	else if(ltype == "real" && (rtype == "real" || rtype == "const real"))
 		return "real";
 	else if(ltype == "char"){
-		if(rtype == "char" || rtype == "string")
+		if(rtype == "char" || rtype == "string" || rtype == "const string" || rtype == "const char")
 			return "char";
 	}
 	else if(ltype == "string"){
-		if(rtype == "string" || rtype == "char")
+		if(rtype == "char" || rtype == "string" || rtype == "const string" || rtype == "const char")
 			return "string";
 	}
 	cout << lineNO << ": " << "Can not transform the type " << rtype << " to the type " << ltype << "." << endl;

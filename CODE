@@ -2,28 +2,13 @@
 .text
 add $fp,$sp,$zero
 addi $sp,$sp,-8
-addi $t0,$zero,0
+addi $t0,$zero,123
 sw $t0, 0($fp)
-addi $t1,$zero,0
-sw $t1, -4($fp)
-addi $t2,$zero,0
+addi $t0,$zero,456
+sw $t0, -4($fp)
+lw $t2, -4($fp)
 sw $t2, 0($fp)
-loop0:
-lw $t2, 0($fp)
-addi $t5,$zero,100
-slt $t4,$t5,$t2
-xori $t3,$t4,1
-beq $t3,$zero,break0
-lw $t4, -4($fp)
-lw $t5, 0($fp)
-add $t6,$t4,$t5
-sw $t6, -4($fp)
-lw $t4, 0($fp)
-addi $t4,$t4,1
-sw $t4, 0($fp)
-j loop0
-break0:
-lw $a0, -4($fp)
+lw $a0, 0($fp)
 addi $v0, $zero, 1
 syscall
 addi $sp,$sp,8
