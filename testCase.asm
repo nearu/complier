@@ -18,7 +18,11 @@ begin
 	i := i + 1 + 2 * (j - 1) / 2;
 	t := r - t/2.0 + 10.0 + r * 2.0;
 	writeln(i);
+	writeln(' ');
 	writeln(t);
+	j := -j + 1;
+	writeln(' ');
+	writeln(j);
 end.
 
 
@@ -125,7 +129,7 @@ begin
       'D' : writeln('You passed' );
       'F' : writeln('Better try again' );
    end;     
-   writeln('Your grade is  ', grade );
+   
 end.
 /////////////////////
 test copy record
@@ -151,6 +155,7 @@ begin
 
 	re := 2.2 * re;
 	writeln(b1.id1);
+	writeln(' ');
 	writeln(re);
 end.
 /////////////////////
@@ -165,4 +170,23 @@ begin
 end;
 begin
 	outbinary(100);
+end.
+
+/////////////////////
+test type check
+/////////////////////
+program HelloWorld;
+var 
+	i : integer;
+	j : char;
+	k : array[1..20] of char;
+function ff(h : real) : char;
+begin
+end;
+begin
+	
+	i := ff(i);
+	cc;
+	k[i] := k;
+	i := j;
 end.

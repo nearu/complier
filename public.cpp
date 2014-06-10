@@ -575,7 +575,7 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	return returnBucket;
 }
 
-SymBucket * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg){
+SymBucket * WhileStmtTreeNode::genCode(Symtab *symtab, int *reg) {
 	SymBucket *bucketR, *bucketL;
 	int regL, regR;
 	int locL, LocR;
