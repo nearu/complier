@@ -1,6 +1,8 @@
-7 a:	array .. 7 index:	subrange .. 7 subrange:	1 .. 7 subrange:	20 .. 7 array:	char
-7 aa:	array	 at 8 .. 7 index:	subrange .. 7 subrange:	1 .. 7 subrange:	20 .. 7 array:	char
-3 ccc:	integer	 at 0
-6 i:	integer	 at 6
-6 int:	integer
-4 sub:	string	 at 2
+3 int:	integer
+10 min:	proc .. 7 num1:	integer	 at 0 .. 7 num2:	integer	 at 4 .. 7 r:	integer	 at 8
+============begin min's symtab==================
+7 num1:	integer	 at 0
+7 num2:	integer	 at 4
+7 r:	integer	 at 8
+============end min's symtab==================
+3 result:	integer	 at 0

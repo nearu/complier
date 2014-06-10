@@ -1,8 +1,11 @@
  ProgramTreeNode 
  RoutineTreeNode 
  RoutineHead  CompoundStmtTreeNode 
- a list of const_value_list:2  a list of type_decl_list:2  a list of var_decl_list:2  a list of non routine part:0  a list of stmt:1 
- ConstTreeNode  ConstTreeNode  CustomTypeTreeNode:int  CustomTypeTreeNode:a  VariableTreeNode:i  VariableTreeNode:aa  BinaryExprTreeNode 
- BinaryExprTreeNode  VariableTreeNode:i 
- NumberTreeNode  BinaryExprTreeNode 
- VariableTreeNode:i  NumberTreeNode 
+ a list of non const part:0  a list of type_decl_list:1  a list of var_decl_list:1  a list of procedure_decl_list:1  a list of stmt:2 
+ CustomTypeTreeNode:int  VariableTreeNode:result  FunctionTreeNode  BinaryExprTreeNode  BinaryExprTreeNode 
+ a list of para_type_list:2  RoutineTreeNode 
+ VariableTreeNode:num1num2  VariableTreeNode:r  RoutineHead  CompoundStmtTreeNode 
+ a list of non const part:0  a list of non type part:0  a list of non var part:0  a list of non routine part:0  a list of stmt:1 
+ IfStmtTreeNode 
+ BinaryExprTreeNode  BinaryExprTreeNode 
+ VariableTreeNode:num2  VariableTreeNode:num1  VariableTreeNode:num1  VariableTreeNode:r 

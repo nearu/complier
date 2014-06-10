@@ -29,6 +29,7 @@ extern ofstream ast;
 extern ofstream code;
 extern ofstream sym;
 extern map<string,string> constStringMap;
+extern map<string,string> constRealMap;
 class Symtab;
 class SymBucket;
 static int constStringNumber;
@@ -599,6 +600,9 @@ public:
 	TreeNode * getlhs() { return lhs; }
 
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
+
+	// SymBucket *genCodeFloat(Symtab *symtab, SymBucket *bucketR, SymBucket *bucketL,
+	// 										int regR, int regL, int *reg);
 };
 
 /*
@@ -618,7 +622,7 @@ public:
 		ast << "BinaryExprTreeNode";
 	}
 	SymBucket *genCode(Symtab *symtab, int *reg = NULL );
-	void genSysFunc(Symtab *symtab);
+	void genSysFunc(Symtab *symtab, string name);
 };
 
 class CaseExprTreeNode : public ExprTreeNode {
@@ -722,22 +726,20 @@ private:
 	ExprTreeNode *condition;
 	CompoundStmtTreeNode *body;
 	StmtTreeNode *elsePart;
-	void addChildren() {
-		children.push_back(condition);
-		children.push_back(body);
-		children.push_back(elsePart);
-	}
 public:
 	IfStmtTreeNode( TreeNode *e,  TreeNode *c)
 				:condition((ExprTreeNode*)e), body((CompoundStmtTreeNode*)c)
 	{
-		addChildren();
+		children.push_back(condition);
+		children.push_back(body);
 	}
-	IfStmtTreeNode( TreeNode *e,  TreeNode *c,
-		 TreeNode *s)
+	IfStmtTreeNode( TreeNode *e,  TreeNode *c,TreeNode *s)
 				:condition((ExprTreeNode*)e), body((CompoundStmtTreeNode*)c),elsePart((StmtTreeNode*)s){
-					addChildren();
-				}	
+		children.push_back(condition);
+		children.push_back(body);
+		if (elsePart != NULL)
+			children.push_back(elsePart);		
+	}	
 	void printSelf() {
 		ast << "IfStmtTreeNode";
 	}							

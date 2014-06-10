@@ -91,7 +91,9 @@ EQUAL  const_value  SEMI {
 }
 ;
 const_value : INTEGER     {tp("const value 1");$$ = new NumberTreeNode(currentToken, "integer");}
-              |  REAL     {tp("const value 2");$$ = new NumberTreeNode(currentToken, "real");}
+              |  REAL     {tp("const value 2");$$ = new NumberTreeNode(currentToken, "real");
+                          constRealMap[currentToken] = labelManager->getRealLabel();
+                          }
               |  CHAR     {tp("const value 3");$$ = new NumberTreeNode(currentToken, "char");}
               |  STRING   {tp("const value 4");$$ = new NumberTreeNode(currentToken, "string");
                           constStringMap[currentToken] = labelManager->getStringLabel();
