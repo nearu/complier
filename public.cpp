@@ -509,7 +509,9 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		regManager->freeReg(tmpReg);
 	} else if (regL == -1 && regR > 0) {
 		if (op == "=") {
-			if (bucketL->getType() == "char" && bucketR->getType() == "string") {
+			cout << "ltype = " << bucketL->getType() << endl;
+			cout << "rtype = " << bucketR->getType() << endl;
+			if (bucketL->getType() == "char" && bucketR->getType() == "string"){
 				int tmpReg = regManager->getTmpReg();
 				CodeGenerator::emitCodeM(getSize("char"),loadOPR, 0,regR, tmpReg);
 				CodeGenerator::emitCodeM(getSize("char"),storeOPL, locL,FP, tmpReg);

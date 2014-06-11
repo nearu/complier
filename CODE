@@ -1,41 +1,18 @@
 .data
 string0: .asciiz " "
-real0: .float  1.1
-real1: .float  2.2
 .text
 add $fp,$sp,$zero
 addi $sp,$sp,-184
 addi $t0,$zero,1
-sw $t0, -12($fp)
-add $t6,$fp,$zero
-add $t7,$fp,$zero
-add $t4,$zero,$zero
+sw $t0, -164($fp)
+addi $t1,$zero,1
+sw $t1, -12($fp)
+lw $t2, -164($fp)
+addi $t3,$zero,16
+mul $t4,$t2,$t3
+addi $t4,$t4,20
+add $s0,$fp,$zero
+add $s1,$fp,$zero
+add $t6,$zero,$zero
 copy1:
-lw $t5, 0($t6)
-sw $t5, -36($t7)
-addi $t6,$t6,-4
-addi $t7,$t7,-4
-addi $t4,$t4,1
-slti $s0,$t4,4
-bne $s0,$zero,copy1
-la $t1 real0
-l.s $f4, 0($t1)
-s.s $f4, -16($fp)
-la $t1 real1
-l.s $f4, 0($t1)
-l.s $f5, -16($fp)
-mul.s $f6,$f4,$f5
-s.s $f6, -16($fp)
-lw $a0, -12($fp)
-addi $v0, $zero, 1
-syscall
-la $t1 string0
-add $a0,$t1,$zero
-addi $v0, $zero, 4
-syscall
-l.s $f12, -16($fp)
-addi $v0, $zero, 2
-syscall
-addi $sp,$sp,184
-j exit
-exit:
+lw $t7, 0($s0)

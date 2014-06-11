@@ -64,7 +64,7 @@
 16 term 5
 16 expr 4
 16 expression 7
-16 assign stmt 3
+16 assign stmt 1
 16 non_label_stmt 1
 16 stmt 2
 16 stmt list 1
@@ -73,35 +73,45 @@
 17 term 5
 17 expr 4
 17 expression 7
-17 factor 1
-17 term 5
-17 expr 4
-17 expression 7
-17 assign stmt 2
+17 assign stmt 3
 17 non_label_stmt 1
 17 stmt 2
 17 stmt list 1
-18 const value 2
-18 factor 5
+18 factor 1
 18 term 5
 18 expr 4
 18 expression 7
-18 assign stmt 1
+18 factor 1
+18 term 5
+18 expr 4
+18 expression 7
+18 assign stmt 2
 18 non_label_stmt 1
 18 stmt 2
 18 stmt list 1
-20 const value 2
-20 factor 5
+19 factor 1
+19 term 5
+19 expr 4
+19 expression 7
+19 factor 9
+19 term 5
+19 expr 4
+19 expression 7
+19 assign stmt 1
+19 non_label_stmt 1
+19 stmt 2
+19 stmt list 1
+20 factor 10
 20 term 5
-20 factor 1
-20 term 1
 20 expr 4
 20 expression 7
-20 assign stmt 1
-20 non_label_stmt 1
+20 args_list 2
+20 proc_stmt 2
+20 non_label_stmt 2
 20 stmt 2
 20 stmt list 1
-21 factor 10
+21 const value 4
+21 factor 5
 21 term 5
 21 expr 4
 21 expression 7
@@ -110,26 +120,23 @@
 21 non_label_stmt 2
 21 stmt 2
 21 stmt list 1
-22 const value 4
-22 factor 5
+22 factor 1
 22 term 5
 22 expr 4
+22 factor 1
+22 term 5
+22 expr 1
+22 factor 1
+22 term 5
+22 factor 1
+22 term 1
+22 expr 2
 22 expression 7
-22 args_list 2
-22 proc_stmt 2
-22 non_label_stmt 2
+22 assign stmt 1
+22 non_label_stmt 1
 22 stmt 2
 22 stmt list 1
-23 factor 1
-23 term 5
-23 expr 4
-23 expression 7
-23 args_list 2
-23 proc_stmt 2
-23 non_label_stmt 2
-23 stmt 2
-23 stmt list 1
-24 compound stmt
-24 routine_body
-24 routine
-24 pargram
+23 compound stmt
+23 routine_body
+23 routine
+23 pargram
