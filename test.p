@@ -1,23 +1,17 @@
 program HelloWorld;
-type 
-	int = integer;
-	book = record 
-		id1 : integer;
-		id2 : integer;
-		id3 : integer;
-		name : integer;
-	end;
+const 
+	con = 10;
 var 
-	b1,b2 : book;
-	re : real;
-	ar : array[1..10] of book;
 	i : integer;
-begin	
-	i := 1;
-	b1.id1 := 1;
-	ar[i] := b1;
-	b2 := ar[i];
-	writeln(b2.id1);
-	writeln(' ');
-	re := re + re - re * re;
+	j : char;
+	k : array[1..20] of char;
+function ff(h : real) : char;
+begin
+end;
+begin
+	con := 100;
+	i := ff(i,i);
+	cc;
+	k[i] := k;
+	i := j;
 end.

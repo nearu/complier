@@ -1,52 +1,53 @@
 .data
+string0: .asciiz " "
 .text
 add $fp,$sp,$zero
-addi $sp,$sp,-16
-sw $ra, 16($sp)
-sw $v1, 12($sp)
-sw $fp, 8($sp)
-addi $t0,$fp,4
-sw $t0, 4($sp)
-addi $t0,$zero,100
-sw $t0, 0($sp)
-addi $fp,$sp,0
-jal outbinary
-lw $ra, 16($sp)
-lw $v0, 12($sp)
-lw $fp, 8($sp)
-addi $sp,$sp,16
-j exit
-outbinary:
-addi $sp,$sp,-4
-lw $t1, 0($fp)
-addi $t2,$zero,2
-div $t0,$t1,$t2
-addi $t3,$zero,0
-slt $t1,$t3,$t0
-beq $t1,$zero,endif0
-addi $sp,$sp,-16
-sw $ra, 16($sp)
-sw $v1, 12($sp)
-sw $fp, 8($sp)
-addi $t0,$fp,4
-sw $t0, 4($sp)
-lw $t3, 0($fp)
-addi $t4,$zero,2
-div $t2,$t3,$t4
-sw $t2, 0($sp)
-addi $fp,$sp,0
-jal outbinary
-lw $ra, 16($sp)
-lw $v0, 12($sp)
-lw $fp, 8($sp)
-addi $sp,$sp,16
-endif0:
-lw $t1, 0($fp)
-addi $t3,$zero,2
-rem $t0,$t1,$t3
-add $a0,$t0,$zero
+addi $sp,$sp,-184
+addi $t0,$zero,1
+sw $t0, -164($fp)
+addi $t1,$zero,1
+sw $t1, -12($fp)
+lw $t2, -164($fp)
+addi $t3,$zero,16
+mul $t4,$t2,$t3
+addi $t4,$t4,20
+add $s0,$fp,$zero
+add $s1,$fp,$zero
+addi $s0,$s0,0
+add $s1,$s1,$t4
+add $t6,$zero,$zero
+copy1:
+lw $t7, 0($s0)
+sw $t7, 0($s1)
+addi $s0,$s0,-4
+addi $s1,$s1,-4
+addi $t6,$t6,1
+slti $s2,$t6,4
+bne $s2,$zero,copy1
+lw $t2, -164($fp)
+addi $t3,$zero,16
+mul $t6,$t2,$t3
+addi $t6,$t6,20
+add $s2,$fp,$zero
+add $s3,$fp,$zero
+add $s2,$s2,$t6
+addi $s3,$s3,0
+add $s0,$zero,$zero
+copy2:
+lw $s1, 0($s2)
+sw $s1, 0($s3)
+addi $s2,$s2,-4
+addi $s3,$s3,-4
+addi $s0,$s0,1
+slti $s4,$s0,4
+bne $s4,$zero,copy2
+lw $a0, -28($fp)
 addi $v0, $zero, 1
 syscall
-addi $sp,$sp,4
-jr $ra
+la $t2 string0
+add $a0,$t2,$zero
+addi $v0, $zero, 4
+syscall
+addi $sp,$sp,184
+j exit
 exit:

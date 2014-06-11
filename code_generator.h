@@ -409,7 +409,6 @@ public:
 		// find correct FP
 		findFP(op, localOP, regAddr);
 		//regAddr = tmpAC;
-		cout << "ttttt" << endl;
 		if (localOP == "load" || localOP == "load_reg" || localOP == "load_ref") {
 			if (!isFloat)
 				instr = loadInstr[size];
@@ -420,7 +419,6 @@ public:
 			else 
 				instr = ss;
 		}
-		cout << "ttttt" << endl;
 		if (localOP == "load" || localOP == "store") {
 			sprintf(ch,"%d",offset);
 			c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
@@ -430,10 +428,8 @@ public:
 			ch[0] = '\0';
 			sprintf(ch, "0");
 			string c1 = "add " + regTable[offset] + ", " + regTable[offset] + ", " + regTable[regAddr];
-			cout << "ttttt" << endl;
 			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[offset] + ")";
 			code << c1 << endl << c << endl;
-			cout << "ttttt" << endl;
 		} else if (localOP == "load_ref" || localOP == "store_ref") {
 			int tmp = regManager->getTmpReg();
 			CodeGenerator::emitCodeM(4, "load", offset, regAddr, tmp);
@@ -455,7 +451,6 @@ public:
 		char ch[8] = {0,};
 		sprintf(ch, "%d", loopNum);
 		s += ch;
-		cout << "yyyy" << endl;
 		int loop = regManager->getTmpReg();
 		int tmp  = regManager->getTmpReg();
 		string localLoadOP = loadOP, localStoreOP = storeOP;
@@ -468,12 +463,10 @@ public:
 			addrRegSrc = regManager->getTmpReg();
 			CodeGenerator::emitCodeR("+", addrRegSrc, addrReg, 0);
 		}
-		cout << "yyyy" << endl;
 		if (addrRegDst == addrReg) {
 			addrRegDst = regManager->getTmpReg();
 			CodeGenerator::emitCodeR("+", addrRegDst, addrReg, 0);
 		}
-		cout << "yyyy" << endl;
 		if (loadOP.find("reg") != string::npos) {
 			CodeGenerator::emitCodeR("+", addrRegSrc, addrRegSrc, srcOffset);
 		} else {
@@ -488,10 +481,8 @@ public:
 		CodeGenerator::addLabel(s);
 		CodeGenerator::emitCodeM(copysize, "load",0, addrRegSrc, tmp);
 		CodeGenerator::emitCodeM(copysize, "store",0, addrRegDst, tmp);
-		cout << "yyyy" << endl;
 		CodeGenerator::emitCodeI("+", addrRegSrc, addrRegSrc, -copysize);
 		CodeGenerator::emitCodeI("+", addrRegDst, addrRegDst, -copysize);
-		cout << "yyyy" << endl;
 		CodeGenerator::emitCodeI("+",loop,loop,1);
 		int tmp2 = regManager->getTmpReg();
 		CodeGenerator::emitCodeI("<",tmp2,loop,loopTime);

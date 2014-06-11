@@ -1,8 +1,8 @@
  ProgramTreeNode 
  RoutineTreeNode 
  RoutineHead  CompoundStmtTreeNode 
- a list of non const part:0  a list of type_decl_list:2  a list of var_decl_list:4  a list of non routine part:0  a list of stmt:7 
- CustomTypeTreeNode:int  CustomTypeTreeNode:book  VariableTreeNode:b1b2  VariableTreeNode:re  VariableTreeNode:ar  VariableTreeNode:i  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode 
- NumberTreeNode  VariableTreeNode:i  NumberTreeNode  RecordElemTreeNode:b1.id1  VariableTreeNode:b1  ArrayElemTreeNode:ar  ArrayElemTreeNode:ar  VariableTreeNode:b2  BinaryExprTreeNode  VariableTreeNode:re 
- BinaryExprTreeNode  BinaryExprTreeNode 
- VariableTreeNode:re  VariableTreeNode:re  VariableTreeNode:re  VariableTreeNode:re 
+ a list of const_value_list:1  a list of non type part:0  a list of var_decl_list:3  a list of function_decl_list:1  a list of stmt:5 
+ ConstTreeNode  VariableTreeNode:i  VariableTreeNode:j  VariableTreeNode:k  FunctionTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode  BinaryExprTreeNode 
+ a list of para_type_list:1  RoutineTreeNode  NumberTreeNode  VariableTreeNode:con  BinaryExprTreeNode  VariableTreeNode:i  VariableTreeNode:k  ArrayElemTreeNode:k  VariableTreeNode:j  VariableTreeNode:i 
+ VariableTreeNode:h  RoutineHead  CompoundStmtTreeNode 
+ a list of non const part:0  a list of non type part:0  a list of non var part:0  a list of non routine part:0  a list of stmt:0 

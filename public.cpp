@@ -152,12 +152,14 @@ void childrenUpdateSymtab(vector<TreeNode*>& children, Symtab *symtab) {
 }
 
 string childrenTypeCheck(vector<TreeNode*>& children, Symtab *symtab) {
+	string s;
+	s = "success";
 	for(int i = 0; i < children.size(); i++) {
 		if((children[i]->typeCheck(symtab))=="failure") {
-			return "failure";
+			s = "failure";
 		}
 	}
-	return children[0]->typeCheck(symtab);
+	return s;
 }
 
 
@@ -225,8 +227,10 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 		} else {
 			SymBucket *tmpBucket;
 			// need to gencode to allocate memory in stack for these variables.
+
 			if (type.find("record") != string::npos) {
 				SymBucket *member = b->next;
+				b->setLoc(symtab->genLoc(0));
 				do {
 					member->setLoc(env->genLoc(member->getSize()));
 					member = member->last->next;
@@ -1222,21 +1226,25 @@ string IfStmtTreeNode::typeCheck(Symtab *symtab){
 	string s1 = condition->typeCheck(symtab);
 	string s2 = body->typeCheck(symtab);
 	string s3 = elsePart->typeCheck(symtab);
-	if(s1 != "failure" && s2 != "failure" && (s3 == NULL? 1 : (s3!="failure"))){
+	if(s1 != "failure" && s2 != "failure" && (elsePart == NULL? 1 : (s3!="failure"))){
 		return "success";
 	}
 	 return "failure";
 }
 
 string RepeatStmtTreeNode::typeCheck(Symtab *symtab){
-	if(((condition->typeCheck(symtab))!="failure")&&((body->typeCheck(symtab))!="failure")){
+	string s1 = condition->typeCheck(symtab);
+	string s2 = body->typeCheck(symtab);
+	if(s1!="failure" && s2!="failure"){
 		return "success";
 	}
 	return "failure";
 }
 
 string WhileStmtTreeNode::typeCheck(Symtab *symtab){
-	if(((condition->typeCheck(symtab))!="failure")&&((body->typeCheck(symtab))!="failure")){
+	string s1 = condition->typeCheck(symtab);
+	string s2 = body->typeCheck(symtab);
+	if(s1!="failure" && s2!="failure"){
 		return "success";
 	}
 	return "failure";
@@ -1244,14 +1252,20 @@ string WhileStmtTreeNode::typeCheck(Symtab *symtab){
 
 string SwitchStmtTreeNode::typeCheck(Symtab *symtab){
 
-	if(((expr->typeCheck(symtab))!="failure")&&((caseExprList->typeCheck(symtab))!="failure"))
+	string s1 = expr->typeCheck(symtab);
+	string s2 = caseExprList->typeCheck(symtab);
+	if(s1!="failure" && s2!="failure"){
 		return "success";
+	}
 
 	return "failure";
 }
 
 string ForStmtTreeNode::typeCheck(Symtab *symtab){
-	if(((assignExpr->typeCheck(symtab))!="failure")&&((dirExpr->typeCheck(symtab))!="failure")&&((body->typeCheck(symtab))!="failure")){
+	string s1 = assignExpr->typeCheck(symtab);
+	string s2 = dirExpr->typeCheck(symtab);
+	string s3 = body->typeCheck(symtab);
+	if(s1 != "failure" && s2 != "failure" && s3!="failure"){
 		return "success";
 	}
 	return "failure";
@@ -1312,23 +1326,19 @@ string CallExprTreeNode::typeCheck(Symtab *symtab){
 	cout << "in call type check " << name << endl;
 	if (func != NULL) {
 		SymBucket * member = func->next;
-		cout << "xxxxxx" << i<< endl;
 		do {
 			string argType = args[i]->typeCheck(symtab);
 			if (member->getIsRef() && argType.find("const") != string::npos) {
 				cout << lineNO << " : const value can not be passed to var type argument" << endl;
 				return "failure";
 			}
-			cout << "xxxxxx" << i<< endl;
 			string memberType = member->getType();
 			if (argType.find(memberType) == string::npos)  {
 				cout << lineNO << " : argument " << i << " type dismatch " << endl;
 				return "failure";
 			}
-			cout << "xxxxxx" << i<< endl;
 			i++;
 			member = member->last->next;
-			cout << "xxxxxx" << i<< endl;
 		} while (member != func->last && member != func);
 		if (i < args.size()) {
 			cout << lineNO << " : argument number is not match " << endl;
