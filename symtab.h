@@ -50,7 +50,7 @@ class SymBucket {
 
 	void _print(ofstream &out) {
 		if (location != -1)
-			out << lineNO << " " << name << ":\t" << type << "\t at " << location;
+			out << lineNO << " " << name << ":\t" << type << "\t at " << location ;
 		else if (regNum != -1)
 			out << lineNO << " " << name << ":\t" << type << "\t at reg " << regNum;
 		else 
@@ -65,7 +65,7 @@ public:
 	SymBucket 		*ref;
 	SymBucket(const string _name, int _lineNO, const string _type, Symtab* _curSymtab)
 		:name(_name),lineNO(_lineNO), type(_type), curSymtab(_curSymtab),nextSymtab(NULL),
-		location(-1), next(this), regNum(-1),last(this),ref(NULL),isType(0),
+		location(-1), next(this), regNum(-1),last(this),ref(NULL),isType(0),isConst(0),
 		isRef(0), isVar(0), intImme(0)
 		{}
 	SymBucket(const SymBucket* that) : type(that->type){
@@ -83,6 +83,7 @@ public:
 		nextSymtab 	= NULL;
 		last 		= this;
 		next 		= this;
+		isConst     = 0;
 //		offsetReg 	= -1;
 	}
 /////////////////////////////////////////////////////

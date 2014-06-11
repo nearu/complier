@@ -21,5 +21,5 @@ begin
 	b2 := ar[i];
 	writeln(b2.id1);
 	writeln(' ');
-	
+	re := re + re - re * re;
 end.
