@@ -1311,23 +1311,19 @@ string CallExprTreeNode::typeCheck(Symtab *symtab){
 	cout << "in call type check " << name << endl;
 	if (func != NULL) {
 		SymBucket * member = func->next;
-		cout << "xxxxxx" << i<< endl;
 		do {
 			string argType = args[i]->typeCheck(symtab);
 			if (member->getIsRef() && argType.find("const") != string::npos) {
 				cout << lineNO << " : const value can not be passed to var type argument" << endl;
 				return "failure";
 			}
-			cout << "xxxxxx" << i<< endl;
 			string memberType = member->getType();
 			if (argType.find(memberType) == string::npos)  {
 				cout << lineNO << " : argument " << i << " type dismatch " << endl;
 				return "failure";
 			}
-			cout << "xxxxxx" << i<< endl;
 			i++;
 			member = member->last->next;
-			cout << "xxxxxx" << i<< endl;
 		} while (member != func->last && member != func);
 		if (i < args.size()) {
 			cout << lineNO << " : argument number is not match " << endl;
