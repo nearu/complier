@@ -1226,6 +1226,10 @@ string VariableTreeNode::typeCheck(Symtab *symtab){
 string ArrayElemTreeNode::typeCheck(Symtab *symtab){
 	SymBucket * b = symtab->find(name);
 	if (b == NULL || b->getType()!= "array") {
+		if (b == NULL) 
+			cout << lineNO << " : name is not defined."  << endl;
+		else 
+			cout << lineNO << " : name is not a array type."  << endl;
 		return "failure";
 	} else {
 		return b->next->last->next->getType();
@@ -1339,7 +1343,6 @@ string CallExprTreeNode::typeCheck(Symtab *symtab){
 
 	SymBucket *func = symtab->find(name);
 	int i = 0;
-	cout << "in call type check " << name << endl;
 	if (func != NULL) {
 		SymBucket * member = func->next;
 		do {
