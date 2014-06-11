@@ -1,61 +1,56 @@
 .data
-string0: .asciiz " "
+string3: .asciiz "A"
+string5: .asciiz "B"
+string10: .asciiz "Better try again"
+string7: .asciiz "D"
+string4: .asciiz "Excellent!"
+string9: .asciiz "F"
+string6: .asciiz "Well done"
+string8: .asciiz "You passed"
 .text
 add $fp,$sp,$zero
-addi $sp,$sp,-184
-addi $t0,$zero,1
-sw $t0, -180($fp)
-addi $t1,$zero,1
-sw $t1, -12($fp)
-lw $t2, -180($fp)
-addi $t3,$zero,16
-mul $t4,$t2,$t3
-addi $t4,$t4,36
-add $s0,$fp,$zero
-add $s1,$fp,$zero
-addi $s0,$s0,0
-add $s1,$s1,$t4
-add $t6,$zero,$zero
-copy1:
-lw $t7, 0($s0)
-sw $t7, 0($s1)
-addi $s0,$s0,-4
-addi $s1,$s1,-4
-addi $t6,$t6,1
-slti $s2,$t6,4
-bne $s2,$zero,copy1
-lw $t2, -180($fp)
-addi $t3,$zero,16
-mul $t6,$t2,$t3
-addi $t6,$t6,36
-add $s2,$fp,$zero
-add $s3,$fp,$zero
-add $s2,$s2,$t6
-addi $s3,$s3,-16
-add $s0,$zero,$zero
-copy2:
-lw $s1, 0($s2)
-sw $s1, 0($s3)
-addi $s2,$s2,-4
-addi $s3,$s3,-4
-addi $s0,$s0,1
-slti $s4,$s0,4
-bne $s4,$zero,copy2
-lw $a0, -28($fp)
-addi $v0, $zero, 1
-syscall
-la $t2 string0
-add $a0,$t2,$zero
+addi $sp,$sp,-9
+la $t0 string5
+sw $t0, 0($fp)
+la $t0 string3
+lb $t1, 0($t0)
+sb $t1, -4($fp)
+la $t0 string5
+lb $t2, 0($t0)
+sb $t2, -5($fp)
+lb $t0, -5($fp)
+la $t3 string3
+lb $t3, 0($t3)
+bne $t3,$t0,nextcase0
+la $t3 string4
+add $a0,$t3,$zero
 addi $v0, $zero, 4
 syscall
-l.s $f6, -32($fp)
-l.s $f8, -32($fp)
-mul.s $f9,$f6,$f8
-l.s $f6, -32($fp)
-l.s $f8, -32($fp)
-add.s $f10,$f6,$f8
-sub.s $f6,$f9,$f10
-s.s $f6, -32($fp)
-addi $sp,$sp,184
+nextcase0:
+la $t3 string5
+lb $t3, 0($t3)
+bne $t3,$t0,nextcase1
+la $t3 string6
+add $a0,$t3,$zero
+addi $v0, $zero, 4
+syscall
+nextcase1:
+la $t3 string7
+lb $t3, 0($t3)
+bne $t3,$t0,nextcase2
+la $t3 string8
+add $a0,$t3,$zero
+addi $v0, $zero, 4
+syscall
+nextcase2:
+la $t3 string9
+lb $t3, 0($t3)
+bne $t3,$t0,nextcase3
+la $t3 string10
+add $a0,$t3,$zero
+addi $v0, $zero, 4
+syscall
+nextcase3:
+addi $sp,$sp,9
 j exit
 exit:

@@ -684,19 +684,29 @@ SymBucket * ForStmtTreeNode::genCode(Symtab *symtab, int *reg){
 }
 
 SymBucket * SwitchStmtTreeNode::genCode(Symtab *symtab, int *reg){
+	cout << "sg" << endl;
 	SymBucket *bucketE, *bucketLD;
 	int regE;	
 	string loadOPE, storeOPE;
 	int locE;
+	cout << expr << endl;
 	bucketE = expr->genCode(symtab,&regE);
 	selectOP(bucketE,regE,loadOPE,storeOPE,locE, symtab->getLevel());
 	if(regE == -1){
 		int tmp = regManager->getTmpReg();
-		CodeGenerator::emitCodeM(bucketE ->getSize(),loadOPE, locE, FP, tmp);
+		if (bucketE != NULL && bucketE->getType() == "string") {
+			CodeGenerator::emitCodeM(4,loadOPE, locE, FP, tmp);
+			CodeGenerator::emitCodeM(getSize("char"),"load", 0, tmp, tmp);
+		} else {
+			CodeGenerator::emitCodeM(bucketE->getSize(),loadOPE, locE, FP, tmp);
+		}
 		bucketLD = caseExprList->genCode(symtab,&tmp);
 		regManager->freeReg(tmp);
 	}
-	else{
+	else if (regE > 0) {
+		if (bucketE != NULL && bucketE->getType() == "string") {
+			CodeGenerator::emitCodeM(getSize("char"),"load", 0, regE, regE);
+		}
 		bucketLD = caseExprList->genCode(symtab,&regE);
 	}
 	regManager->freeReg(regE);
@@ -732,6 +742,7 @@ SymBucket * CaseExprTreeNode::genCode(Symtab *symtab, int *reg){
 		s = "nextcase" + intTostring(x);
 		// 假定上面的switch的就是char
 		if (bucketID->getType() == "string") {
+			cout << "switch string !!!!!!" << endl;
 			CodeGenerator::emitCodeM(getSize("char"), "load", 0, regID, regID);
 		}
 		CodeGenerator::emitCodeJ("bne",regID,regE,0,s); 

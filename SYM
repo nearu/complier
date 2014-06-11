@@ -1,7 +1,0 @@
-13 ar:	array	 at 36 isConst = 0 .. 13 index:	subrange .. 13 subrange:	1 .. 13 subrange:	10 .. 9 array:	record	 at 0 isConst = 0 .. 8 name:	integer .. 7 id3:	integer .. 6 id2:	integer .. 5 id1:	integer
-9 b1:	record	 at 0 isConst = 0 .. 8 name:	integer	 at 0 isConst = 0 .. 7 id3:	integer	 at 4 isConst = 0 .. 6 id2:	integer	 at 8 isConst = 0 .. 5 id1:	integer	 at 12 isConst = 0
-9 b2:	record	 at 16 isConst = 0 .. 8 name:	integer	 at 16 isConst = 0 .. 7 id3:	integer	 at 20 isConst = 0 .. 6 id2:	integer	 at 24 isConst = 0 .. 5 id1:	integer	 at 28 isConst = 0
-9 book:	record	 at 0 isConst = 0 .. 8 name:	integer .. 7 id3:	integer .. 6 id2:	integer .. 5 id1:	integer
-14 i:	integer	 at 180 isConst = 0
-3 int:	integer
-12 re:	real	 at 32 isConst = 0
