@@ -395,7 +395,8 @@ public:
 	// load_reg , store_reg means that offset现在保存了一个寄存器号，这个寄存器中有偏移量
 	static void emitCodeM(int size, const string op, int offset, int regAddr, int reg, int isFloat = 0) {
 		if (traceEmit) cout << "emit M " << "op = " << op << " size = " << size << " offset = " << offset <<  endl;
-		offset = -offset;
+		if (op.find("reg") == string::npos)
+			offset = -offset;
 		string c;
 		char loadInstr[][4] = {"", "lb", "lh", "","lw"};
 		char storeInstr[][4] = {"", "sb", "sh", "","sw"};
@@ -408,7 +409,7 @@ public:
 		// find correct FP
 		findFP(op, localOP, regAddr);
 		//regAddr = tmpAC;
-
+		cout << "ttttt" << endl;
 		if (localOP == "load" || localOP == "load_reg" || localOP == "load_ref") {
 			if (!isFloat)
 				instr = loadInstr[size];
@@ -419,17 +420,20 @@ public:
 			else 
 				instr = ss;
 		}
+		cout << "ttttt" << endl;
 		if (localOP == "load" || localOP == "store") {
 			sprintf(ch,"%d",offset);
 			c = instr +  " "  + regTable[reg] + ", " + ch + "(" + regTable[regAddr]+")";
 			code << c << endl;
 		} else if (localOP == "load_reg" || localOP =="store_reg") {
+			cout << offset << " " << regAddr << endl;
 			ch[0] = '\0';
 			sprintf(ch, "0");
 			string c1 = "add " + regTable[offset] + ", " + regTable[offset] + ", " + regTable[regAddr];
+			cout << "ttttt" << endl;
 			c = instr + " " + regTable[reg] + ", " + ch + "(" + regTable[offset] + ")";
-			regManager->freeReg(offset);
 			code << c1 << endl << c << endl;
+			cout << "ttttt" << endl;
 		} else if (localOP == "load_ref" || localOP == "store_ref") {
 			int tmp = regManager->getTmpReg();
 			CodeGenerator::emitCodeM(4, "load", offset, regAddr, tmp);
@@ -451,7 +455,7 @@ public:
 		char ch[8] = {0,};
 		sprintf(ch, "%d", loopNum);
 		s += ch;
-		
+		cout << "yyyy" << endl;
 		int loop = regManager->getTmpReg();
 		int tmp  = regManager->getTmpReg();
 		string localLoadOP = loadOP, localStoreOP = storeOP;
@@ -464,25 +468,30 @@ public:
 			addrRegSrc = regManager->getTmpReg();
 			CodeGenerator::emitCodeR("+", addrRegSrc, addrReg, 0);
 		}
+		cout << "yyyy" << endl;
 		if (addrRegDst == addrReg) {
 			addrRegDst = regManager->getTmpReg();
 			CodeGenerator::emitCodeR("+", addrRegDst, addrReg, 0);
 		}
-		CodeGenerator::emitCodeR("+",loop,0,0);
-		CodeGenerator::addLabel(s);
-		CodeGenerator::emitCodeM(copysize, localLoadOP,srcOffset, addrRegSrc, tmp);
-		CodeGenerator::emitCodeM(copysize, localStoreOP,dstOffset, addrRegDst, tmp);
-		
+		cout << "yyyy" << endl;
 		if (loadOP.find("reg") != string::npos) {
-			CodeGenerator::emitCodeI("+", srcOffset, srcOffset, -copysize);
+			CodeGenerator::emitCodeR("+", addrRegSrc, addrRegSrc, srcOffset);
 		} else {
-			CodeGenerator::emitCodeI("+", addrRegSrc, addrRegSrc, -copysize);
+			CodeGenerator::emitCodeI("+", addrRegSrc, addrRegSrc, -srcOffset);
 		}
 		if (storeOP.find("reg") != string::npos) {
-			CodeGenerator::emitCodeI("+", dstOffset, dstOffset, -copysize);
+			CodeGenerator::emitCodeR("+", addrRegDst, addrRegDst, dstOffset);
 		} else {
-			CodeGenerator::emitCodeI("+", addrRegDst, addrRegDst, -copysize);
+			CodeGenerator::emitCodeI("+", addrRegDst, addrRegDst, -dstOffset);
 		}
+		CodeGenerator::emitCodeR("+",loop,0,0);
+		CodeGenerator::addLabel(s);
+		CodeGenerator::emitCodeM(copysize, "load",0, addrRegSrc, tmp);
+		CodeGenerator::emitCodeM(copysize, "store",0, addrRegDst, tmp);
+		cout << "yyyy" << endl;
+		CodeGenerator::emitCodeI("+", addrRegSrc, addrRegSrc, -copysize);
+		CodeGenerator::emitCodeI("+", addrRegDst, addrRegDst, -copysize);
+		cout << "yyyy" << endl;
 		CodeGenerator::emitCodeI("+",loop,loop,1);
 		int tmp2 = regManager->getTmpReg();
 		CodeGenerator::emitCodeI("<",tmp2,loop,loopTime);
@@ -492,6 +501,7 @@ public:
 		regManager->freeReg(tmp);
 		regManager->freeReg(tmp2);
 		regManager->freeReg(loop);
+		cout << "yyyy" << endl;
 	}
 
 	static void emitCodeConstStr(string constStr, string label) {

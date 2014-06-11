@@ -149,14 +149,12 @@ var
 	ar : array[1..10] of book;
 	i : integer;
 begin	
+	i := 1;
 	b1.id1 := 1;
-	ar[1] := b1;
-	re := 1.1;
-
-	re := 2.2 * re;
-	writeln(b1.id1);
+	ar[i] := b1;
+	b2 := ar[i];
+	writeln(b2.id1);
 	writeln(' ');
-	writeln(re);
 end.
 /////////////////////
 test recursive
