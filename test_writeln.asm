@@ -4,13 +4,13 @@ string0: .asciiz " "
 add $fp,$sp,$zero
 addi $sp,$sp,-184
 addi $t0,$zero,1
-sw $t0, -180($fp)
+sw $t0, -164($fp)
 addi $t1,$zero,1
 sw $t1, -12($fp)
-lw $t2, -180($fp)
+lw $t2, -164($fp)
 addi $t3,$zero,16
 mul $t4,$t2,$t3
-addi $t4,$t4,36
+addi $t4,$t4,20
 add $s0,$fp,$zero
 add $s1,$fp,$zero
 addi $s0,$s0,0
@@ -24,14 +24,14 @@ addi $s1,$s1,-4
 addi $t6,$t6,1
 slti $s2,$t6,4
 bne $s2,$zero,copy1
-lw $t2, -180($fp)
+lw $t2, -164($fp)
 addi $t3,$zero,16
 mul $t6,$t2,$t3
-addi $t6,$t6,36
+addi $t6,$t6,20
 add $s2,$fp,$zero
 add $s3,$fp,$zero
 add $s2,$s2,$t6
-addi $s3,$s3,-16
+addi $s3,$s3,0
 add $s0,$zero,$zero
 copy2:
 lw $s1, 0($s2)

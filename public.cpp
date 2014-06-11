@@ -225,9 +225,10 @@ void VariableTreeNode::updateSymtab(Symtab *symtab) {
 		} else {
 			SymBucket *tmpBucket;
 			// need to gencode to allocate memory in stack for these variables.
+
 			if (type.find("record") != string::npos) {
-				b->setLoc(symtab->genLoc(0));
 				SymBucket *member = b->next;
+				b->setLoc(symtab->genLoc(0));
 				do {
 					member->setLoc(env->genLoc(member->getSize()));
 					member = member->last->next;
@@ -462,11 +463,8 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		int tmpDst = regManager->getTmpReg(isFloat);
 		if (op == "=") {
 			if (bucketR->getSize() > 4)  {
-				
 				if (bucketL->getSize() == bucketR->getSize()) {
-					cout << "xxxx" << endl;
 					CodeGenerator::emitCodeB(loadOPR,storeOPL, bucketR->getSize(), locL, locR,FP,4);
-					cout << "xxxx" << endl;
 				} else {
 					cout << lineNO << ": error two record has different size" << endl;
 					exit(-1);
@@ -513,7 +511,9 @@ SymBucket * BinaryExprTreeNode::genCode(Symtab *symtab, int *reg) {
 		regManager->freeReg(tmpReg);
 	} else if (regL == -1 && regR > 0) {
 		if (op == "=") {
-			if (bucketL->getType() == "char" && bucketR->getType() == "string") {
+			cout << "ltype = " << bucketL->getType() << endl;
+			cout << "rtype = " << bucketR->getType() << endl;
+			if (bucketL->getType() == "char" && bucketR->getType() == "string"){
 				int tmpReg = regManager->getTmpReg();
 				CodeGenerator::emitCodeM(getSize("char"),loadOPR, 0,regR, tmpReg);
 				CodeGenerator::emitCodeM(getSize("char"),storeOPL, locL,FP, tmpReg);
@@ -722,7 +722,7 @@ SymBucket * CaseExprTreeNode::genCode(Symtab *symtab, int *reg){
 		int tmp = regManager->getTmpReg();
 		CodeGenerator::emitCodeM(bucketID ->getSize(),loadOPID, locID, FP, tmp);
 		x = labelManager->getCaseLabel();
-		s = "nextcase" + intTostring(x); 
+		s = "nextcase" + intTostring(x);
 		CodeGenerator::emitCodeJ("bne",tmp,regE,0,s); 
 		labelManager->addCaseLabel();
 		regManager->freeReg(tmp);
