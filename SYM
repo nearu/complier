@@ -1,16 +1,22 @@
-3 int:	integer
-20 max:	func .. 7 num1:	integer	 at 0 .. 7 num2:	integer	 at 4 .. 7 returnType:	integer
-============begin max's symtab==================
-7 max:	integer	 at reg 3
-16 min:	func .. 9 num1:	integer	 at 0 .. 9 num2:	integer	 at 4 .. 9 returnType:	integer
-============begin min's symtab==================
-9 min:	integer	 at reg 3
-9 num1:	integer	 at 0
-9 num2:	integer	 at 4
-3 r:	integer	 at 8
-============end min's symtab==================
-7 num1:	integer	 at 0
-7 num2:	integer	 at 4
-============end max's symtab==================
-5 outReal:	real	 at 0
-3 result:	integer	 at 4
+34 A1:	func .. 23 a1:	integer	 at 0 .. 23 returnType:	integer
+============begin A1's symtab==================
+23 A1:	integer	 at reg 3
+29 B1:	func .. 25 b2:	integer	 at 0 .. 25 returnType:	integer
+============begin B1's symtab==================
+25 B1:	integer	 at reg 3
+25 b2:	integer	 at 0
+============end B1's symtab==================
+23 a1:	integer	 at 0
+============end A1's symtab==================
+22 A2:	func .. 6 b1:	integer	 at 0 .. 6 returnType:	integer
+============begin A2's symtab==================
+6 A2:	integer	 at reg 3
+16 B2:	func .. 10 b2:	integer	 at 0 .. 10 returnType:	integer
+============begin B2's symtab==================
+10 B2:	integer	 at reg 3
+10 b2:	integer	 at 0
+============end B2's symtab==================
+8 b:	integer	 at 4
+6 b1:	integer	 at 0
+============end A2's symtab==================
+3 a:	integer	 at 0

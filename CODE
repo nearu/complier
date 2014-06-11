@@ -1,8 +1,27 @@
 .data
-string0: .asciiz " "
-real0: .float  10.0
 .text
 add $fp,$sp,$zero
+addi $sp,$sp,-4
+addi $sp,$sp,-16
+sw $ra, 16($sp)
+sw $v1, 12($sp)
+sw $fp, 8($sp)
+addi $t0,$fp,4
+sw $t0, 4($sp)
+addi $t0,$zero,4
+sw $t0, 0($sp)
+addi $fp,$sp,0
+jal A1
+lw $ra, 16($sp)
+lw $v0, 12($sp)
+lw $fp, 8($sp)
+addi $sp,$sp,16
+lw $a0, 0($fp)
+addi $v0, $zero, 1
+syscall
+addi $sp,$sp,4
+j exit
+A2:
 addi $sp,$sp,-8
 addi $sp,$sp,-16
 sw $ra, 16($sp)
@@ -10,71 +29,67 @@ sw $v1, 12($sp)
 sw $fp, 8($sp)
 addi $t0,$fp,4
 sw $t0, 4($sp)
-addi $t0,$zero,1
+addi $t0,$zero,3
 sw $t0, 0($sp)
-addi $t0,$zero,2
-sw $t0, -4($sp)
 addi $fp,$sp,0
-jal max
+jal B2
 lw $ra, 16($sp)
 lw $v0, 12($sp)
 lw $fp, 8($sp)
 addi $sp,$sp,16
-l.s $f12, 0($fp)
-addi $v0, $zero, 2
-syscall
-la $t0 string0
-add $a0,$t0,$zero
-addi $v0, $zero, 4
-syscall
 lw $a0, -4($fp)
 addi $v0, $zero, 1
 syscall
 addi $sp,$sp,8
-j exit
-max:
-addi $sp,$sp,-8
+jr $ra
+B2:
+addi $sp,$sp,-4
+addi $t0,$zero,123
+lw $t2, 4($fp)
+lw $t2, 0($t2)
+addi $t2,$t2,-4
+sw $t0, 0($t2)
+addi $t1,$zero,321
+lw $t4, 4($fp)
+addi $t4,$t4,-4
+sw $t1, -4($t4)
+addi $sp,$sp,4
+jr $ra
+A1:
+addi $sp,$sp,-4
 addi $sp,$sp,-16
 sw $ra, 16($sp)
 sw $v1, 12($sp)
 sw $fp, 8($sp)
-addi $t0,$fp,4
-sw $t0, 4($sp)
-addi $t0,$zero,2
-sw $t0, 0($sp)
-addi $t0,$zero,1
-sw $t0, -4($sp)
+addi $t3,$fp,4
+sw $t3, 4($sp)
+addi $t3,$zero,3
+sw $t3, 0($sp)
 addi $fp,$sp,0
-jal min
-add $t0,$v1,$zero
+jal B1
 lw $ra, 16($sp)
 lw $v0, 12($sp)
 lw $fp, 8($sp)
 addi $sp,$sp,16
-lw $t1, 4($fp)
-addi $t1,$t1,-4
-sw $t0, -4($t1)
-addi $sp,$sp,8
+addi $sp,$sp,4
 jr $ra
-min:
-addi $sp,$sp,-12
-la $t0 real0
-l.s $f6, 0($t0)
-lw $t0, 4($fp)
-lw $t0, 0($t0)
-addi $t0,$t0,-4
-s.s $f6, 0($t0)
-lw $t2, 0($fp)
-lw $t3, -4($fp)
-slt $t4,$t2,$t3
-beq $t4,$zero,endif0
-lw $t2, 0($fp)
-add $v1,$t2,$zero
-j endelse0
-endif0:
-lw $t2, -4($fp)
-add $v1,$t2,$zero
-endelse0:
-addi $sp,$sp,12
+B1:
+addi $sp,$sp,-4
+addi $sp,$sp,-16
+sw $ra, 16($sp)
+sw $v1, 12($sp)
+sw $fp, 8($sp)
+lw $t3, 4($fp)
+lw $t3, 0($t3)
+sw $t3, 4($sp)
+addi $t3,$zero,3
+sw $t3, 0($sp)
+addi $fp,$sp,0
+jal A2
+lw $ra, 16($sp)
+lw $v0, 12($sp)
+lw $fp, 8($sp)
+addi $sp,$sp,16
+addi $sp,$sp,4
 jr $ra
 exit:
