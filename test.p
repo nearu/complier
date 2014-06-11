@@ -7,7 +7,7 @@ var
 begin
    grade := 'A';
    aa[0] := 'B';
-   case (a[0]) of
+   case (aa[0]) of
       'A' : writeln('Excellent!' );
       'B' : writeln('Well done' );
       'D' : writeln('You passed' );
