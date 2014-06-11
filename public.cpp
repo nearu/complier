@@ -6,11 +6,7 @@
 #include "public.h"
 #include "symtab.h"
 #include <cmath>
-#define FP 30
-#define SP 29
-#define A0 4
-#define F12 44
-#define V1 3
+
 ofstream ast("AST");
 ofstream code("CODE");
 ofstream sym("SYM");
@@ -1011,13 +1007,11 @@ SymBucket * CallExprTreeNode::genCode(Symtab *symtab, int *reg) {
 	CodeGenerator::emitCodeM(4, "store", -16, SP, 31);
 	CodeGenerator::emitCodeM(4, "store", -12,  SP, V1);
 	CodeGenerator::emitCodeM(4, "store", -8,  SP, FP);
-	int tmp = regManager->getTmpReg();
-	CodeGenerator::emitCodeI("+", tmp, FP, 4);		 // 压入的ac的地址比当前fp高
-	CodeGenerator::emitCodeM(4, "store", -4,  SP, tmp);
-	regManager->freeReg(tmp);
-	//CodeGenerator::emitCodeI("+", FP, SP, 0);
-	int tmpDst;
+	CodeGenerator::emitGetAccessLink(funcBucket->getNextSymtab()->getLevel()-symtab->getLevel());
+
 	// pass arguments
+	int tmpDst;
+	int tmp;
 	for (int i = 0; i < args.size(); i++) {
 		tmpDst = regManager->getTmpReg();
 		SymBucket *argType = argsTypeList[i];

@@ -118,12 +118,15 @@ end.
 test switch
 /////////////////////
 program checkCase;
+const 
+	c = 'B';
 var
    grade: char;
+   aa : array [0..4] of char;
 begin
    grade := 'A';
-
-   case (grade) of
+   aa[0] := 'B';
+   case (a[0]) of
       'A' : writeln('Excellent!' );
       'B' : writeln('Well done' );
       'D' : writeln('You passed' );

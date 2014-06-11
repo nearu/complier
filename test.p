@@ -1,17 +1,26 @@
-program checkCase;
-const 
-	c = 'B';
-var
-   grade: char;
-   aa : array [0..4] of char;
+program HelloWorld;
+type 
+	int = integer;
+var 
+	outReal : real;
+	result : int;
+function max(num1, num2 :integer) :integer;
+
+function min(num1, num2:integer):integer;
+var 
+	r : int;
+	begin
+		outReal := 10.0;
+		if (num1 < num2) then min := num1
+		else min := num2;
+	end;
 begin
-   grade := 'A';
-   aa[0] := 'B';
-   case (a[0]) of
-      'A' : writeln('Excellent!' );
-      'B' : writeln('Well done' );
-      'D' : writeln('You passed' );
-      'F' : writeln('Better try again' );
-   end;     
-   
+	result := min(2,1);
+	
+end;
+begin	
+	max(1,2);
+	writeln(outReal);
+	writeln(' ');
+	writeln(result);
 end.

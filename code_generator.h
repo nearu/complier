@@ -4,6 +4,11 @@
 #include <iostream>
 #include <cctype>
 #include <cstdio>
+#define FP 30
+#define SP 29
+#define A0 4
+#define F12 44
+#define V1 3
 using namespace std;
 extern ofstream code;
 class RegManager;
@@ -376,7 +381,6 @@ public:
 
 
 	static void findFP(string op, string& localOP, int& tmpAC) {
-		const int FP = 30;
 		if (op.find("-") != string::npos) {
 			tmpAC = regManager->getTmpReg();
 			int pos = op.find('-');
@@ -385,7 +389,6 @@ public:
 			for (int i = 1; i < level; i++) {
 				CodeGenerator::emitCodeM(4, "load", 0, tmpAC, tmpAC);
 			}
-			// CodeGenerator::emitCodeM(4, "load", 4, tmpAC, tmpAC);
 			CodeGenerator::emitCodeI("+", tmpAC, tmpAC, -4);
 			localOP = op.substr(0,pos);
 		}
@@ -519,7 +522,22 @@ public:
 		code << "syscall" << endl;
 	}
 
-
+	static void emitGetAccessLink(int levelDiff) {
+		cout << "========== levelDiff = " <<  levelDiff << endl;
+		int tmpAC = regManager->getTmpReg();
+		if (levelDiff == 1) {
+			CodeGenerator::emitCodeI("+", tmpAC, FP, 4);
+		} else if (levelDiff <= 0) {
+			CodeGenerator::emitCodeM(4, "load", -4, FP, tmpAC);	
+			for (int i = 0; i < -levelDiff; i++) {
+				CodeGenerator::emitCodeM(4, "load", 0, tmpAC, tmpAC);
+			}
+		} else if (levelDiff > 0) {
+			cout << "error : can not call inner function !!" << endl;
+		}
+		CodeGenerator::emitCodeM(4, "store", -4,  SP, tmpAC);
+		regManager->freeReg(tmpAC);
+	}
 };	
 
 	

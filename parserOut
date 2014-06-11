@@ -1,116 +1,170 @@
 1 program head
-3 const value 4
-3 const expr list 2
-4 const part1
-4 type part 2
+2 const part 2
+3 simple_type_decl 1
+3 type_decl 1
+3 type_definition
+3 type_decl_list 2
+4 type part 1
 5 name list 2
 5 simple_type_decl 1
 5 type_decl 1
 5 var_decl
 5 var_decl_list 2
 6 name list 2
-6 const value 1
-6 const value 1
-6 simple_type_decl 4
-6 simple_type_decl 1
+6 simple_type_decl 2
 6 type_decl 1
-6 array_type_decl
-6 type_decl 2
 6 var_decl
 6 var_decl_list 1
 7 var part 1
-7 routine part 5
-7 routine head
-7 stmt list 2
-8 const value 4
-8 factor 5
-8 term 5
-8 expr 4
-8 expression 7
-8 assign stmt 1
-8 non_label_stmt 1
-8 stmt 2
-8 stmt list 1
-9 const value 1
-9 factor 5
-9 term 5
-9 expr 4
-9 expression 7
-9 const value 4
-9 factor 5
-9 term 5
-9 expr 4
-9 expression 7
-9 assign stmt 2
-9 non_label_stmt 1
-9 stmt 2
-9 stmt list 1
-10 const value 1
-10 factor 5
-10 term 5
-10 expr 4
-10 expression 7
-10 factor 9
-10 term 5
-10 expr 4
-10 expression 7
-10 factor 6
-10 term 5
-10 expr 4
-10 expression 7
-11 const value 4
-11 const value 4
-11 factor 5
-11 term 5
-11 expr 4
-11 expression 7
-11 args_list 2
-11 proc_stmt 2
-11 non_label_stmt 2
-11 stmt 2
-11 case expr 1
-11 case expr list 2
-12 const value 4
-12 const value 4
-12 factor 5
-12 term 5
-12 expr 4
-12 expression 7
-12 args_list 2
-12 proc_stmt 2
-12 non_label_stmt 2
-12 stmt 2
-12 case expr 1
-12 case expr list 1
-13 const value 4
-13 const value 4
+7 name list 2
+7 name list 1
+7 val_para_list
+7 simple_type_decl 1
+7 para_type_list 2
+7 para_decl_list 2
+7 paramters 1
+7 simple_type_decl 1
+9 const part 2
+9 type part 2
+9 var part 2
+9 name list 2
+9 name list 1
+9 val_para_list
+9 simple_type_decl 1
+9 para_type_list 2
+9 para_decl_list 2
+9 paramters 1
+9 simple_type_decl 1
+10 const part 2
+10 type part 2
+11 name list 2
+11 simple_type_decl 2
+11 type_decl 1
+11 var_decl
+11 var_decl_list 2
+12 var part 1
+12 routine part 5
+12 routine head
+12 stmt list 2
+13 const value 2
 13 factor 5
 13 term 5
 13 expr 4
 13 expression 7
-13 args_list 2
-13 proc_stmt 2
-13 non_label_stmt 2
+13 assign stmt 1
+13 non_label_stmt 1
 13 stmt 2
-13 case expr 1
-13 case expr list 1
-14 const value 4
-14 const value 4
-14 factor 5
+13 stmt list 1
+14 factor 1
 14 term 5
 14 expr 4
 14 expression 7
-14 args_list 2
-14 proc_stmt 2
-14 non_label_stmt 2
-14 stmt 2
-14 case expr 1
-14 case expr list 1
-15 case stmt
-15 non_label_stmt 8
+14 factor 1
+14 term 5
+14 expr 4
+14 expression 4
+14 factor 6
+14 term 5
+14 expr 4
+14 expression 7
+15 factor 1
+15 term 5
+15 expr 4
+15 expression 7
+15 assign stmt 1
+15 non_label_stmt 1
+15 stmt 2
+15 factor 1
+15 term 5
+15 expr 4
+15 expression 7
+15 assign stmt 1
+15 non_label_stmt 1
+15 stmt 2
+15 else clause 1
+15 if stmt
+15 non_label_stmt 4
 15 stmt 2
 15 stmt list 1
-17 compound stmt
-17 routine_body
-17 routine
-17 pargram
+16 compound stmt
+16 routine_body
+16 routine
+16 function decl
+16 routine part 3
+17 routine head
+17 stmt list 2
+18 const value 1
+18 factor 5
+18 term 5
+18 expr 4
+18 expression 7
+18 args_list 2
+18 const value 1
+18 factor 5
+18 term 5
+18 expr 4
+18 expression 7
+18 args_list 1
+18 factor 2
+18 term 5
+18 expr 4
+18 expression 7
+18 assign stmt 1
+18 non_label_stmt 1
+18 stmt 2
+18 stmt list 1
+20 compound stmt
+20 routine_body
+20 routine
+20 function decl
+20 routine part 3
+21 routine head
+21 stmt list 2
+22 const value 1
+22 factor 5
+22 term 5
+22 expr 4
+22 expression 7
+22 args_list 2
+22 const value 1
+22 factor 5
+22 term 5
+22 expr 4
+22 expression 7
+22 args_list 1
+22 proc_stmt 2
+22 non_label_stmt 2
+22 stmt 2
+22 stmt list 1
+23 factor 1
+23 term 5
+23 expr 4
+23 expression 7
+23 args_list 2
+23 proc_stmt 2
+23 non_label_stmt 2
+23 stmt 2
+23 stmt list 1
+24 const value 4
+24 factor 5
+24 term 5
+24 expr 4
+24 expression 7
+24 args_list 2
+24 proc_stmt 2
+24 non_label_stmt 2
+24 stmt 2
+24 stmt list 1
+25 factor 1
+25 term 5
+25 expr 4
+25 expression 7
+25 args_list 2
+25 proc_stmt 2
+25 non_label_stmt 2
+25 stmt 2
+25 stmt list 1
+26 compound stmt
+26 routine_body
+26 routine
+26 pargram

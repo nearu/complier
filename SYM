@@ -1,0 +1,16 @@
+3 int:	integer
+20 max:	func .. 7 num1:	integer	 at 0 .. 7 num2:	integer	 at 4 .. 7 returnType:	integer
+============begin max's symtab==================
+7 max:	integer	 at reg 3
+16 min:	func .. 9 num1:	integer	 at 0 .. 9 num2:	integer	 at 4 .. 9 returnType:	integer
+============begin min's symtab==================
+9 min:	integer	 at reg 3
+9 num1:	integer	 at 0
+9 num2:	integer	 at 4
+3 r:	integer	 at 8
+============end min's symtab==================
+7 num1:	integer	 at 0
+7 num2:	integer	 at 4
+============end max's symtab==================
+5 outReal:	real	 at 0
+3 result:	integer	 at 4

@@ -1,56 +1,80 @@
 .data
-string3: .asciiz "A"
-string5: .asciiz "B"
-string10: .asciiz "Better try again"
-string7: .asciiz "D"
-string4: .asciiz "Excellent!"
-string9: .asciiz "F"
-string6: .asciiz "Well done"
-string8: .asciiz "You passed"
+string0: .asciiz " "
+real0: .float  10.0
 .text
 add $fp,$sp,$zero
-addi $sp,$sp,-9
-la $t0 string5
-sw $t0, 0($fp)
-la $t0 string3
-lb $t1, 0($t0)
-sb $t1, -4($fp)
-la $t0 string5
-lb $t2, 0($t0)
-sb $t2, -5($fp)
-lb $t0, -5($fp)
-la $t3 string3
-lb $t3, 0($t3)
-bne $t3,$t0,nextcase0
-la $t3 string4
-add $a0,$t3,$zero
+addi $sp,$sp,-8
+addi $sp,$sp,-16
+sw $ra, 16($sp)
+sw $v1, 12($sp)
+sw $fp, 8($sp)
+addi $t0,$fp,4
+sw $t0, 4($sp)
+addi $t0,$zero,1
+sw $t0, 0($sp)
+addi $t0,$zero,2
+sw $t0, -4($sp)
+addi $fp,$sp,0
+jal max
+lw $ra, 16($sp)
+lw $v0, 12($sp)
+lw $fp, 8($sp)
+addi $sp,$sp,16
+l.s $f12, 0($fp)
+addi $v0, $zero, 2
+syscall
+la $t0 string0
+add $a0,$t0,$zero
 addi $v0, $zero, 4
 syscall
-nextcase0:
-la $t3 string5
-lb $t3, 0($t3)
-bne $t3,$t0,nextcase1
-la $t3 string6
-add $a0,$t3,$zero
-addi $v0, $zero, 4
+lw $a0, -4($fp)
+addi $v0, $zero, 1
 syscall
-nextcase1:
-la $t3 string7
-lb $t3, 0($t3)
-bne $t3,$t0,nextcase2
-la $t3 string8
-add $a0,$t3,$zero
-addi $v0, $zero, 4
-syscall
-nextcase2:
-la $t3 string9
-lb $t3, 0($t3)
-bne $t3,$t0,nextcase3
-la $t3 string10
-add $a0,$t3,$zero
-addi $v0, $zero, 4
-syscall
-nextcase3:
-addi $sp,$sp,9
+addi $sp,$sp,8
 j exit
+max:
+addi $sp,$sp,-8
+addi $sp,$sp,-16
+sw $ra, 16($sp)
+sw $v1, 12($sp)
+sw $fp, 8($sp)
+addi $t0,$fp,4
+sw $t0, 4($sp)
+addi $t0,$zero,2
+sw $t0, 0($sp)
+addi $t0,$zero,1
+sw $t0, -4($sp)
+addi $fp,$sp,0
+jal min
+add $t0,$v1,$zero
+lw $ra, 16($sp)
+lw $v0, 12($sp)
+lw $fp, 8($sp)
+addi $sp,$sp,16
+lw $t1, 4($fp)
+addi $t1,$t1,-4
+sw $t0, -4($t1)
+addi $sp,$sp,8
+jr $ra
+min:
+addi $sp,$sp,-12
+la $t0 real0
+l.s $f6, 0($t0)
+lw $t0, 4($fp)
+lw $t0, 0($t0)
+addi $t0,$t0,-4
+s.s $f6, 0($t0)
+lw $t2, 0($fp)
+lw $t3, -4($fp)
+slt $t4,$t2,$t3
+beq $t4,$zero,endif0
+lw $t2, 0($fp)
+add $v1,$t2,$zero
+j endelse0
+endif0:
+lw $t2, -4($fp)
+add $v1,$t2,$zero
+endelse0:
+addi $sp,$sp,12
+jr $ra
 exit:
