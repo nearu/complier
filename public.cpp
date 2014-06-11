@@ -1219,7 +1219,10 @@ string CompoundStmtTreeNode::typeCheck(Symtab *symtab){
 }
 
 string IfStmtTreeNode::typeCheck(Symtab *symtab){
-	if(((condition->typeCheck(symtab))!="failure")&&((body->typeCheck(symtab))!="failure")&&(elsePart != NULL ? ((elsePart->typeCheck(symtab))!="failure") : 1)){
+	string s1 = condition->typeCheck(symtab);
+	string s2 = body->typeCheck(symtab);
+	string s3 = elsePart->typeCheck(symtab);
+	if(s1 != "failure" && s2 != "failure" && (s3 == NULL? 1 : (s3!="failure"))){
 		return "success";
 	}
 	 return "failure";
