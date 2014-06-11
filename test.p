@@ -1,23 +1,23 @@
 program HelloWorld;
 type 
 	int = integer;
+	book = record 
+		id1 : integer;
+		id2 : integer;
+		id3 : integer;
+		name : integer;
+	end;
 var 
-	i : int;
-	j : int;
-	r : real;
-	t : real;
-	c : char;
+	b1,b2 : book;
+	re : real;
+	ar : array[1..10] of book;
+	i : integer;
 begin	
 	i := 1;
-	j := 4;
-	r := 1.0;
-	t := 1.0;
-	i := i + 1 + 2 * (j - 1) / 2;
-	t := r - t/2.0 + 10.0 + r * 2.0;
-	writeln(i);
+	b1.id1 := 1;
+	ar[i] := b1;
+	b2 := ar[i];
+	writeln(b2.id1);
 	writeln(' ');
-	writeln(t);
-	j := -j + 1;
-	writeln(' ');
-	writeln(j);
+	re := re + re - re * re;
 end.
